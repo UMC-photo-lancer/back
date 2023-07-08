@@ -46,7 +46,7 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Sex sex;
 
-    private String explain;
+    private String explane;
 
     @Column(columnDefinition = "Integer default 0")
     private Integer level;

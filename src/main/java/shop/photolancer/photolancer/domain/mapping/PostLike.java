@@ -1,7 +1,8 @@
-package shop.photolancer.photolancer.domain;
+package shop.photolancer.photolancer.domain.mapping;
 
 import lombok.*;
-import shop.photolancer.photolancer.domain.base.BaseEntity;
+import shop.photolancer.photolancer.domain.Post;
+import shop.photolancer.photolancer.domain.User;
 
 import javax.persistence.*;
 
@@ -10,8 +11,7 @@ import javax.persistence.*;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Post extends BaseEntity {
-
+public class PostLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,13 +20,7 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(columnDefinition = "TEXT")
-    private String content;
-
-    private Integer likeCount;
-
-    private Boolean isSale;
-
-    @Column(nullable = false)
-    private Integer point;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "post_id")
+    private Post post;
 }
