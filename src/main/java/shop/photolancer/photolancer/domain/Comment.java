@@ -28,6 +28,6 @@ public class Comment extends BaseEntity {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "comment_id")
-    private Comment comment;
+    @JoinColumn(name = "parentComment_id")
+    private Comment parentComment;
 }
