@@ -20,7 +20,8 @@ public class Payment_method {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String details;
+    @Enumerated(EnumType.STRING)
+    private PaymentMethodType paymentMethodType;
 
     private String bank;
 
