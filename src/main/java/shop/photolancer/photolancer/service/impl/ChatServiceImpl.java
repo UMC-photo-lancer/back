@@ -4,11 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.photolancer.photolancer.domain.Chat;
+import shop.photolancer.photolancer.domain.Message;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.repository.ChatRepository;
+import shop.photolancer.photolancer.repository.MessageRepository;
 import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.service.ChatService;
 
@@ -20,11 +23,10 @@ import java.util.NoSuchElementException;
 public class ChatServiceImpl implements ChatService {
 
     private final ChatRepository chatRepository;
-
     private final UserRepository userRepository;
+    private final MessageRepository messageRepository;
 
     //팔로잉 채팅 목록 불러오기
-    @Transactional
     @Override
     public Page<Chat> findFollowingChats(Long userId, Long last){
         User user = userRepository.findById(userId)
@@ -34,7 +36,7 @@ public class ChatServiceImpl implements ChatService {
 
         if (last != null && last > 1){
             // last 값이 1보다 크고 있을 경우, 해당 값 기준으로 다음 페이지를 요청
-            pageable = PageRequest.of(last.intValue(), 5);
+            pageable = PageRequest.of(last.intValue()-1, 5);
         } else {
             // last 값이 1 이하일 경우, 첫 번째 페이지 요청
             pageable = PageRequest.of(0, 5);
@@ -42,6 +44,27 @@ public class ChatServiceImpl implements ChatService {
         Page<Chat> chatRooms = chatRepository.findAllBySenderOrReceiver(pageable, user, user);
 
         return chatRooms;
+    }
+
+    @Override
+    public Page<Message> findMessages(Long chatId, Long last){
+        Chat chat = chatRepository.findById(chatId)
+                .orElseThrow(() -> new NoSuchElementException("Chat not found"));
+
+        Pageable pageable;
+
+        if (last != null && last > 1){
+            // last 값이 1보다 크고 있을 경우, 해당 값 기준으로 다음 페이지를 요청
+            pageable = PageRequest.of(last.intValue()-1, 5);
+        } else {
+            // last 값이 1 이하일 경우, 첫 번째 페이지 요청
+            pageable = PageRequest.of(0, 5);
+        }
+
+        Page<Message> messages = messageRepository.findByChat(pageable, chat);
+
+        return messages;
+
     }
 
 }
