@@ -21,9 +21,11 @@ public class Charge extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "payment_method_id")
-    private Payment_method paymentMethod;
+//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+//    @JoinColumn(name = "payment_method_id")
+//    private Payment_method paymentMethod;
+
+    private String paymentMethod;
 
     @Column(nullable = false)
     private Integer amount;
