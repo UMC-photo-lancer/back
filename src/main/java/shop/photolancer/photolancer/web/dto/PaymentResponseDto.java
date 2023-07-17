@@ -16,4 +16,14 @@ public class PaymentResponseDto {
         private NoteType log;
         private LocalDateTime createdAt;
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class PurchaseDto{
+        private Integer price;
+        private Integer userPoint;
+    }
+
 }
