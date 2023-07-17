@@ -5,7 +5,8 @@ Spring Boot + JPA
 ---------------------------
 
 #ERD 설계
-<img src="./pocketbox_erd.png">
+
+<img src="./photolancer_erd.jpg">
 ---------------------------
 
 ### 커밋컨벤션
