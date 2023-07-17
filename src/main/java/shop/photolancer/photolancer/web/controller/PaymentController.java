@@ -81,8 +81,8 @@ public class PaymentController {
         }
     }
 
-    @GetMapping("/{photo-id}/purchase")
-    public ResponseEntity purchase(@PathVariable("photo-id") Long photoId){
+    @GetMapping("/{post-id}/purchase")
+    public ResponseEntity purchaseWindow(@PathVariable("post-id") Long postId){
         try {
             //추후 유저 인증 구현
             //
@@ -92,9 +92,28 @@ public class PaymentController {
                     .orElseThrow(() -> new NoSuchElementException("User not found"));
             //
 
-            PaymentResponseDto.PurchaseDto response = paymentService.getPurchase(photoId, user);
+            PaymentResponseDto.PurchaseDto response = paymentService.getPurchase(postId, user);
 
             return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.PURCHASE_READ_SUCCESS, response), HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/{post-id}/purchase")
+    public ResponseEntity purchase(@PathVariable("post-id") Long postId){
+        try {
+            //추후 유저 인증 구현
+            //
+            Long userId = Long.valueOf(1);
+
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new NoSuchElementException("User not found"));
+            //
+
+            paymentService.purchase(postId, user);
+
+            return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.PURCHASE_SUCCESS), HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
         }
