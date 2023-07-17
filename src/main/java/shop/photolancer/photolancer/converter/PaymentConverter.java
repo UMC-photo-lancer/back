@@ -35,11 +35,17 @@ public class PaymentConverter {
     }
 
     public PaymentResponseDto.TradeLogDto toTradeLogDto(Charge charge){
-        System.out.println(charge.getPaymentMethod());
         return PaymentResponseDto.TradeLogDto.builder()
                 .point(charge.getAmount())
                 .log(charge.getNote())
                 .createdAt(charge.getCreatedAt())
+                .build();
+    }
+
+    public PaymentResponseDto.PurchaseDto toPurchase(Integer price, Integer userPoint){
+        return PaymentResponseDto.PurchaseDto.builder()
+                .price(price)
+                .userPoint(userPoint)
                 .build();
     }
 }

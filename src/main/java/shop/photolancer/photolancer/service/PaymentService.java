@@ -12,4 +12,6 @@ public interface PaymentService {
 
     List<Charge> getAllCharges(User user);
 
+    PaymentResponseDto.PurchaseDto getPurchase(Long photoId, User user);
+
 }
