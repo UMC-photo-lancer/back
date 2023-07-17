@@ -3,6 +3,8 @@ package shop.photolancer.photolancer.domain;
 import lombok.*;
 import shop.photolancer.photolancer.domain.base.BaseEntity;
 import shop.photolancer.photolancer.domain.enums.ChargeStatus;
+import shop.photolancer.photolancer.domain.enums.NoteType;
+import shop.photolancer.photolancer.domain.enums.PaymentMethodType;
 
 import javax.persistence.*;
 
@@ -21,15 +23,12 @@ public class Charge extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-//    @JoinColumn(name = "payment_method_id")
-//    private Payment_method paymentMethod;
-
-    private String paymentMethod;
+    @Enumerated(EnumType.STRING)
+    private PaymentMethodType paymentMethod;
 
     @Column(nullable = false)
     private Integer amount;
 
     @Enumerated(EnumType.STRING)
-    private ChargeStatus status;
+    private NoteType note;
 }

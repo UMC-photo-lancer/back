@@ -8,6 +8,9 @@ import shop.photolancer.photolancer.domain.Charge;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.repository.ChargeRepository;
 import shop.photolancer.photolancer.service.PaymentService;
+import shop.photolancer.photolancer.web.dto.PaymentResponseDto;
+
+import java.util.List;
 
 
 @Service
@@ -23,6 +26,11 @@ public class PaymentServiceImpl implements PaymentService {
     public Charge charge(User user, Integer amount, String paymentMethod){
         Charge charge = paymentConverter.toCharge(user, amount, paymentMethod);
         return chargeRepository.save(charge);
+    }
+
+    @Override
+    public List<Charge> getAllCharges(User user){
+        return chargeRepository.findAllByUserOrderByCreatedAtDesc(user);
     }
 
 }
