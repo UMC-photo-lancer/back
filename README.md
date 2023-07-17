@@ -4,8 +4,7 @@
 Spring Boot + JPA
 ---------------------------
 
-#ERD 설계
-
+# ERD 설계
 <img src="./photolancer_erd.jpg">
 ---------------------------
 
