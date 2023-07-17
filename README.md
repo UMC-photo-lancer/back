@@ -1,8 +1,12 @@
 # UMC Photo Lancer Backend
 ---------------------------
-
 # Stack
-Spring Boot
+Spring Boot + JPA
+---------------------------
+
+#ERD 설계
+<img src="./pocketbox_erd.png">
+---------------------------
 
 ### 커밋컨벤션
 | 태그이름    | 내용         |
