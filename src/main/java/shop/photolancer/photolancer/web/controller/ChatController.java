@@ -3,19 +3,28 @@ package shop.photolancer.photolancer.web.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import shop.photolancer.photolancer.domain.Chat;
 import shop.photolancer.photolancer.domain.Message;
+import shop.photolancer.photolancer.domain.PublishMessage;
 import shop.photolancer.photolancer.exception.ResponseMessage;
 import shop.photolancer.photolancer.exception.StatusCode;
 import shop.photolancer.photolancer.mapper.ChatMapper;
 import shop.photolancer.photolancer.service.ChatService;
+import shop.photolancer.photolancer.service.Redis.RedisPublisher;
 import shop.photolancer.photolancer.web.dto.ChatResponseDto;
 import shop.photolancer.photolancer.web.dto.TestResponseDto;
 import shop.photolancer.photolancer.web.dto.base.DefaultRes;
 
+import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -25,8 +34,10 @@ import java.util.List;
 public class ChatController {
 
     private final ChatService chatService;
-
     private final ChatMapper mapper;
+
+    private final RedisPublisher redisPublisher;
+
 
     //팔로잉 채팅 목록 불러오기
     @GetMapping("/following")
@@ -65,5 +76,16 @@ public class ChatController {
             return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
         }
     }
+
+//        @MessageMapping
+//        public void processMessage(Message message){
+//            chatService.processMessage(message);
+//        }
+//
+//        @GetMapping("/history")
+//        public ResponseEntity<List<Message>> getChatHistory() {
+//            List<Message> chatHistory = chatService.getChatHistory();
+//            return ResponseEntity.ok(chatHistory);
+//        }
 
 }

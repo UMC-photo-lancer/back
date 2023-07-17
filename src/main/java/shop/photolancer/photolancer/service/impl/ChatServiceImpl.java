@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.photolancer.photolancer.domain.Chat;
@@ -15,6 +15,7 @@ import shop.photolancer.photolancer.repository.MessageRepository;
 import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.service.ChatService;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -65,6 +66,22 @@ public class ChatServiceImpl implements ChatService {
 
         return messages;
 
+    }
+
+
+    private SimpMessagingTemplate messagingTemplate;
+    private List<Message> chatHistory;
+
+    @Override
+    @Transactional
+    public void processMessage(Message message) {
+        chatHistory.add(message);
+        messagingTemplate.convertAndSend("/sub/chats", message);
+    }
+
+    @Override
+    public List<Message> getChatHistory() {
+        return chatHistory;
     }
 
 }

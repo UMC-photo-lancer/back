@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 public class PublishMessage implements Serializable {
     private static final long serialVersionUID = 2082503192322391880L;
     @NotNull
-    private Long roomId;
+    private Long chatId;
     @NotNull
     private Long senderId;
     @NotBlank

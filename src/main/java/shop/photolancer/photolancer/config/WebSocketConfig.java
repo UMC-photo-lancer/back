@@ -1,12 +1,17 @@
 package shop.photolancer.photolancer.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.*;
+import shop.photolancer.photolancer.handler.ChatHandler;
 
 @Configuration
 @EnableWebSocketMessageBroker
+@RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+    private final ChatHandler chatHandler;
 
     // sockJS Fallback을 이용해 노출할 endpoint 설정
     @Override
