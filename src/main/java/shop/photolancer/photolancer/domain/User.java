@@ -65,4 +65,8 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
+    public void updatePoint(Integer amount){
+        this.point += amount;
+    }
+
 }

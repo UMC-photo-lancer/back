@@ -7,8 +7,10 @@ import shop.photolancer.photolancer.converter.PaymentConverter;
 import shop.photolancer.photolancer.domain.Charge;
 import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
+import shop.photolancer.photolancer.domain.mapping.UserPhoto;
 import shop.photolancer.photolancer.repository.ChargeRepository;
 import shop.photolancer.photolancer.repository.PostRepository;
+import shop.photolancer.photolancer.repository.UserPhotoRepository;
 import shop.photolancer.photolancer.service.PaymentService;
 import shop.photolancer.photolancer.web.dto.PaymentResponseDto;
 
@@ -24,6 +26,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentConverter paymentConverter;
     private final ChargeRepository chargeRepository;
     private final PostRepository postRepository;
+    private final UserPhotoRepository userPhotoRepository;
 
     @Override
     @Transactional
@@ -38,15 +41,30 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public PaymentResponseDto.PurchaseDto getPurchase(Long photoId, User user){
+    public PaymentResponseDto.PurchaseDto getPurchase(Long postId, User user){
         Integer userPoint = user.getPoint();
 
-        Post post = postRepository.findById(photoId)
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NoSuchElementException("Post not found"));
 
         Integer price = post.getPoint();
 
-        return paymentConverter.toPurchase(price, userPoint);
+        return paymentConverter.toPurchaseWindow(price, userPoint);
+    }
+
+    @Override
+    @Transactional
+    public void purchase(Long postId, User user){
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NoSuchElementException("Post not found"));
+
+        Integer amount = post.getPoint();
+
+        user.updatePoint(-amount);
+
+        UserPhoto userPhoto = paymentConverter.toPurchase(post, user);
+        userPhotoRepository.save(userPhoto);
+
     }
 
 }
