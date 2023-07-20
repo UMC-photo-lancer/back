@@ -27,3 +27,20 @@ spring:
 
 logging.level:
   org.hibernate.SQL: debug
+
+cloud:
+  aws:
+    s3:
+      bucket: photolancer-post
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: ${ACCESS_KEY}
+      secretKey: ${SECRET_KEY}
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: ERROR

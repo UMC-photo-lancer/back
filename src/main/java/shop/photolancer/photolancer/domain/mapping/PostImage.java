@@ -16,9 +16,6 @@ public class PostImage {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
     private String uri;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
