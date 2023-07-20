@@ -2,8 +2,11 @@ package shop.photolancer.photolancer.domain;
 
 import lombok.*;
 import shop.photolancer.photolancer.domain.base.BaseEntity;
+import shop.photolancer.photolancer.domain.mapping.PostImage;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -29,4 +32,7 @@ public class Post extends BaseEntity {
 
     @Column(nullable = false)
     private Integer point;
+
+    @Transient
+    private final List<PostImage> postImageList = new ArrayList<>();
 }

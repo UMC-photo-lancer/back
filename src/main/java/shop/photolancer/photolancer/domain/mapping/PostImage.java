@@ -16,12 +16,14 @@ public class PostImage {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
     private String uri;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "post_id")
     private Post post;
+
+    public PostImage(String uri, Post post) {
+        this.uri = uri;
+        this.post = post;
+    }
 }
