@@ -9,6 +9,9 @@ spring:
   output:
     ansi:
       enabled: always
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   jpa:
     hibernate:
       ddl-auto: create
@@ -21,6 +24,10 @@ spring:
         hbm2ddl:
           auto: update
         default_batch_fetch_size: 1000
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
   redis:
     host: ${REDIS_HOST}
     port: ${REDIS_PORT}
