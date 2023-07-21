@@ -1,8 +1,7 @@
 package shop.photolancer.photolancer.domain.enums;
 
 public enum PaymentMethodType {
-    NAVER("naver"),
-    PAYCO("payco"),
+    KG("kg"),
     TOSS("toss"),
     KAKAO("kakao");
 
