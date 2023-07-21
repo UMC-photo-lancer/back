@@ -83,6 +83,27 @@ public class PaymentController {
         }
     }
 
+    @ApiOperation(value = "환전 창 불러오기 API")
+    @ApiResponse(code = 200, message = "환전 창 불러오기 성공")
+    @GetMapping("/my-profile/exchange")
+    public ResponseEntity exchangeWindow(){
+        try {
+            //추후 유저 인증 구현
+            //
+            Long userId = Long.valueOf(1);
+
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new NoSuchElementException("User not found"));
+            //
+
+            List<PaymentResponseDto.ExchangeDto> response = paymentService.getExchange(user);
+
+            return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.EXCHANGE_READ_SUCCESS, response), HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @ApiOperation(value = "사진 구매 창 불러오기 API")
     @ApiImplicitParam(name = "post-id", value = "게시물 ID", required = true, dataType = "Long", example = "1", paramType = "path")
     @ApiResponse(code = 200, message = "사진 구매 창 불러오기 성공")
