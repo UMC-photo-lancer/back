@@ -1,5 +1,6 @@
 package shop.photolancer.photolancer.web.controller;
 
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,7 @@ import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Api(tags = "채팅 관련 API")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -39,7 +41,9 @@ public class ChatController {
     private final RedisPublisher redisPublisher;
 
 
-    //팔로잉 채팅 목록 불러오기
+    @ApiOperation(value = "팔로잉 채팅 목록 불러오기 API")
+    @ApiImplicitParam(name = "last", value = "마지막으로 본 페이지", required = true, dataType = "Long", example = "1", paramType = "query")
+    @ApiResponse(code = 200, message = "팔로잉 채팅 목록 불러오기 성공")
     @GetMapping("/following")
     public ResponseEntity getFollowingChats(@RequestParam(defaultValue = "1") Long last){
         try {
@@ -58,6 +62,12 @@ public class ChatController {
         }
     }
 
+    @ApiOperation(value = "채팅 내용 불러오기 API")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "chat-id", value = "채팅방 ID", required = true, dataType = "Long", example = "5", paramType = "path"),
+            @ApiImplicitParam(name = "last", value = "마지막으로 본 페이지", required = true, dataType = "Long", example = "1", paramType = "query")
+    })
+    @ApiResponse(code = 200, message = "채팅 내용 불러오기 성공")
     @GetMapping("/{chat-id}")
     public ResponseEntity getChatMessages(@PathVariable("chat-id") Long chatId,
                                           @RequestParam(defaultValue = "1") Long last){

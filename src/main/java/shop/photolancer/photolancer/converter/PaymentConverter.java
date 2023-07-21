@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import shop.photolancer.photolancer.domain.Charge;
 import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
-import shop.photolancer.photolancer.domain.enums.ChargeStatus;
 import shop.photolancer.photolancer.domain.enums.NoteType;
 import shop.photolancer.photolancer.domain.enums.PaymentMethodType;
 import shop.photolancer.photolancer.domain.mapping.UserPhoto;
