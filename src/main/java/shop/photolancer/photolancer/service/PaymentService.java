@@ -11,7 +11,10 @@ public interface PaymentService {
     Charge charge(User user, Integer amount, String paymentMethod);
 
     List<Charge> getAllCharges(User user);
+
     List<PaymentResponseDto.ExchangeDto> getExchange(User user);
+
+    void exchange(User user, String bank, String accountNumber, Integer point);
 
     PaymentResponseDto.PurchaseDto getPurchase(Long postId, User user);
 

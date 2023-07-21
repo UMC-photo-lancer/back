@@ -18,8 +18,9 @@ public class AccountConverter {
                 .build();
     }
 
-    public PaymentResponseDto.ExchangeDto toExchange(String bank, String accountNumber, Boolean isMain){
+    public PaymentResponseDto.ExchangeDto toExchange(Long id, String bank, String accountNumber, Boolean isMain){
         return PaymentResponseDto.ExchangeDto.builder()
+                .id(id)
                 .bank(bank)
                 .accountNumber(accountNumber)
                 .isMain(isMain)
