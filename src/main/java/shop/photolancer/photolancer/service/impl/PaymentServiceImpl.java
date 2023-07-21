@@ -32,6 +32,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional
     public Charge charge(User user, Integer amount, String paymentMethod){
         Charge charge = paymentConverter.toCharge(user, amount, paymentMethod);
+
+        user.updatePoint(amount);
+
         return chargeRepository.save(charge);
     }
 

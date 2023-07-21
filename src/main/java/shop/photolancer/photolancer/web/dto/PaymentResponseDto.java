@@ -14,7 +14,7 @@ public class PaymentResponseDto {
     public static class TradeLogDto{
         private Integer point;
         private NoteType log;
-        private LocalDateTime createdAt;
+        private String createdAt;
     }
 
     @Builder
