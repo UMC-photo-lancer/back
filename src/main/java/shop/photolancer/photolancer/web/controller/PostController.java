@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import shop.photolancer.photolancer.exception.ResponseMessage;
 import shop.photolancer.photolancer.exception.StatusCode;
-import shop.photolancer.photolancer.service.impl.BookMarkServiceImpl;
 import shop.photolancer.photolancer.service.impl.S3Upload;
 import shop.photolancer.photolancer.service.impl.PostServiceImpl;
 import shop.photolancer.photolancer.web.dto.PostRequestDto;
+import shop.photolancer.photolancer.web.dto.PostResponseDto;
 import shop.photolancer.photolancer.web.dto.base.DefaultRes;
 
 
@@ -39,5 +39,9 @@ public class PostController {
         } catch (Exception e){
         return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
         }
+    }
+    @GetMapping("/{id}")
+    public PostResponseDto.PostDetailDto postDetail(@PathVariable Long id) {
+        return postService.searchById(id);
     }
 }
