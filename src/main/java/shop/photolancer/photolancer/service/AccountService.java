@@ -10,4 +10,6 @@ public interface AccountService {
 
     void updateAccount(User user, Long accountId, String  bank, String accountNumber);
 
+    void deleteAccount(User user, Long accountId);
+
 }

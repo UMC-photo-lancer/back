@@ -55,4 +55,13 @@ public class AccountServiceImpl implements AccountService {
         account.setBank(bank);
         account.setAccountNumber(accountNumber);
     }
+
+    @Transactional
+    @Override
+    public void deleteAccount(User user, Long accountId){
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new NoSuchElementException("Account not found."));
+
+        accountRepository.delete(account);
+    }
 }

@@ -18,8 +18,9 @@ public class ResponseMessage {
 
     //account
     public static final String ADD_ACCOUNT_SUCCESS = "계좌 추가 성공";
-    public static final String MAIN_ACCOUNT_SUCCESS = "메인 계좌 설정 성공";
+    public static final String ACCOUNT_MAIN_SUCCESS = "메인 계좌 설정 성공";
     public static final String ACCOUNT_UPDATE_SUCCESS = "계좌 수정 성공";
+    public static final String ACCOUNT_DELETE_SUCCESS = "계좌 삭제 성공";
 
 
     public static final String POST_UPLOAD_SUCCESS = "포스트 업로드 성공";

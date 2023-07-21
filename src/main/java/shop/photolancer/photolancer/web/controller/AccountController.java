@@ -76,7 +76,7 @@ public class AccountController {
 
             accountService.updateIsMain(user, accountId);
 
-            return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.MAIN_ACCOUNT_SUCCESS), HttpStatus.OK);
+            return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.ACCOUNT_MAIN_SUCCESS), HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
         }
@@ -108,6 +108,28 @@ public class AccountController {
             accountService.updateAccount(user, accountId, bank, accountNumber);
 
             return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.ACCOUNT_UPDATE_SUCCESS), HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @ApiOperation(value = "계좌 삭제 API")
+    @ApiImplicitParam(name = "account-id", value = "계좌 ID", required = true, dataType = "Long", example = "1", paramType = "path")
+    @ApiResponse(code = 200, message = "계좌 삭제 성공")
+    @DeleteMapping("/{account-id}")
+    public ResponseEntity deleteAccount(@PathVariable("account-id") Long accountId){
+        try {
+            //추후 유저 인증 구현
+            //
+            Long userId = Long.valueOf(1);
+
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new NoSuchElementException("User not found"));
+            //
+
+            accountService.deleteAccount(user, accountId);
+
+            return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.ACCOUNT_DELETE_SUCCESS), HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
         }
