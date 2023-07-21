@@ -1,11 +1,12 @@
 package shop.photolancer.photolancer.domain;
 
 import lombok.*;
+
 import javax.persistence.*;
 
 @Entity
 @Builder
-@Getter
+@Getter @Setter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account {
@@ -24,6 +25,6 @@ public class Account {
     @Column(nullable = false)
     private String accountNumber;
 
-    @Column(columnDefinition = "Boolean default false")
+    @Column(columnDefinition = "Boolean default False")
     private Boolean isMain;
 }

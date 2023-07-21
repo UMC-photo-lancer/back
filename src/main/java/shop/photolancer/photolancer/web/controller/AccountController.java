@@ -30,7 +30,6 @@ public class AccountController {
     private final UserRepository userRepository;
     private final AccountService accountService;
 
-
     @ApiOperation(value = "계좌 추가 API")
     @ApiResponse(code = 200, message = "계좌 추가 성공")
     @PostMapping()
@@ -56,6 +55,28 @@ public class AccountController {
             accountService.add(user, bank, accountNumber);
 
             return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.ADD_ACCOUNT_SUCCESS), HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @ApiOperation(value = "메인 계좌 설정 API")
+    @ApiImplicitParam(name = "account-id", value = "계좌 ID", required = true, dataType = "Long", example = "1", paramType = "path")
+    @ApiResponse(code = 200, message = "메인 계좌 설정 성공")
+    @PatchMapping("/{account-id}")
+    public ResponseEntity mainAccount(@PathVariable("account-id") Long accountId){
+        try {
+            //추후 유저 인증 구현
+            //
+            Long userId = Long.valueOf(1);
+
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new NoSuchElementException("User not found"));
+            //
+
+            accountService.updateIsMain(user, accountId);
+
+            return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.MAIN_ACCOUNT_SUCCESS), HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
         }

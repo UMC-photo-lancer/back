@@ -11,12 +11,12 @@ import shop.photolancer.photolancer.domain.enums.PaymentMethodType;
 @RequiredArgsConstructor
 @Component
 public class AccountConverter {
-    public Account toAccount(User user, String bank, String accountNumber, Boolean isMain){
+    public Account toAccount(User user, String bank, String accountNumber){
         return Account.builder()
                 .user(user)
                 .bank(bank)
                 .accountNumber(accountNumber)
-                .isMain(isMain)
+                .isMain(false)
                 .build();
     }
 }

@@ -10,6 +10,9 @@ import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.repository.AccountRepository;
 import shop.photolancer.photolancer.service.AccountService;
 
+import java.util.List;
+import java.util.NoSuchElementException;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -20,16 +23,26 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     @Override
     public void add(User user, String bank, String accountNumber){
-        Account existAccount = accountRepository.findByUser(user);
 
-        Boolean isMain = false;
-
-        if (existAccount == null){
-            isMain = true;
-        }
-
-        Account account = accountConverter.toAccount(user, bank, accountNumber, isMain);
+        Account account = accountConverter.toAccount(user, bank, accountNumber);
 
         accountRepository.save(account);
+    }
+
+    @Transactional
+    @Override
+    public void updateIsMain(User user, Long accountId){
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new NoSuchElementException("Account not found."));
+
+        List<Account> userAccounts = accountRepository.findByUser(user);
+
+        for (Account userAccount : userAccounts) {
+            userAccount.setIsMain(false);
+        }
+
+        account.setIsMain(true);
+
+        accountRepository.saveAll(userAccounts);
     }
 }
