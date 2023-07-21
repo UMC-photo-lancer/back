@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import shop.photolancer.photolancer.exception.ResponseMessage;
 import shop.photolancer.photolancer.exception.StatusCode;
+import shop.photolancer.photolancer.service.impl.BookMarkServiceImpl;
 import shop.photolancer.photolancer.service.impl.S3Upload;
 import shop.photolancer.photolancer.service.impl.PostServiceImpl;
 import shop.photolancer.photolancer.web.dto.PostRequestDto;
@@ -31,7 +32,8 @@ public class PostController {
             Integer likeCount = request.getLikeCount();
             Boolean isSale = request.getIsSale();
             Integer point = request.getPoint();
-            postService.upload(content, likeCount, isSale, point, imgPaths);
+            List<String> bookmarkList = request.getBookmark();
+            postService.upload(content, likeCount, isSale, point, imgPaths, bookmarkList);
 
             return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.POST_UPLOAD_SUCCESS), HttpStatus.OK);
         } catch (Exception e){
