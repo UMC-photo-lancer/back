@@ -1,13 +1,11 @@
 package shop.photolancer.photolancer.web.controller;
 
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import shop.photolancer.photolancer.converter.PaymentConverter;
 import shop.photolancer.photolancer.domain.Charge;
 import shop.photolancer.photolancer.domain.User;
@@ -22,6 +20,7 @@ import shop.photolancer.photolancer.web.dto.base.DefaultRes;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@Api(tags = "결제 관련 API")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -31,9 +30,10 @@ public class PaymentController {
     public final UserRepository userRepository;
     public final PaymentConverter paymentConverter;
 
-    //jwt 토큰, 충전금액, 충전 방법
+    @ApiOperation(value = "포인트 충전 API")
+    @ApiResponse(code = 200, message = "포인트 충전 성공")
     @PostMapping("/my-profile/charge")
-    public ResponseEntity charge(PaymentRequestDto.ChargeDto request){
+    public ResponseEntity charge(@RequestBody PaymentRequestDto.ChargeDto request){
         try {
             //추후 유저 인증 구현
             //
@@ -61,6 +61,8 @@ public class PaymentController {
         }
     }
 
+    @ApiOperation(value = "거래 내역 조회 API")
+    @ApiResponse(code = 200, message = "거래 내역 조회 성공")
     @GetMapping("/my-profile/trade-log")
     public ResponseEntity tradeLog(){
         try {
@@ -81,6 +83,9 @@ public class PaymentController {
         }
     }
 
+    @ApiOperation(value = "사진 구매 창 불러오기 API")
+    @ApiImplicitParam(name = "post-id", value = "게시물 ID", required = true, dataType = "Long", example = "1", paramType = "path")
+    @ApiResponse(code = 200, message = "사진 구매 창 불러오기 성공")
     @GetMapping("/{post-id}/purchase")
     public ResponseEntity purchaseWindow(@PathVariable("post-id") Long postId){
         try {
@@ -100,6 +105,9 @@ public class PaymentController {
         }
     }
 
+    @ApiOperation(value = "사진 구매 API")
+    @ApiImplicitParam(name = "post-id", value = "게시물 ID", required = true, dataType = "Long", example = "1", paramType = "path")
+    @ApiResponse(code = 200, message = "사진 구매 성공")
     @PostMapping("/{post-id}/purchase")
     public ResponseEntity purchase(@PathVariable("post-id") Long postId){
         try {

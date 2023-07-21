@@ -7,8 +7,6 @@
     <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
     <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
     <script>
         var IMP = window.IMP;
         IMP.init("imp43113443");
@@ -17,9 +15,9 @@
     <script>
         function requestPay() {
             IMP.request_pay({
-                pg: "kcp.{상점ID}",
+                pg: "kcp.TC0ONETIME",
                 pay_method: "card",
-                merchant_uid: "ORD20180131-0000025",   // 주문번호 1씩 증가하게 해주세요
+                merchant_uid: "ORD20180131-0000029",   // 주문번호 1씩 증가하게 해주세요
                 name: "포토랜서 포인트 충전",
                 amount: 10000,                         // int 타입으로 보내주세요
             },
@@ -30,6 +28,7 @@
                         // http://127.0.0.1:8080/my-profile/charge로 POST 요청
                         // 결제 완료 후 결제 정보 서버에 전달
                         // jwt 토큰, 충전금액, 충전방법 보내주세요!
+                        // 충전 방법은 enum type으로 KAKAO,PAYCO,NAVER,TOSS 있습니다!
 
                     } else {
                         alert(`결제에 실패하였습니다. ${rsp.error_msg}`);
