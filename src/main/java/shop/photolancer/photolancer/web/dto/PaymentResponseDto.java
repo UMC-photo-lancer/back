@@ -24,6 +24,7 @@ public class PaymentResponseDto {
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class ExchangeDto{
+        private Long id;
         private String bank;
         private String accountNumber;
         private Boolean isMain;

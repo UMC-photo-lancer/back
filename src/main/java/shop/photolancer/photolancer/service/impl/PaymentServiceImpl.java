@@ -67,11 +67,21 @@ public class PaymentServiceImpl implements PaymentService {
         List<PaymentResponseDto.ExchangeDto> accountDTOs = new ArrayList<>();
 
         for (Account account : accounts) {
-            PaymentResponseDto.ExchangeDto accountDTO = accountConverter.toExchange(account.getBank(),account.getAccountNumber(),account.getIsMain());
+            PaymentResponseDto.ExchangeDto accountDTO = accountConverter.toExchange(account.getId(), account.getBank(),account.getAccountNumber(),account.getIsMain());
             accountDTOs.add(accountDTO);
         }
 
         return accountDTOs;
+    }
+
+    @Override
+    @Transactional
+    public void exchange(User user, String bank, String accountNumber, Integer point){
+        Charge charge = paymentConverter.toExchange(user, -point);
+
+        user.updatePoint(-point);
+
+        chargeRepository.save(charge);
     }
 
     @Override
