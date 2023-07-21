@@ -1,8 +1,6 @@
 package shop.photolancer.photolancer.domain;
 
 import lombok.*;
-import shop.photolancer.photolancer.domain.enums.PaymentMethodType;
-
 import javax.persistence.*;
 
 @Entity
@@ -10,7 +8,7 @@ import javax.persistence.*;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Payment_method {
+public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,10 +18,12 @@ public class Payment_method {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Enumerated(EnumType.STRING)
-    private PaymentMethodType paymentMethodType;
-
+    @Column(nullable = false)
     private String bank;
 
-    private int accountNumber;
+    @Column(nullable = false)
+    private String accountNumber;
+
+    @Column(columnDefinition = "Boolean default false")
+    private Boolean isMain;
 }
