@@ -45,4 +45,23 @@ public class AccountServiceImpl implements AccountService {
 
         accountRepository.saveAll(userAccounts);
     }
+
+    @Transactional
+    @Override
+    public void updateAccount(User user, Long accountId, String  bank, String accountNumber){
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new NoSuchElementException("Account not found."));
+
+        account.setBank(bank);
+        account.setAccountNumber(accountNumber);
+    }
+
+    @Transactional
+    @Override
+    public void deleteAccount(User user, Long accountId){
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new NoSuchElementException("Account not found."));
+
+        accountRepository.delete(account);
+    }
 }

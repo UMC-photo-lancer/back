@@ -15,4 +15,5 @@ public interface PaymentService {
     PaymentResponseDto.PurchaseDto getPurchase(Long postId, User user);
 
     void purchase(Long photoId, User user);
+
 }

@@ -8,4 +8,8 @@ public interface AccountService {
 
     void updateIsMain(User user, Long accountId);
 
+    void updateAccount(User user, Long accountId, String  bank, String accountNumber);
+
+    void deleteAccount(User user, Long accountId);
+
 }
