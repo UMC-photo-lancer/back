@@ -2,6 +2,8 @@ package shop.photolancer.photolancer.web.dto;
 
 import lombok.*;
 
+import java.util.List;
+
 public class PostRequestDto {
 
     @Builder
@@ -14,5 +16,6 @@ public class PostRequestDto {
         private Integer likeCount;
         private Boolean isSale;
         private Integer point;
+        private List<String> bookmark;
     }
 }

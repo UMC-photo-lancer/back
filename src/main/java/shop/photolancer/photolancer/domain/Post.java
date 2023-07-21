@@ -35,4 +35,5 @@ public class Post extends BaseEntity {
 
     @Transient
     private final List<PostImage> postImageList = new ArrayList<>();
+
 }
