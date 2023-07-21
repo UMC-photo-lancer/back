@@ -6,4 +6,6 @@ public interface AccountService {
 
     void add(User user, String bank, String accountNumber);
 
+    void updateIsMain(User user, Long accountId);
+
 }
