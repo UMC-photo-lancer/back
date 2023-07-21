@@ -12,6 +12,7 @@ import shop.photolancer.photolancer.domain.mapping.UserPhoto;
 import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.web.dto.PaymentResponseDto;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,10 @@ public class PaymentConverter {
     private UserRepository userRepository;
 
     public Charge toCharge(User user, Integer amount, String paymentMethod) {
+        if (paymentMethod =="kakao") {
+            PaymentMethodType paymentMethodType = PaymentMethodType.KAKAO;
+        }
+
         return Charge.builder()
                 .user(user)
                 .amount(amount)
@@ -37,10 +42,13 @@ public class PaymentConverter {
     }
 
     public PaymentResponseDto.TradeLogDto toTradeLogDto(Charge charge){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedCreatedAt = charge.getCreatedAt().format(formatter);
+
         return PaymentResponseDto.TradeLogDto.builder()
                 .point(charge.getAmount())
                 .log(charge.getNote())
-                .createdAt(charge.getCreatedAt())
+                .createdAt(formattedCreatedAt)
                 .build();
     }
 
