@@ -6,8 +6,8 @@ import shop.photolancer.photolancer.domain.Bookmark;
 
 @RequiredArgsConstructor
 @Component
-public class BookMarkConverter {
-    public Bookmark toBookMark(String bookmarkName) {
+public class BookmarkConverter {
+    public Bookmark toBookmark(String bookmarkName) {
         return Bookmark.builder()
                 .name(bookmarkName)
                 .build();
