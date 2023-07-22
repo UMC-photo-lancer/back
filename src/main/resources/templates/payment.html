@@ -9,19 +9,17 @@
 
     <script>
         var IMP = window.IMP;
-        IMP.init("imp43113443");
-    </script>
 
-    <script>
         function requestPay() {
             IMP.init("imp43113443");
             IMP.request_pay({
 
-                // 해당하는 pg사 요청해주세요. 잘못 요청시 기본 PG사(KG이니시스) 띄워짐.
-                // "kakaopay.TC0ONETIME"
-                // "tosspay.tosstest"
+                // 해당하는 pg사 요청해주세요! 잘못 요청시 기본 PG사(KG이니시스) 띄워져용!
+                // 카드 결제 - "kg"
+                // 카카오 - "kakaopay.TC0ONETIME"
+                // 토스 - "tosspay.tosstest"
                 pg: "tosspay.tosstest",
-                pay_method: "card",
+                pay_method: "TOSS",
                 merchant_uid: "ORD20180131-0000030",   // 주문번호 1씩 증가하게 해주세요
                 name: "포토랜서 포인트 충전",
                 amount: 10000,                         // int 타입으로 포인트 충전액 보내주세요
@@ -30,10 +28,11 @@
                     if (rsp.success) {
                         alert(`결제가 완료되었습니다.`);
 
-                        // http://127.0.0.1:8080/my-profile/charge로 POST 요청
                         // 결제 완료 후 결제 정보 서버에 전달
-                        // jwt 토큰, 충전금액, 충전방법 보내주세요!
-                        // 충전 방법은 enum type으로 KAKAO,PAYCO,NAVER,TOSS 있습니다!
+                        // http://127.0.0.1:8080/my-profile/charge로 POST 요청
+                        // 추후 도메인 연결 후 url 달라질 예정
+                        // Body에 jwt 토큰(유저 인증), 충전금액, 충전방법 json으로 보내주세요!
+                        // 충전 방법은 enum type으로 CARD, KAKAO, TOSS 있습니다!
 
                     } else {
                         alert(`결제에 실패하였습니다. ${rsp.error_msg}`);
