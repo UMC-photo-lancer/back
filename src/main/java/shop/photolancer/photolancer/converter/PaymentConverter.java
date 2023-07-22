@@ -24,12 +24,10 @@ public class PaymentConverter {
     public Charge toCharge(User user, Integer amount, String paymentMethod) {
         if (paymentMethod =="kakao") {
             PaymentMethodType paymentMethodType = PaymentMethodType.KAKAO;
-        } else if(paymentMethod=="naver"){
-            PaymentMethodType paymentMethodType = PaymentMethodType.NAVER;
         } else if(paymentMethod=="toss"){
             PaymentMethodType paymentMethodType = PaymentMethodType.TOSS;
-        } else if(paymentMethod=="payco"){
-            PaymentMethodType paymentMethodType = PaymentMethodType.PAYCO;
+        } else if(paymentMethod=="card"){
+            PaymentMethodType paymentMethodType = PaymentMethodType.CARD;
         }
 
         return Charge.builder()
