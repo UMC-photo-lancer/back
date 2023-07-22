@@ -25,7 +25,9 @@ public class ResponseMessage {
     public static final String ACCOUNT_UPDATE_SUCCESS = "계좌 수정 성공";
     public static final String ACCOUNT_DELETE_SUCCESS = "계좌 삭제 성공";
 
-
+    // post
     public static final String POST_UPLOAD_SUCCESS = "포스트 업로드 성공";
 
+    // notice
+    public static final String NOTICE_UPLOAD_SUCCESS = "공지 업로드 성공";
 }
