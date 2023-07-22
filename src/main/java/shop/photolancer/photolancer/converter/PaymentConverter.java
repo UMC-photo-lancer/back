@@ -25,11 +25,11 @@ public class PaymentConverter {
         if (paymentMethod =="kakao") {
             PaymentMethodType paymentMethodType = PaymentMethodType.KAKAO;
         } else if(paymentMethod=="naver"){
-            PaymentMethodType paymentMethodType = PaymentMethodType.NAVER;
+//            PaymentMethodType paymentMethodType = PaymentMethodType.NAVER;
         } else if(paymentMethod=="toss"){
             PaymentMethodType paymentMethodType = PaymentMethodType.TOSS;
         } else if(paymentMethod=="payco"){
-            PaymentMethodType paymentMethodType = PaymentMethodType.PAYCO;
+//            PaymentMethodType paymentMethodType = PaymentMethodType.PAYCO;
         }
 
         return Charge.builder()

@@ -28,4 +28,6 @@ public class ResponseMessage {
 
     public static final String POST_UPLOAD_SUCCESS = "포스트 업로드 성공";
 
+    // notice
+    public static final String NOTICE_UPLOAD_SUCCESS = "공지 업로드 성공";
 }
