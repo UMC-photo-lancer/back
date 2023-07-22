@@ -10,7 +10,7 @@ public interface PaymentService {
 
     Charge charge(User user, Integer amount, String paymentMethod);
 
-    List<Charge> getAllCharges(User user);
+    List<Charge> getAllCharges(User user, Integer page);
 
     List<PaymentResponseDto.ExchangeDto> getExchange(User user);
 

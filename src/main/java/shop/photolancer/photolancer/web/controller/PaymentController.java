@@ -64,8 +64,9 @@ public class PaymentController {
 
     @ApiOperation(value = "거래 내역 조회 API")
     @ApiResponse(code = 200, message = "거래 내역 조회 성공")
+    @ApiImplicitParam(name = "page", value = "페이지 번호", dataType = "int", example = "1", paramType = "query")
     @GetMapping("/my-profile/trade-log")
-    public ResponseEntity tradeLog(){
+    public ResponseEntity tradeLog(@RequestParam(defaultValue = "1") Integer page){
         try {
             //추후 유저 인증 구현
             //
@@ -75,7 +76,7 @@ public class PaymentController {
                     .orElseThrow(() -> new NoSuchElementException("User not found"));
             //
 
-            List<Charge> charges = paymentService.getAllCharges(user);
+            List<Charge> charges = paymentService.getAllCharges(user, page);
             List<PaymentResponseDto.TradeLogDto> response = paymentConverter.toTradeLogDtoList(charges);
 
             return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.TRADE_LOG_READ_SUCCESS, response), HttpStatus.OK);
@@ -142,7 +143,7 @@ public class PaymentController {
     @ApiImplicitParam(name = "post-id", value = "게시물 ID", required = true, dataType = "Long", example = "1", paramType = "path")
     @ApiResponse(code = 200, message = "사진 구매 창 불러오기 성공")
     @GetMapping("/{post-id}/purchase")
-    public ResponseEntity purchaseWindow(@PathVariable("post-id") Long postId){
+    public ResponseEntity purchaseWindow(@PathVariable("post-id") Long postId) {
         try {
             //추후 유저 인증 구현
             //
