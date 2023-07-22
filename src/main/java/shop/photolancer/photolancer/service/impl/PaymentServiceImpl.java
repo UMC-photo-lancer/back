@@ -1,6 +1,8 @@
 package shop.photolancer.photolancer.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.photolancer.photolancer.converter.AccountConverter;
@@ -16,6 +18,7 @@ import shop.photolancer.photolancer.repository.PostRepository;
 import shop.photolancer.photolancer.repository.UserPhotoRepository;
 import shop.photolancer.photolancer.service.PaymentService;
 import shop.photolancer.photolancer.web.dto.PaymentResponseDto;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +48,10 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public List<Charge> getAllCharges(User user){
-        return chargeRepository.findAllByUserOrderByCreatedAtDesc(user);
+    public List<Charge> getAllCharges(User user, Integer page){
+        int pageSize = 10; // 페이지 당 출력할 아이템 수
+        Pageable pageable = (Pageable) PageRequest.of(page-1, pageSize, Sort.by("createdAt").descending());
+        return chargeRepository.findAllByUser(user, pageable).getContent();
     }
 
     @Override
