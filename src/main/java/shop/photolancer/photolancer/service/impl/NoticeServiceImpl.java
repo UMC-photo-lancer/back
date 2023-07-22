@@ -1,6 +1,8 @@
 package shop.photolancer.photolancer.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import shop.photolancer.photolancer.converter.NoticeConverter;
 import shop.photolancer.photolancer.converter.NoticeFileConverter;
@@ -10,8 +12,9 @@ import shop.photolancer.photolancer.domain.mapping.NoticeFile;
 import shop.photolancer.photolancer.repository.NoticeFileRepository;
 import shop.photolancer.photolancer.repository.NoticeRepository;
 import shop.photolancer.photolancer.service.NoticeService;
+import shop.photolancer.photolancer.web.dto.NoticeResponseDto;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 @Service
@@ -33,5 +36,19 @@ public class NoticeServiceImpl implements NoticeService {
         }
 
         return null;
+    }
+
+    @Override
+    public Page<NoticeResponseDto.NoticePagingDto> noticePage(Pageable request) {
+        Page<Notice> noticeList = noticeRepository.findAll(request);
+
+        Page<NoticeResponseDto.NoticePagingDto> noticePage = noticeList.map(
+                notice -> noticeConverter.toNoticePage(
+                                notice.getId(),
+                                notice.getTitle(),
+                                notice.getCreatedAt(),
+                                notice.getCategory()
+                        ));
+        return noticePage;
     }
 }
