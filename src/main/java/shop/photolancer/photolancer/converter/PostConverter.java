@@ -2,7 +2,10 @@ package shop.photolancer.photolancer.converter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import shop.photolancer.photolancer.domain.Bookmark;
 import shop.photolancer.photolancer.domain.Post;
+import shop.photolancer.photolancer.domain.mapping.PostBookmark;
+import shop.photolancer.photolancer.domain.mapping.PostImage;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
 
 import java.util.List;
@@ -29,6 +32,19 @@ public class PostConverter {
                 .point(post.getPoint())
                 .postImages(postImageUri)
                 .bookmarks(postBookmarkName)
+                .build();
+    }
+    public PostImage toPostImage(String uri, Post post) {
+        return PostImage.builder()
+                .uri(uri)
+                .post(post)
+                .build();
+    }
+
+    public PostBookmark toPostBookmark(Post post, Bookmark bookmark) {
+        return PostBookmark.builder()
+                .post(post)
+                .bookmark(bookmark)
                 .build();
     }
 }
