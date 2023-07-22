@@ -48,6 +48,14 @@ public class PaymentConverter {
                 .build();
     }
 
+    public Charge toPurchaseLog(User user, Integer amount){
+        return Charge.builder()
+                .user(user)
+                .amount(amount)
+                .note(NoteType.PURCHASE)
+                .build();
+    }
+
     public List<PaymentResponseDto.TradeLogDto> toTradeLogDtoList(List<Charge> charges){
         return charges.stream()
                 .map(this::toTradeLogDto)

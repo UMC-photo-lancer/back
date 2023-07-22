@@ -95,9 +95,13 @@ public class PaymentServiceImpl implements PaymentService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NoSuchElementException("Post not found"));
 
-        Integer amount = post.getPoint();
+        Integer point = post.getPoint();
 
-        user.updatePoint(-amount);
+        Charge charge = paymentConverter.toPurchaseLog(user, -point);
+
+        chargeRepository.save(charge);
+
+        user.updatePoint(-point);
 
         UserPhoto userPhoto = paymentConverter.toPurchase(post, user);
         userPhotoRepository.save(userPhoto);
