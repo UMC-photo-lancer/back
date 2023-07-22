@@ -1,6 +1,10 @@
 package shop.photolancer.photolancer.web.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +15,7 @@ import shop.photolancer.photolancer.exception.StatusCode;
 import shop.photolancer.photolancer.service.NoticeService;
 import shop.photolancer.photolancer.service.impl.NoticeFileUploadService;
 import shop.photolancer.photolancer.web.dto.NoticeRequestDto;
+import shop.photolancer.photolancer.web.dto.NoticeResponseDto;
 import shop.photolancer.photolancer.web.dto.base.DefaultRes;
 
 import java.util.List;
@@ -34,6 +39,16 @@ public class NoticeController {
             return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.NOTICE_UPLOAD_SUCCESS), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping
+    public Page<NoticeResponseDto.NoticePagingDto> noticePage(@PageableDefault(size = 10, sort = "createdAt",
+            direction = Sort.Direction.DESC) Pageable request) {
+        try {
+            return noticeService.noticePage(request);
+        } catch (Exception e) {
+            return null;
         }
     }
 }
