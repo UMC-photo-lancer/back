@@ -33,7 +33,7 @@ public class AccountController {
     @ApiOperation(value = "계좌 추가 API")
     @ApiResponse(code = 200, message = "계좌 추가 성공")
     @PostMapping()
-    public ResponseEntity exchange(@RequestBody AccountRequestDto.AccountDto request){
+    public ResponseEntity addAccount(@RequestBody AccountRequestDto.AccountDto request){
         try {
             //추후 유저 인증 구현
             //

@@ -1,8 +1,8 @@
 package shop.photolancer.photolancer.domain.mapping;
 
 import lombok.*;
-import shop.photolancer.photolancer.domain.Bookmark;
-import shop.photolancer.photolancer.domain.Post;
+import shop.photolancer.photolancer.domain.Notice;
+import shop.photolancer.photolancer.domain.enums.Category;
 
 import javax.persistence.*;
 
@@ -11,16 +11,17 @@ import javax.persistence.*;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostBookmark {
+public class NoticeFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "post_id")
-    private Post post;
+    @Column(nullable = false)
+    private String uri;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "bookmark_id")
-    private Bookmark bookmark;
+    @JoinColumn(name = "notice_id")
+    private Notice notice;
+    
 }
+

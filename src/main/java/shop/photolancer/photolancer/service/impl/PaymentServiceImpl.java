@@ -3,17 +3,21 @@ package shop.photolancer.photolancer.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shop.photolancer.photolancer.converter.AccountConverter;
 import shop.photolancer.photolancer.converter.PaymentConverter;
+import shop.photolancer.photolancer.domain.Account;
 import shop.photolancer.photolancer.domain.Charge;
 import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.mapping.UserPhoto;
+import shop.photolancer.photolancer.repository.AccountRepository;
 import shop.photolancer.photolancer.repository.ChargeRepository;
 import shop.photolancer.photolancer.repository.PostRepository;
 import shop.photolancer.photolancer.repository.UserPhotoRepository;
 import shop.photolancer.photolancer.service.PaymentService;
 import shop.photolancer.photolancer.web.dto.PaymentResponseDto;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -27,6 +31,8 @@ public class PaymentServiceImpl implements PaymentService {
     private final ChargeRepository chargeRepository;
     private final PostRepository postRepository;
     private final UserPhotoRepository userPhotoRepository;
+    private final AccountRepository accountRepository;
+    private final AccountConverter accountConverter;
 
     @Override
     @Transactional
@@ -53,6 +59,29 @@ public class PaymentServiceImpl implements PaymentService {
         Integer price = post.getPoint();
 
         return paymentConverter.toPurchaseWindow(price, userPoint);
+    }
+
+    @Override
+    public List<PaymentResponseDto.ExchangeDto> getExchange(User user){
+        List<Account> accounts = accountRepository.findByUser(user);
+        List<PaymentResponseDto.ExchangeDto> accountDTOs = new ArrayList<>();
+
+        for (Account account : accounts) {
+            PaymentResponseDto.ExchangeDto accountDTO = accountConverter.toExchange(account.getId(), account.getBank(),account.getAccountNumber(),account.getIsMain());
+            accountDTOs.add(accountDTO);
+        }
+
+        return accountDTOs;
+    }
+
+    @Override
+    @Transactional
+    public void exchange(User user, String bank, String accountNumber, Integer point){
+        Charge charge = paymentConverter.toExchange(user, -point);
+
+        user.updatePoint(-point);
+
+        chargeRepository.save(charge);
     }
 
     @Override

@@ -13,6 +13,7 @@ import shop.photolancer.photolancer.exception.ResponseMessage;
 import shop.photolancer.photolancer.exception.StatusCode;
 import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.service.PaymentService;
+import shop.photolancer.photolancer.web.dto.AccountRequestDto;
 import shop.photolancer.photolancer.web.dto.PaymentRequestDto;
 import shop.photolancer.photolancer.web.dto.PaymentResponseDto;
 import shop.photolancer.photolancer.web.dto.base.DefaultRes;
@@ -78,6 +79,60 @@ public class PaymentController {
             List<PaymentResponseDto.TradeLogDto> response = paymentConverter.toTradeLogDtoList(charges);
 
             return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.TRADE_LOG_READ_SUCCESS, response), HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @ApiOperation(value = "환전 창 불러오기 API")
+    @ApiResponse(code = 200, message = "환전 창 불러오기 성공")
+    @GetMapping("/my-profile/exchange")
+    public ResponseEntity exchangeWindow(){
+        try {
+            //추후 유저 인증 구현
+            //
+            Long userId = Long.valueOf(1);
+
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new NoSuchElementException("User not found"));
+            //
+
+            List<PaymentResponseDto.ExchangeDto> response = paymentService.getExchange(user);
+
+            return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.EXCHANGE_READ_SUCCESS, response), HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @ApiOperation(value = "포인트 환전하기 API")
+    @ApiResponse(code = 200, message = "포인트 환전 성공")
+    @PostMapping("/my-profile/exchange")
+    public ResponseEntity exchange(@RequestBody PaymentRequestDto.ExchangeDto request){
+        try {
+            //추후 유저 인증 구현
+            //
+            Long userId = Long.valueOf(1);
+
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new NoSuchElementException("User not found"));
+            //
+
+            String bank = request.getBank();
+            String accountNumber = request.getAccountNumber();
+            Integer point = request.getPoint();
+
+            if (bank == null){
+                return new ResponseEntity( DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.BANK_EXIT_ERROR), HttpStatus.BAD_REQUEST);
+            } else if (accountNumber==null) {
+                return new ResponseEntity( DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.ACCOUNT_NUMBER_EXIT_ERROR), HttpStatus.BAD_REQUEST);
+            } else if (point==null) {
+                return new ResponseEntity( DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.POINT_EXIT_ERROR), HttpStatus.BAD_REQUEST);
+            }
+
+            paymentService.exchange(user, bank, accountNumber, point);
+
+            return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.EXCHANGE_POINT_SUCCESS), HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
         }
