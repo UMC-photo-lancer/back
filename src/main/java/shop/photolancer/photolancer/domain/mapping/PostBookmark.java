@@ -23,9 +23,4 @@ public class PostBookmark {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "bookmark_id")
     private Bookmark bookmark;
-
-    public PostBookmark(Post post, Bookmark bookmark) {
-        this.post = post;
-        this.bookmark = bookmark;
-    }
 }
