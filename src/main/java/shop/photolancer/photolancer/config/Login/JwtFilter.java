@@ -51,11 +51,11 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
         // userId 을 token에서 꺼내기
-        Integer userId = JwtUtil.getUserId(token,secretKey);
+        String userName = JwtUtil.getName(token,secretKey);
         log.info("jwt 이상없음");
 
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(userId, null, List.of(new SimpleGrantedAuthority("USER")));
+                new UsernamePasswordAuthenticationToken(userName, null, List.of(new SimpleGrantedAuthority("USER")));
         // Role이 DB에 있을경우 필요함
 
         // Detail을 넣어줍니다.

@@ -13,12 +13,12 @@ import java.util.Date;
 public class JwtUtil {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
     // Token에서 userId꺼내기
-    public static Integer getUserId(String token, String secretKey) {
+    public static String  getName(String token, String secretKey) {
 //        log.info("그럼 여기서 터지는거야 ?");
         Claims claims = Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(token).getBody();
-        Integer userId = (Integer) claims.get("userId");
+        String userName = (String) claims.get("Name");
 //        logger.info("User ID from token: " + userId);
-        return userId;
+        return userName;
     }
 
     //Token만료
@@ -30,9 +30,9 @@ public class JwtUtil {
     }
 
 
-    public static String createJwt(Long userId, String secretKey, Long expireMs) {
+    public static String createJwt(String name, String secretKey, Long expireMs) {
         Claims claims = Jwts.claims(); // 일종의 map claims로 정보를 담는다
-        claims.put("userId", userId);
+        claims.put("Name", name);
 //        log.info("secretKey:{}",secretKey);
         String token = Jwts.builder()
                 .setClaims(claims)
