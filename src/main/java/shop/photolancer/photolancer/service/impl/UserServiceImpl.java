@@ -9,6 +9,7 @@ import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.Purpose;
 import shop.photolancer.photolancer.domain.enums.UserStatus;
 import shop.photolancer.photolancer.repository.UserRepository;
+import shop.photolancer.photolancer.web.dto.ChangePasswordDto;
 import shop.photolancer.photolancer.web.dto.UserJoinRequestDto;
 import shop.photolancer.photolancer.web.dto.UserUpdateRequestDto;
 
@@ -120,4 +121,20 @@ public class UserServiceImpl {
         }
         return user.getUserId();
     }
+
+    public User changePassword(Long userId, ChangePasswordDto changePasswordDto) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+            // 입력한 비밀번호가 이전 비밀번호와 같습니다.
+            // !passwordEncoder.matches(changePasswordDto.getCurrentPassword(), user.getPassword())
+            if (user.getPassword().equals(changePasswordDto.getNewPassword())){
+                throw new IllegalArgumentException("입력한 비밀번호가 이전 비밀번호와 같습니다.");
+            }
+            if (!changePasswordDto.getNewPassword().equals(changePasswordDto.getNewAgainPassword())) {
+                throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            }
+//            user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+            user.setPassword(changePasswordDto.getNewPassword());
+            return userRepository.save(user);
+        }
 }
