@@ -25,4 +25,14 @@ public class ExploreServiceImpl implements ExploreService {
         );
         return hotPhotoPage;
     }
+
+    @Override
+    public Page<PostResponseDto.PostImageListDto> recentPhoto(Pageable request) {
+        Page<PostImage> postImageList = imgRepository.findExplore(request);
+
+        Page<PostResponseDto.PostImageListDto> recentPhotoPage = postImageList.map(
+                recentPhoto -> postConverter.toPostImageList(recentPhoto)
+        );
+        return recentPhotoPage;
+    }
 }
