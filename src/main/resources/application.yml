@@ -31,6 +31,9 @@ spring:
   redis:
     host: ${REDIS_HOST}
     port: ${REDIS_PORT}
+  profiles:
+    include:
+      - jwt
 
 logging.level:
   org.hibernate.SQL: debug

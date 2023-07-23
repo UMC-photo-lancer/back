@@ -1,10 +1,12 @@
 package shop.photolancer.photolancer.web.controller;
 
 
+import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import shop.photolancer.photolancer.domain.User;
@@ -12,11 +14,12 @@ import shop.photolancer.photolancer.domain.enums.UserStatus;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 import shop.photolancer.photolancer.web.dto.ChangePasswordDto;
 import shop.photolancer.photolancer.web.dto.UserJoinRequestDto;
+import shop.photolancer.photolancer.web.dto.UserLoginDto;
 import shop.photolancer.photolancer.web.dto.UserUpdateRequestDto;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
-
+@Api(tags = "사용자 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
@@ -125,4 +128,16 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "로그인을 진행합니다.")
+    @PostMapping(value = "/login")
+    public ResponseEntity<String> login(@RequestBody UserLoginDto userLoginDto) {
+        try {
+            String user_id = userLoginDto.getUser_id();
+            String password = userLoginDto.getPassword();
+            String result = userServiceImpl.login(user_id, password);
+            return ResponseEntity.ok().body(result);
+        }catch (AuthenticationCredentialsNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        }
+    }
 }
