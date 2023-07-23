@@ -24,10 +24,11 @@ public class UserController {
     // 2. 소셜로그인
     // 3. 회원가입(이름,이메일,비밀번호,비밀번호확인) -> done
     // 4. 비밀번호 찾기
-    // 5. 회원정보 수정 (닉네임 -> Null일 경우 자기 닉네임,소개,북마크 설정)
+    // 5. 회원정보 수정 (닉네임 -> Null일 경우 자기 닉네임,소개,북마크 설정) -> done/bookmark연동 필요
     // 6. 유저 Level,point 반환
     // 7. 회원 탈퇴 -> done
     // 8. 유저 검색(nikname기반 검색 포스트 개수,팔로워수, 팔로잉 수, 한줄 소개 관심키워드 보여줌)
+    // 9. 아이디 찾기 -> done
 
     private final UserServiceImpl userServiceImpl;
 
@@ -98,6 +99,17 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>("해당 사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @Operation(summary = "아이디를 찾습니다.")
+    @GetMapping(value = "/find-id")
+    public ResponseEntity<?> findUserId(@RequestParam String name, @RequestParam String email) {
+        try {
+            String userId = userServiceImpl.findUserIdByNameAndEmail(name, email);
+            return new ResponseEntity<>(userId, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 }
