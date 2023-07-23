@@ -29,7 +29,7 @@ public class Post extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @ColumnDefault("0")
+    @Column(columnDefinition = "0")
     private Integer likeCount;
 
     private Boolean isSale;

@@ -5,12 +5,13 @@ import org.springframework.stereotype.Service;
 import shop.photolancer.photolancer.converter.PostConverter;
 import shop.photolancer.photolancer.domain.Bookmark;
 import shop.photolancer.photolancer.domain.Post;
+import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.mapping.PostBookmark;
 import shop.photolancer.photolancer.domain.mapping.PostImage;
-import shop.photolancer.photolancer.repository.ImgRepository;
-import shop.photolancer.photolancer.repository.PostBookmarkRepository;
-import shop.photolancer.photolancer.repository.PostRepository;
+import shop.photolancer.photolancer.domain.mapping.PostLike;
+import shop.photolancer.photolancer.repository.*;
 import shop.photolancer.photolancer.service.PostService;
+import shop.photolancer.photolancer.web.dto.PostRequestDto;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,8 @@ public class PostServiceImpl implements PostService {
     private final PostConverter postConverter;
     private final BookMarkServiceImpl bookmarkService;
     private final PostBookmarkRepository postBookmarkRepository;
+    private final UserRepository userRepository;
+    private final PostLikeRepository postLikeRepository;
 
 
     @Override
@@ -61,5 +64,26 @@ public class PostServiceImpl implements PostService {
             postBookmarkNameList.add(p.getBookmark().getName());
         }
         return  postConverter.toPostDetail(post, postImageUri, postBookmarkNameList);
+    }
+
+    @Override
+    public void updateLike(Long postId, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(()
+                -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+        Post post = postRepository.findById(postId).orElseThrow(()
+                -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
+        try {
+            PostLike postLike = postLikeRepository.findByPostAndUser(post, user);
+            if(postLike == null) {
+                postRepository.updateLikeCount(postId, post.getLikeCount()+1);
+                postLikeRepository.save(postConverter.toPostLike(post, user));
+            }
+            else {
+                postRepository.updateLikeCount(postId, post.getLikeCount()-1);
+                postLikeRepository.delete(postLike);
+            }
+        }catch (Exception e) {
+            System.out.println(e);
+        }
     }
 }

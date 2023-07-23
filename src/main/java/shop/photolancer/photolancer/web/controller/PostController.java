@@ -44,4 +44,15 @@ public class PostController {
     public PostResponseDto.PostDetailDto postDetail(@PathVariable Long id) {
         return postService.searchById(id);
     }
+
+    @PutMapping("/{id}/like")
+    public ResponseEntity updateLike(@PathVariable Long id) {
+        try {
+             postService.updateLike(id, 1L);
+
+            return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.POST_LIKE_SUCCESS), HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
+        }
+    }
 }
