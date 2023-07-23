@@ -104,7 +104,7 @@ public class UserServiceImpl {
                 .build();
 
         // 사용자 등록
-//        user.passwordEncode(passwordEncoder);
+        user.passwordEncode(passwordEncoder);
         userRepository.save(user);
     }
     //소셜 로그인에 쓰일 함수
@@ -137,12 +137,12 @@ public class UserServiceImpl {
         User user = userRepository.findByUserId(userId);
 
         if (user == null) {
-            throw new AuthenticationCredentialsNotFoundException("Invalid credentials.");
+            throw new AuthenticationCredentialsNotFoundException("아이디가 잘못되었습니다.");
         }
 
         // 3. 조회한 사용자 정보와 입력한 비밀번호를 비교하여 일치하는지 확인합니다.
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new AuthenticationCredentialsNotFoundException("Invalid credentials.");
+            throw new AuthenticationCredentialsNotFoundException("비밀번호가 잘못되었습니다.");
         }
 
         Long DbId = user.getId();
