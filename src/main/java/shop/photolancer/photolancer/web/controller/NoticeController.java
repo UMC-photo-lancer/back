@@ -51,4 +51,12 @@ public class NoticeController {
             return null;
         }
     }
+
+    @GetMapping("/category/{category}")
+    public Page<NoticeResponseDto.NoticePagingDto> noticePageCategory(
+            @PathVariable("category") String categoryValue,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageRequest) {
+        Category category = Category.valueOf(categoryValue.toUpperCase());
+        return noticeService.noticePageCategory(category, pageRequest);
+    }
 }

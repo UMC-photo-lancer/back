@@ -9,4 +9,5 @@ import java.util.List;
 public interface NoticeService {
     Long upload(String content, String title, Category category, Boolean isPublic, List<String> filePaths);
     Page<NoticeResponseDto.NoticePagingDto> noticePage(Pageable request);
+    Page<NoticeResponseDto.NoticePagingDto> noticePageCategory(Category category, Pageable request);
 }
