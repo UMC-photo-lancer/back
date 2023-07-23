@@ -11,6 +11,7 @@ import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.UserStatus;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 import shop.photolancer.photolancer.web.dto.UserJoinRequestDto;
+import shop.photolancer.photolancer.web.dto.UserUpdateRequestDto;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -19,13 +20,15 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
 public class UserController {
-    // 1. 로그인
+    // 1. 로그인 -> 탈퇴한 회원인지 체크하기
     // 2. 소셜로그인
-    // 3. 회원가입(이름,이메일,비밀번호,비밀번호확인)
+    // 3. 회원가입(이름,이메일,비밀번호,비밀번호확인) -> done
     // 4. 비밀번호 찾기
-    // 5. 회원정보 수정
-    // 6. 이미 가입된 아이디인지, 메일인지 확인하기 -> response값을 뭐라 해야할까
-    // 7. 회원 탈퇴
+    // 5. 회원정보 수정 (닉네임 -> Null일 경우 자기 닉네임,소개,북마크 설정)
+    // 6. 유저 Level,point 반환
+    // 7. 회원 탈퇴 -> done
+    // 8. 유저 검색(nikname기반 검색 포스트 개수,팔로워수, 팔로잉 수, 한줄 소개 관심키워드 보여줌)
+
     private final UserServiceImpl userServiceImpl;
 
     // 휴면 계정, 즉 탈퇴한 계정일 경우의 회원가입 얘기하기
@@ -68,8 +71,8 @@ public class UserController {
     }
 
     @Operation(summary = "회원 탈퇴를 진행합니다.")
-    @PutMapping(value = "/withdrawal/{userId}")
-    public ResponseEntity<?> withdrawUser(@PathVariable Long userId) {
+    @PutMapping(value = "/withdrawal")
+    public ResponseEntity<?> withdrawUser(@RequestHeader("user_id") Long userId) {
         try {
             User user = userServiceImpl.findUserById(userId);
             userServiceImpl.deactivateUser(user);
@@ -79,4 +82,22 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "회원 정보를 수정합니다.")
+    @PutMapping(value = "/update")
+    public ResponseEntity<?> updateUser(@RequestHeader("user_id") Long userId,
+                                        @RequestBody UserUpdateRequestDto requestDto) {
+        try {
+            userServiceImpl.checkUserNickNameDuplication(requestDto);
+        } catch (IllegalStateException e){
+            return new ResponseEntity<>("별명이 중복 됩니다.", HttpStatus.BAD_REQUEST);
+        }
+        try {
+            User user = userServiceImpl.findUserById(userId);
+            // jwt로 수정하기
+            User updatedUser = userServiceImpl.updateUser(requestDto, user);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("해당 사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+        }
+    }
 }

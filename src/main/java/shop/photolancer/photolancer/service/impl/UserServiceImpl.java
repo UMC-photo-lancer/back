@@ -10,6 +10,7 @@ import shop.photolancer.photolancer.domain.enums.Purpose;
 import shop.photolancer.photolancer.domain.enums.UserStatus;
 import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.web.dto.UserJoinRequestDto;
+import shop.photolancer.photolancer.web.dto.UserUpdateRequestDto;
 
 import javax.transaction.Transactional;
 import java.util.HashMap;
@@ -64,6 +65,13 @@ public class UserServiceImpl {
         }
     }
 
+    public void checkUserNickNameDuplication(UserUpdateRequestDto requestDto) {
+        boolean userNickNameDuplicate = userRepository.existsByNickname(requestDto.toEntity().getNickname());
+        if (userNickNameDuplicate) {
+            throw new IllegalStateException("이미 존재하는 닉네임입니다.");
+        }
+    }
+
     public User findUserById(Long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
@@ -92,9 +100,15 @@ public class UserServiceImpl {
         userRepository.save(user);
     }
 
-
     public User deactivateUser(User user) {
         user.setStatus(UserStatus.INACTIVE);
+        return userRepository.save(user);
+    }
+
+    public User updateUser(UserUpdateRequestDto requestDto,User user) {
+        user.setNickname(requestDto.getNickname());
+        user.setExplane(requestDto.getExplane());
+//        user.setBookmark(requestDto.getBookmark());
         return userRepository.save(user);
     }
 }
