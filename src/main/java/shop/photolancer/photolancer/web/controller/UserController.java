@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.UserStatus;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
+import shop.photolancer.photolancer.web.dto.ChangePasswordDto;
 import shop.photolancer.photolancer.web.dto.UserJoinRequestDto;
 import shop.photolancer.photolancer.web.dto.UserUpdateRequestDto;
 
@@ -29,6 +30,7 @@ public class UserController {
     // 7. 회원 탈퇴 -> done
     // 8. 유저 검색(nikname기반 검색 포스트 개수,팔로워수, 팔로잉 수, 한줄 소개 관심키워드 보여줌)
     // 9. 아이디 찾기 -> done
+    // 10. 비밀번호 변경
 
     private final UserServiceImpl userServiceImpl;
 
@@ -64,7 +66,6 @@ public class UserController {
         } catch (IllegalStateException e){
             return new ResponseEntity<>("password값이 맞지 않습니다.", HttpStatus.CONFLICT);
         }
-
 
         userServiceImpl.createUser(userDto);
         return new ResponseEntity<>(1, HttpStatus.OK);
@@ -112,4 +113,16 @@ public class UserController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
+
+    @Operation(summary = "비밀번호를 변경합니다.")
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestHeader("user_id") Long userId,@RequestBody ChangePasswordDto changePasswordDto) {
+        try {
+            User user = userServiceImpl.changePassword(userId, changePasswordDto);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
