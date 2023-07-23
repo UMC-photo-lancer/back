@@ -10,6 +10,7 @@ import javax.persistence.*;
 @Entity
 @Builder
 @Getter
+@Setter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
@@ -22,7 +23,7 @@ public class User extends BaseEntity {
 
     private String nickname;
 
-    private String user_id;
+    private String userId;
 
     @Column(unique = true)
     private String email;
