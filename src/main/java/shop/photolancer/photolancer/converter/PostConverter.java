@@ -47,4 +47,15 @@ public class PostConverter {
                 .bookmark(bookmark)
                 .build();
     }
+
+    public PostResponseDto.PostImageListDto toPostImageList(PostImage postImage) {
+        return PostResponseDto.PostImageListDto.builder()
+                .imageId(postImage.getId())
+                .postId(postImage.getPost().getId())
+                .likeCount(postImage.getPost().getLikeCount())
+                .createdAt(postImage.getPost().getCreatedAt().toString().substring(0, 10))
+                .uri(postImage.getUri())
+//                .user(postImage.getPost().getUser())
+                .build();
+    }
 }

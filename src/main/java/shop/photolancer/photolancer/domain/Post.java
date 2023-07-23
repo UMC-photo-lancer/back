@@ -1,12 +1,15 @@
 package shop.photolancer.photolancer.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import shop.photolancer.photolancer.domain.base.BaseEntity;
 import shop.photolancer.photolancer.domain.mapping.PostImage;
 
+
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
+
 
 @Entity
 @Builder
@@ -26,14 +29,10 @@ public class Post extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    @ColumnDefault("0")
     private Integer likeCount;
 
     private Boolean isSale;
 
-    @Column(nullable = false)
     private Integer point;
-
-    @Transient
-    private final List<PostImage> postImageList = new ArrayList<>();
-
 }
