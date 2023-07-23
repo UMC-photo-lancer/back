@@ -51,4 +51,17 @@ public class NoticeServiceImpl implements NoticeService {
                         ));
         return noticePage;
     }
+
+    @Override
+    public Page<NoticeResponseDto.NoticePagingDto> noticePageCategory(Category category, Pageable request) {
+        Page<Notice> noticeList = noticeRepository.findAllByCategory(category, request);
+        Page<NoticeResponseDto.NoticePagingDto> noticeCategoryPage = noticeList.map(
+                notice -> noticeConverter.toNoticePage(
+                        notice.getId(),
+                        notice.getTitle(),
+                        notice.getCreatedAt(),
+                        notice.getCategory()
+                ));
+        return noticeCategoryPage;
+    }
 }

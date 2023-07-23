@@ -26,7 +26,7 @@ public class NoticeConverter {
         return NoticeResponseDto.NoticePagingDto.builder()
                 .id(id)
                 .title(title)
-                .createdAt(String.valueOf(createdAt))
+                .createdAt(String.valueOf(createdAt).toString().substring(0, 10))
                 .category(category)
                 .build();
     }
