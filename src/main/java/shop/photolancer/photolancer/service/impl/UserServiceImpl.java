@@ -111,4 +111,13 @@ public class UserServiceImpl {
 //        user.setBookmark(requestDto.getBookmark());
         return userRepository.save(user);
     }
+
+    public String findUserIdByNameAndEmail(String name, String email) {
+        User user = userRepository.findByNameAndEmail(name, email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+        if(user.getStatus().equals(UserStatus.INACTIVE)) {
+            throw new IllegalArgumentException("해당 사용자는 탈퇴한 사용자입니다.");
+        }
+        return user.getUserId();
+    }
 }
