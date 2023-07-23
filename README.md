@@ -31,3 +31,6 @@ Spring Boot + JPA
 3. issue/번호로 브랜치 만들고 push
 4. pull request 보내고 코드 리뷰자, 작성자 선택
 5. 코드 리뷰 후 merge
+
+### swagger 주소
+http://localhost:8080/swagger-ui/index.html#/
