@@ -17,7 +17,7 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Schema(description = "user의 requestdto")
+@Schema(description = "user의 회원가입dto")
 public class UserJoinRequestDto {
 
     @NotBlank(message = "사용자 이름은 필수 입력 값입니다.")
