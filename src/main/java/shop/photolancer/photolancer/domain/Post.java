@@ -1,11 +1,14 @@
 package shop.photolancer.photolancer.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import shop.photolancer.photolancer.domain.base.BaseEntity;
+import shop.photolancer.photolancer.domain.mapping.PostImage;
 
 
 import javax.persistence.*;
+import java.util.List;
 
 
 @Entity
