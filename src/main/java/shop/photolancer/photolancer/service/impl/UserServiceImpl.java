@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -149,11 +148,14 @@ public class UserServiceImpl {
             throw new AuthenticationCredentialsNotFoundException("아이디가 잘못되었습니다.");
         }
 
-        // 3. 조회한 사용자 정보와 입력한 비밀번호를 비교하여 일치하는지 확인합니다.
+        // 조회한 사용자 정보와 입력한 비밀번호를 비교하여 일치하는지 확인합니다.
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new AuthenticationCredentialsNotFoundException("비밀번호가 잘못되었습니다.");
         }
-
+        // 탈퇴한 회원인지 확인
+        if (user.getStatus().equals(UserStatus.INACTIVE)){
+            throw new AuthenticationCredentialsNotFoundException("탈퇴한 회원입니다.");
+        }
         String userName = user.getName();
         return JwtUtil.createJwt(userName, secretKey,expireMs);
     }
@@ -171,6 +173,4 @@ public class UserServiceImpl {
             user.setPassword(changePasswordDto.getNewPassword());
             return userRepository.save(user);
         }
-
-
 }
