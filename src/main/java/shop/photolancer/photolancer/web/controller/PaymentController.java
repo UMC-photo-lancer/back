@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import shop.photolancer.photolancer.converter.PaymentConverter;
 import shop.photolancer.photolancer.domain.Charge;
@@ -13,7 +14,7 @@ import shop.photolancer.photolancer.exception.ResponseMessage;
 import shop.photolancer.photolancer.exception.StatusCode;
 import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.service.PaymentService;
-import shop.photolancer.photolancer.web.dto.AccountRequestDto;
+import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 import shop.photolancer.photolancer.web.dto.PaymentRequestDto;
 import shop.photolancer.photolancer.web.dto.PaymentResponseDto;
 import shop.photolancer.photolancer.web.dto.base.DefaultRes;
@@ -27,23 +28,18 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class PaymentController {
 
-    public final PaymentService paymentService;
-    public final UserRepository userRepository;
-    public final PaymentConverter paymentConverter;
+    private final PaymentService paymentService;
+    private final PaymentConverter paymentConverter;
+    private final UserServiceImpl userService;
 
     @ApiOperation(value = "포인트 충전 API")
     @ApiResponse(code = 200, message = "포인트 충전 성공")
     @PostMapping("/my-profile/charge")
-    public ResponseEntity charge(@RequestBody PaymentRequestDto.ChargeDto request){
+    public ResponseEntity charge(Authentication authentication, @RequestBody PaymentRequestDto.ChargeDto request){
         try {
-            //추후 유저 인증 구현
-            //
-            Long userId = Long.valueOf(1);
+            String userName = authentication.getName();
 
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new NoSuchElementException("User not found"));
-
-            //
+            User user = userService.findUserByUserName(userName);
 
             Integer amount = request.getAmount();
             String paymentMethod = request.getPaymentMethod();
@@ -66,15 +62,11 @@ public class PaymentController {
     @ApiResponse(code = 200, message = "거래 내역 조회 성공")
     @ApiImplicitParam(name = "page", value = "페이지 번호", dataType = "int", example = "1", paramType = "query")
     @GetMapping("/my-profile/trade-log")
-    public ResponseEntity tradeLog(@RequestParam(defaultValue = "1") Integer page){
+    public ResponseEntity tradeLog(Authentication authentication ,@RequestParam(defaultValue = "1") Integer page){
         try {
-            //추후 유저 인증 구현
-            //
-            Long userId = Long.valueOf(1);
+            String userName = authentication.getName();
 
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new NoSuchElementException("User not found"));
-            //
+            User user = userService.findUserByUserName(userName);
 
             List<Charge> charges = paymentService.getAllCharges(user, page);
             List<PaymentResponseDto.TradeLogDto> response = paymentConverter.toTradeLogDtoList(charges);
@@ -88,15 +80,11 @@ public class PaymentController {
     @ApiOperation(value = "환전 창 불러오기 API")
     @ApiResponse(code = 200, message = "환전 창 불러오기 성공")
     @GetMapping("/my-profile/exchange")
-    public ResponseEntity exchangeWindow(){
+    public ResponseEntity exchangeWindow(Authentication authentication){
         try {
-            //추후 유저 인증 구현
-            //
-            Long userId = Long.valueOf(1);
+            String userName = authentication.getName();
 
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new NoSuchElementException("User not found"));
-            //
+            User user = userService.findUserByUserName(userName);
 
             List<PaymentResponseDto.ExchangeDto> response = paymentService.getExchange(user);
 
@@ -109,15 +97,11 @@ public class PaymentController {
     @ApiOperation(value = "포인트 환전하기 API")
     @ApiResponse(code = 200, message = "포인트 환전 성공")
     @PostMapping("/my-profile/exchange")
-    public ResponseEntity exchange(@RequestBody PaymentRequestDto.ExchangeDto request){
+    public ResponseEntity exchange(Authentication authentication,@RequestBody PaymentRequestDto.ExchangeDto request){
         try {
-            //추후 유저 인증 구현
-            //
-            Long userId = Long.valueOf(1);
+            String userName = authentication.getName();
 
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new NoSuchElementException("User not found"));
-            //
+            User user = userService.findUserByUserName(userName);
 
             String bank = request.getBank();
             String accountNumber = request.getAccountNumber();
@@ -143,15 +127,11 @@ public class PaymentController {
     @ApiImplicitParam(name = "post-id", value = "게시물 ID", required = true, dataType = "Long", example = "1", paramType = "path")
     @ApiResponse(code = 200, message = "사진 구매 창 불러오기 성공")
     @GetMapping("/{post-id}/purchase")
-    public ResponseEntity purchaseWindow(@PathVariable("post-id") Long postId) {
+    public ResponseEntity purchaseWindow(Authentication authentication, @PathVariable("post-id") Long postId) {
         try {
-            //추후 유저 인증 구현
-            //
-            Long userId = Long.valueOf(1);
+            String userName = authentication.getName();
 
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new NoSuchElementException("User not found"));
-            //
+            User user = userService.findUserByUserName(userName);
 
             PaymentResponseDto.PurchaseDto response = paymentService.getPurchase(postId, user);
 
@@ -165,15 +145,11 @@ public class PaymentController {
     @ApiImplicitParam(name = "post-id", value = "게시물 ID", required = true, dataType = "Long", example = "1", paramType = "path")
     @ApiResponse(code = 200, message = "사진 구매 성공")
     @PostMapping("/{post-id}/purchase")
-    public ResponseEntity purchase(@PathVariable("post-id") Long postId){
+    public ResponseEntity purchase(Authentication authentication, @PathVariable("post-id") Long postId){
         try {
-            //추후 유저 인증 구현
-            //
-            Long userId = Long.valueOf(1);
+            String userName = authentication.getName();
 
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new NoSuchElementException("User not found"));
-            //
+            User user = userService.findUserByUserName(userName);
 
             paymentService.purchase(postId, user);
 

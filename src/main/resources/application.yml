@@ -54,3 +54,7 @@ logging:
       amazonaws:
         util:
           EC2MetadataUtils: ERROR
+
+jwt:
+  secret: ${JWT_SECRET}
+  expireMs: 3600000
