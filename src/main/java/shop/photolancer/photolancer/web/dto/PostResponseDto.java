@@ -2,7 +2,11 @@ package shop.photolancer.photolancer.web.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.domain.Page;
+import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
+import shop.photolancer.photolancer.domain.mapping.PostImage;
 
 import java.util.List;
 
@@ -27,5 +31,7 @@ public class PostResponseDto {
         private String uri;
 //        private User user;
     }
+
+
 
 }
