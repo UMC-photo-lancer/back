@@ -29,4 +29,10 @@ public class BookmarkController {
             direction = Sort.Direction.DESC) Pageable request, @PathVariable String bookmarkName) {
         return postBookmarkService.postBookmarkList(request, bookmarkName);
     }
+
+    @GetMapping("/{bookmarkName}/popular")
+    public Page<Post> bookmarkPopularPhoto(@PageableDefault(size = 12, sort = "post.likeCount",
+            direction = Sort.Direction.DESC) Pageable request, @PathVariable String bookmarkName) {
+        return postBookmarkService.postBookmarkList(request, bookmarkName);
+    }
 }
