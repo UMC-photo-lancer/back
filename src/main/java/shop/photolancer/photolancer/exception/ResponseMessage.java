@@ -33,4 +33,6 @@ public class ResponseMessage {
     // notice
     public static final String NOTICE_UPLOAD_SUCCESS = "공지 업로드 성공";
 
+    //comment
+    public static final String COMMENT_UPLOAD_SUCCESS = "댓글 업로드 성공";
 }
