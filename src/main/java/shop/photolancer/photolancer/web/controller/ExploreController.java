@@ -16,14 +16,14 @@ import shop.photolancer.photolancer.web.dto.PostResponseDto;
 @RequestMapping("/explore")
 public class ExploreController {
     public final ExploreServiceImpl exploreService;
-    @GetMapping("/hot")
-    public Page<PostResponseDto.PostImageListDto> hotPhoto(@PageableDefault(size = 12, sort = "post.likeCount", direction = Sort.Direction.DESC)
+    @GetMapping("/popular")
+    public Page<PostResponseDto.PostListDto> hotPhoto(@PageableDefault(size = 12, sort = "likeCount", direction = Sort.Direction.DESC)
                                                    Pageable request) {
         return exploreService.hotPhoto(request);
     }
 
     @GetMapping("/recent")
-    public Page<PostResponseDto.PostImageListDto> recentPhoto(@PageableDefault(size = 12, sort = "post.createdAt", direction = Sort.Direction.DESC)
+    public Page<PostResponseDto.PostListDto> recentPhoto(@PageableDefault(size = 12, sort = "createdAt", direction = Sort.Direction.DESC)
                                                            Pageable request) {
         return exploreService.recentPhoto(request);
     }

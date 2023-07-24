@@ -20,6 +20,7 @@ public class ResponseMessage {
     public static final String POINT_EXIT_ERROR = "포인트 누락 오류";
 
     //account
+    public static final String ACCOUNT_READ_SUCCESS = "계좌 목록 불러오기 성공";
     public static final String ADD_ACCOUNT_SUCCESS = "계좌 추가 성공";
     public static final String ACCOUNT_MAIN_SUCCESS = "메인 계좌 설정 성공";
     public static final String ACCOUNT_UPDATE_SUCCESS = "계좌 수정 성공";

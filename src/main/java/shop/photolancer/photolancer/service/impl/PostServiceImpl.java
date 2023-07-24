@@ -11,7 +11,6 @@ import shop.photolancer.photolancer.domain.mapping.PostImage;
 import shop.photolancer.photolancer.domain.mapping.PostLike;
 import shop.photolancer.photolancer.repository.*;
 import shop.photolancer.photolancer.service.PostService;
-import shop.photolancer.photolancer.web.dto.PostRequestDto;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +33,7 @@ public class PostServiceImpl implements PostService {
     public void upload(String content, Integer likeCount, Boolean isSale,
                        Integer point, List<String> imgPaths, List<String> bookmarkList) {
 
-        Post post = postConverter.toPost(content, likeCount, point, isSale);
+        Post post = postConverter.toPost(content, likeCount, point, isSale, imgPaths.get(0));
         postRepository.save(post);
         for (String imgUrl : imgPaths) {
             PostImage postImage = postConverter.toPostImage(imgUrl, post);

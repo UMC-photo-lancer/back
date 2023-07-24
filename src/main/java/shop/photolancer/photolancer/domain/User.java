@@ -70,6 +70,9 @@ public class User extends BaseEntity {
     private UserStatus status;
 
     public void updatePoint(Integer amount){
+        if (this.point == null){
+            this.point = 0;
+        }
         this.point += amount;
     }
     public void passwordEncode(PasswordEncoder passwordEncoder) {

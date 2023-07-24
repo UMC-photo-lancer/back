@@ -8,17 +8,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.exception.ResponseMessage;
 import shop.photolancer.photolancer.exception.StatusCode;
-import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.service.AccountService;
+import shop.photolancer.photolancer.service.PaymentService;
+import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 import shop.photolancer.photolancer.web.dto.AccountRequestDto;
-import shop.photolancer.photolancer.web.dto.PaymentRequestDto;
+import shop.photolancer.photolancer.web.dto.PaymentResponseDto;
 import shop.photolancer.photolancer.web.dto.base.DefaultRes;
 
-import java.util.NoSuchElementException;
+import java.util.List;
 
 @Api(tags = "계좌 관련 API")
 @RestController
@@ -27,21 +29,35 @@ import java.util.NoSuchElementException;
 @RequestMapping("/setting/account")
 public class AccountController {
 
-    private final UserRepository userRepository;
     private final AccountService accountService;
+    private final UserServiceImpl userService;
+    private final PaymentService paymentService;
+
+    @ApiOperation(value = "계좌 목록 불러오기 API")
+    @ApiResponse(code = 200, message = "계좌 목록 불러오기 성공")
+    @GetMapping()
+    public ResponseEntity exchangeWindow(Authentication authentication){
+        try {
+            String userName = authentication.getName();
+
+            User user = userService.findUserByUserName(userName);
+
+            List<PaymentResponseDto.ExchangeDto> response = paymentService.getExchange(user);
+
+            return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.ACCOUNT_READ_SUCCESS, response), HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @ApiOperation(value = "계좌 추가 API")
     @ApiResponse(code = 200, message = "계좌 추가 성공")
     @PostMapping()
-    public ResponseEntity addAccount(@RequestBody AccountRequestDto.AccountDto request){
+    public ResponseEntity addAccount(Authentication authentication, @RequestBody AccountRequestDto.AccountDto request){
         try {
-            //추후 유저 인증 구현
-            //
-            Long userId = Long.valueOf(1);
+            String userName = authentication.getName();
 
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new NoSuchElementException("User not found"));
-            //
+            User user = userService.findUserByUserName(userName);
 
             String bank = request.getBank();
             String accountNumber = request.getAccountNumber();
@@ -64,15 +80,11 @@ public class AccountController {
     @ApiImplicitParam(name = "account-id", value = "계좌 ID", required = true, dataType = "Long", example = "1", paramType = "path")
     @ApiResponse(code = 200, message = "메인 계좌 설정 성공")
     @PatchMapping("/{account-id}")
-    public ResponseEntity mainAccount(@PathVariable("account-id") Long accountId){
+    public ResponseEntity mainAccount(Authentication authentication, @PathVariable("account-id") Long accountId){
         try {
-            //추후 유저 인증 구현
-            //
-            Long userId = Long.valueOf(1);
+            String userName = authentication.getName();
 
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new NoSuchElementException("User not found"));
-            //
+            User user = userService.findUserByUserName(userName);
 
             accountService.updateIsMain(user, accountId);
 
@@ -86,15 +98,11 @@ public class AccountController {
     @ApiImplicitParam(name = "account-id", value = "계좌 ID", required = true, dataType = "Long", example = "1", paramType = "path")
     @ApiResponse(code = 200, message = "계좌 수정 성공")
     @PutMapping("/{account-id}")
-    public ResponseEntity updateAccount(@PathVariable("account-id") Long accountId, @RequestBody AccountRequestDto.AccountDto request){
+    public ResponseEntity updateAccount(Authentication authentication, @PathVariable("account-id") Long accountId, @RequestBody AccountRequestDto.AccountDto request){
         try {
-            //추후 유저 인증 구현
-            //
-            Long userId = Long.valueOf(1);
+            String userName = authentication.getName();
 
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new NoSuchElementException("User not found"));
-            //
+            User user = userService.findUserByUserName(userName);
 
             String bank = request.getBank();
             String accountNumber = request.getAccountNumber();
@@ -117,15 +125,11 @@ public class AccountController {
     @ApiImplicitParam(name = "account-id", value = "계좌 ID", required = true, dataType = "Long", example = "1", paramType = "path")
     @ApiResponse(code = 200, message = "계좌 삭제 성공")
     @DeleteMapping("/{account-id}")
-    public ResponseEntity deleteAccount(@PathVariable("account-id") Long accountId){
+    public ResponseEntity deleteAccount(Authentication authentication, @PathVariable("account-id") Long accountId){
         try {
-            //추후 유저 인증 구현
-            //
-            Long userId = Long.valueOf(1);
+            String userName = authentication.getName();
 
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new NoSuchElementException("User not found"));
-            //
+            User user = userService.findUserByUserName(userName);
 
             accountService.deleteAccount(user, accountId);
 

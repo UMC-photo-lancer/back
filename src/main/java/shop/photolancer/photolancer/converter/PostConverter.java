@@ -15,13 +15,15 @@ import java.util.List;
 @RequiredArgsConstructor
 @Component
 public class PostConverter {
-    public Post toPost(String content, Integer likeCount, Integer point, Boolean isSale) {
+    public Post toPost(String content, Integer likeCount, Integer point,
+                       Boolean isSale, String thumbNailUri) {
         return Post.builder()
 //                .user(user)
                 .content(content)
                 .likeCount(likeCount)
                 .isSale(isSale)
                 .point(point)
+                .thumbNailUri(thumbNailUri)
                 .build();
     }
 
@@ -50,13 +52,13 @@ public class PostConverter {
                 .build();
     }
 
-    public PostResponseDto.PostImageListDto toPostImageList(PostImage postImage) {
-        return PostResponseDto.PostImageListDto.builder()
-                .imageId(postImage.getId())
-                .postId(postImage.getPost().getId())
-                .likeCount(postImage.getPost().getLikeCount())
-                .createdAt(postImage.getPost().getCreatedAt().toString().substring(0, 10))
-                .uri(postImage.getUri())
+    public PostResponseDto.PostListDto toPostList(Post post) {
+        return PostResponseDto.PostListDto.builder()
+                .postId(post.getId())
+                .likeCount(post.getLikeCount())
+                .createdAt(post.getCreatedAt().toString().substring(0, 10))
+                .thumbNailUri(post.getThumbNailUri())
+                .isSale(post.getIsSale())
 //                .user(postImage.getPost().getUser())
                 .build();
     }
