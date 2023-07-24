@@ -33,4 +33,18 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(comment);
     }
 
+    @Override
+    public void uploadRecomment(CommentRequestDto.CommentUploadDto request, Long userId,
+                                Long postId, Long commentId) {
+        User user = userRepository.findById(userId).orElseThrow(()
+                -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+        Post post = postRepository.findById(postId).orElseThrow(()
+                -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
+        Comment recomment = commentRepository.findById(commentId).orElseThrow(()
+                -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다"));
+        Comment comment = commentConverter.toRecomment(request, user, post, recomment);
+
+        commentRepository.save(comment);
+    }
+
 }

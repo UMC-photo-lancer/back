@@ -27,5 +27,15 @@ public class CommentController {
             return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
         }
     }
+    @PostMapping("/{commentId}")
+    public ResponseEntity uploadRecomment(@RequestBody CommentRequestDto.CommentUploadDto request,
+                                          @PathVariable Long postId, @PathVariable Long commentId) {
+        try {
+            commentService.uploadRecomment(request, 5L, postId, commentId);
 
+            return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.RECOMMENT_UPLOAD_SUCCESS), HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
+        }
+    }
 }
