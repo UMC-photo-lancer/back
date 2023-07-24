@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import shop.photolancer.photolancer.domain.Chat;
+import shop.photolancer.photolancer.domain.ChatRoom;
 import shop.photolancer.photolancer.domain.Message;
 import shop.photolancer.photolancer.exception.ResponseMessage;
 import shop.photolancer.photolancer.exception.StatusCode;
@@ -42,9 +42,9 @@ public class ChatController {
             //
             Long userId = Long.valueOf(1);
             //
-            Page<Chat> chatPage = chatService.findFollowingChats(userId, last);
+            Page<ChatRoom> chatPage = chatService.findFollowingChats(userId, last);
 
-            List<Chat> chats = chatPage.getContent();
+            List<ChatRoom> chats = chatPage.getContent();
             List<ChatResponseDto.ChatResponse> responses = mapper.chatListTochatResponseDtos(chats);
 
             return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.FOLLOWING_CHATS_READ_SUCCESS, responses), HttpStatus.OK);

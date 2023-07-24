@@ -18,11 +18,11 @@ public class Message extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "chat_id")
-    private Chat chat;
+    private ChatRoom chat;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "user_id")
-    private User user;
+    private User sender;
 
     @Column(nullable = false)
     private String content;
