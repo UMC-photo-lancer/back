@@ -21,7 +21,12 @@ public class BookmarkController {
     @GetMapping("/{bookmarkName}")
     public Page<Post> bookmarkPhoto(@PageableDefault(size = 12, sort = "post.likeCount",
             direction = Sort.Direction.DESC) Pageable request, @PathVariable String bookmarkName) {
-        System.out.println(bookmarkName);
+        return postBookmarkService.postBookmarkList(request, bookmarkName);
+    }
+
+    @GetMapping("/{bookmarkName}/recent")
+    public Page<Post> bookmarkRecentPhoto(@PageableDefault(size = 12, sort = "post.createdAt",
+            direction = Sort.Direction.DESC) Pageable request, @PathVariable String bookmarkName) {
         return postBookmarkService.postBookmarkList(request, bookmarkName);
     }
 }
