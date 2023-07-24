@@ -2,9 +2,13 @@ package shop.photolancer.photolancer.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import shop.photolancer.photolancer.config.Login.utils.JwtUtil;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.Purpose;
 import shop.photolancer.photolancer.domain.enums.UserStatus;
@@ -26,6 +30,13 @@ import java.util.Optional;
 @Slf4j
 public class UserServiceImpl {
     protected final UserRepository userRepository;
+    protected final PasswordEncoder passwordEncoder;
+
+    @Value("${jwt.secret}")
+    private String secretKey;
+
+    @Value("${jwt.expireMs}")
+    private Long expireMs;
 
     public Map<String, String> validateHandling(BindingResult bindingResult) {
         Map<String, String> validatorResult = new HashMap<>();
@@ -82,6 +93,15 @@ public class UserServiceImpl {
         }
     }
 
+    public User findUserByUserName(String userName) {
+        Optional<User> optionalUser = userRepository.findByName(userName);
+        if (optionalUser.isPresent()) {
+            return optionalUser.get();
+        } else {
+            throw new NoSuchElementException("No user found with name " + userName);
+        }
+    }
+
     public void createUser(UserJoinRequestDto userInfo) {
         User user = User.builder()
                 .userId(userInfo.getUser_id())
@@ -93,7 +113,7 @@ public class UserServiceImpl {
                 .build();
 
         // 사용자 등록
-//        user.passwordEncode(passwordEncoder);
+        user.passwordEncode(passwordEncoder);
         userRepository.save(user);
     }
     //소셜 로그인에 쓰일 함수
@@ -121,13 +141,27 @@ public class UserServiceImpl {
         }
         return user.getUserId();
     }
+    public String login(String userId, String password) {
+        // email 사용하여 사용자를 데이터베이스에서 조회
+        User user = userRepository.findByUserId(userId);
 
-    public User changePassword(Long userId, ChangePasswordDto changePasswordDto) {
-            User user = userRepository.findById(userId)
+        if (user == null) {
+            throw new AuthenticationCredentialsNotFoundException("아이디가 잘못되었습니다.");
+        }
+
+        // 3. 조회한 사용자 정보와 입력한 비밀번호를 비교하여 일치하는지 확인합니다.
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new AuthenticationCredentialsNotFoundException("비밀번호가 잘못되었습니다.");
+        }
+
+        String userName = user.getName();
+        return JwtUtil.createJwt(userName, secretKey,expireMs);
+    }
+    public User changePassword(String userName, ChangePasswordDto changePasswordDto) {
+            User user = userRepository.findByName(userName)
                     .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
-            // 입력한 비밀번호가 이전 비밀번호와 같습니다.
-            // !passwordEncoder.matches(changePasswordDto.getCurrentPassword(), user.getPassword())
-            if (user.getPassword().equals(changePasswordDto.getNewPassword())){
+
+            if (passwordEncoder.matches(changePasswordDto.getNewPassword(), user.getPassword())){
                 throw new IllegalArgumentException("입력한 비밀번호가 이전 비밀번호와 같습니다.");
             }
             if (!changePasswordDto.getNewPassword().equals(changePasswordDto.getNewAgainPassword())) {
@@ -137,4 +171,6 @@ public class UserServiceImpl {
             user.setPassword(changePasswordDto.getNewPassword());
             return userRepository.save(user);
         }
+
+
 }

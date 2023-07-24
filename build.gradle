@@ -30,6 +30,8 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation("org.springframework.security:spring-security-test")
 
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.5.RELEASE'
 
@@ -40,10 +42,14 @@ dependencies {
 	// 채팅
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.webjars:sockjs-client:1.5.1'
-
 	// swagger
 	implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
 
+	//jwt 관련 라이브러리
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+	// javax.xml.bind.datatypeconverter
+	implementation 'javax.xml.bind:jaxb-api:2.3.0'
 }
 
 tasks.named('test') {

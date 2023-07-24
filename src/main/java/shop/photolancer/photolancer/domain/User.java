@@ -1,6 +1,7 @@
 package shop.photolancer.photolancer.domain;
 
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import shop.photolancer.photolancer.domain.base.BaseEntity;
 import shop.photolancer.photolancer.domain.enums.*;
 import shop.photolancer.photolancer.web.dto.base.DefaultRes;
@@ -71,5 +72,7 @@ public class User extends BaseEntity {
     public void updatePoint(Integer amount){
         this.point += amount;
     }
-
+    public void passwordEncode(PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(this.password);
+    }
 }

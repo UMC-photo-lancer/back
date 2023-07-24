@@ -1,10 +1,14 @@
 package shop.photolancer.photolancer.web.controller;
 
 
+import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import shop.photolancer.photolancer.domain.User;
@@ -12,14 +16,16 @@ import shop.photolancer.photolancer.domain.enums.UserStatus;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 import shop.photolancer.photolancer.web.dto.ChangePasswordDto;
 import shop.photolancer.photolancer.web.dto.UserJoinRequestDto;
+import shop.photolancer.photolancer.web.dto.UserLoginDto;
 import shop.photolancer.photolancer.web.dto.UserUpdateRequestDto;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
-
+@Api(tags = "사용자 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
+@Slf4j
 public class UserController {
     // 1. 로그인 -> 탈퇴한 회원인지 체크하기
     // 2. 소셜로그인
@@ -74,9 +80,11 @@ public class UserController {
 
     @Operation(summary = "회원 탈퇴를 진행합니다.")
     @PutMapping(value = "/withdrawal")
-    public ResponseEntity<?> withdrawUser(@RequestHeader("user_id") Long userId) {
+    public ResponseEntity<?> withdrawUser(Authentication authentication) {
         try {
-            User user = userServiceImpl.findUserById(userId);
+            String userName = authentication.getName();
+//            log.info("userName나오지롱:{}",userName);
+            User user = userServiceImpl.findUserByUserName(userName);
             userServiceImpl.deactivateUser(user);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NoSuchElementException e) {
@@ -86,7 +94,7 @@ public class UserController {
 
     @Operation(summary = "회원 정보를 수정합니다.")
     @PutMapping(value = "/update")
-    public ResponseEntity<?> updateUser(@RequestHeader("user_id") Long userId,
+    public ResponseEntity<?> updateUser(Authentication authentication,
                                         @RequestBody UserUpdateRequestDto requestDto) {
         try {
             userServiceImpl.checkUserNickNameDuplication(requestDto);
@@ -94,8 +102,8 @@ public class UserController {
             return new ResponseEntity<>("별명이 중복 됩니다.", HttpStatus.BAD_REQUEST);
         }
         try {
-            User user = userServiceImpl.findUserById(userId);
-            // jwt로 수정하기
+            String userName = authentication.getName();
+            User user = userServiceImpl.findUserByUserName(userName);
             User updatedUser = userServiceImpl.updateUser(requestDto, user);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NoSuchElementException e) {
@@ -116,13 +124,26 @@ public class UserController {
 
     @Operation(summary = "비밀번호를 변경합니다.")
     @PutMapping("/change-password")
-    public ResponseEntity<?> changePassword(@RequestHeader("user_id") Long userId,@RequestBody ChangePasswordDto changePasswordDto) {
+    public ResponseEntity<?> changePassword(Authentication authentication,@RequestBody ChangePasswordDto changePasswordDto) {
         try {
-            User user = userServiceImpl.changePassword(userId, changePasswordDto);
+            String userName = authentication.getName();
+            User user = userServiceImpl.changePassword(userName, changePasswordDto);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
+    @Operation(summary = "로그인을 진행합니다.")
+    @PostMapping(value = "/login")
+    public ResponseEntity<String> login(@RequestBody UserLoginDto userLoginDto) {
+        try {
+            String user_id = userLoginDto.getUser_id();
+            String password = userLoginDto.getPassword();
+            String result = userServiceImpl.login(user_id, password);
+            return ResponseEntity.ok().body(result);
+        }catch (AuthenticationCredentialsNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        }
+    }
 }
