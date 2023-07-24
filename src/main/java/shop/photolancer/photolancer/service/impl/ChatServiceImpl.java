@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shop.photolancer.photolancer.domain.Chat;
+import shop.photolancer.photolancer.domain.ChatRoom;
 import shop.photolancer.photolancer.domain.Message;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.repository.ChatRepository;
@@ -29,7 +29,7 @@ public class ChatServiceImpl implements ChatService {
 
     //팔로잉 채팅 목록 불러오기
     @Override
-    public Page<Chat> findFollowingChats(Long userId, Long last){
+    public Page<ChatRoom> findFollowingChats(Long userId, Long last){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
 
@@ -42,14 +42,14 @@ public class ChatServiceImpl implements ChatService {
             // last 값이 1 이하일 경우, 첫 번째 페이지 요청
             pageable = PageRequest.of(0, 5);
         }
-        Page<Chat> chatRooms = chatRepository.findAllBySenderOrReceiver(pageable, user, user);
+        Page<ChatRoom> chatRooms = chatRepository.findAllBySenderOrReceiver(pageable, user, user);
 
         return chatRooms;
     }
 
     @Override
     public Page<Message> findMessages(Long chatId, Long last){
-        Chat chat = chatRepository.findById(chatId)
+        ChatRoom chat = chatRepository.findById(chatId)
                 .orElseThrow(() -> new NoSuchElementException("Chat not found"));
 
         Pageable pageable;
