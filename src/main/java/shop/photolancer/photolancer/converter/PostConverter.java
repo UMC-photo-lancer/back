@@ -15,13 +15,15 @@ import java.util.List;
 @RequiredArgsConstructor
 @Component
 public class PostConverter {
-    public Post toPost(String content, Integer likeCount, Integer point, Boolean isSale) {
+    public Post toPost(String content, Integer likeCount, Integer point,
+                       Boolean isSale, String thumbNailUri) {
         return Post.builder()
 //                .user(user)
                 .content(content)
                 .likeCount(likeCount)
                 .isSale(isSale)
                 .point(point)
+                .thumbNailUri(thumbNailUri)
                 .build();
     }
 
