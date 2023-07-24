@@ -38,3 +38,6 @@ out/
 
 ### JWT SECRET KEY ###
 application-jwt.yml
+
+### User Service Debug ###
+UserServiceDebug.java
