@@ -29,7 +29,6 @@ public class JwtUtil {
                 .getBody().getExpiration().before(new Date());
     }
 
-
     public static String createJwt(String name, String secretKey, Long expireMs) {
         Claims claims = Jwts.claims(); // 일종의 map claims로 정보를 담는다
         claims.put("Name", name);
@@ -40,9 +39,7 @@ public class JwtUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + expireMs)) // 만료시간
                 .signWith(SignatureAlgorithm.HS256, secretKey.getBytes()) // 어떤 알고리즘을 사용할지
                 .compact();
-
 //        logger.info("Generated JWT: {}", token);
-
-        return token;
+        return ("Bearer "+token);
     }
 }

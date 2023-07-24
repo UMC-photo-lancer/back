@@ -3,11 +3,15 @@ package shop.photolancer.photolancer.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.server.ResponseStatusException;
 import shop.photolancer.photolancer.config.Login.utils.JwtUtil;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.Purpose;
@@ -109,13 +113,13 @@ public class UserServiceImpl {
                 .email(userInfo.getEmail())
                 .purpose(Purpose.valueOf(userInfo.getPurpose()))
                 .status(UserStatus.ACTIVE)
+                .point(0)
                 .build();
 
         // 사용자 등록
         user.passwordEncode(passwordEncoder);
         userRepository.save(user);
     }
-
 
     public User deactivateUser(User user) {
         user.setStatus(UserStatus.INACTIVE);
@@ -177,7 +181,6 @@ public class UserServiceImpl {
         String userName = existingUser.getName();
         return JwtUtil.createJwt(userName, secretKey,expireMs);
     }
-
     public User changePassword(String userName, ChangePasswordDto changePasswordDto) {
             User user = userRepository.findByName(userName)
                     .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
@@ -191,7 +194,15 @@ public class UserServiceImpl {
 //            user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
             user.setPassword(changePasswordDto.getNewPassword());
             return userRepository.save(user);
+    }
+    public User getCurrentUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || authentication.getPrincipal().equals("anonymousUser")) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "로그인 되지 않았습니다."
+            );
         }
-
-
+        return (User) authentication.getPrincipal();
+    }
 }
