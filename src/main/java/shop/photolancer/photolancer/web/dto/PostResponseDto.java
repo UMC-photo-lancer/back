@@ -19,12 +19,12 @@ public class PostResponseDto {
     }
     @Getter
     @Builder
-    public static class PostImageListDto {
-        private Long imageId;
+    public static class PostListDto {
+        private Long postId;
         private Integer likeCount;
         private String createdAt;
-        private Long postId;
-        private String uri;
+        private String thumbNailUri;
+        private boolean isSale;
 //        private User user;
     }
 
