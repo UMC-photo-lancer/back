@@ -115,10 +115,7 @@ public class UserServiceImpl {
         user.passwordEncode(passwordEncoder);
         userRepository.save(user);
     }
-    //소셜 로그인에 쓰일 함수
-    public void createUser(User user){
-        userRepository.save(user);
-    }
+
 
     public User deactivateUser(User user) {
         user.setStatus(UserStatus.INACTIVE);
@@ -141,7 +138,7 @@ public class UserServiceImpl {
         return user.getUserId();
     }
     public String login(String userId, String password) {
-        // email 사용하여 사용자를 데이터베이스에서 조회
+        // 사용자 id를 사용하여 사용자를 데이터베이스에서 조회
         User user = userRepository.findByUserId(userId);
 
         if (user == null) {
@@ -159,6 +156,28 @@ public class UserServiceImpl {
         String userName = user.getName();
         return JwtUtil.createJwt(userName, secretKey,expireMs);
     }
+
+    //소셜 로그인에 쓰일 함수
+    public String login(User user) {
+        // Find the user in the database
+        User existingUser = userRepository.findByEmail(user.getEmail());
+        // If the user does not exist, return null or throw an exception
+        if (existingUser == null) {
+            throw new AuthenticationCredentialsNotFoundException("없는 사용자 입니다.");
+        }
+
+        if (!passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
+            throw new AuthenticationCredentialsNotFoundException("비밀번호가 잘못되었습니다.");
+        }
+
+        // 탈퇴한 회원인지 확인
+        if (existingUser.getStatus().equals(UserStatus.INACTIVE)){
+            throw new AuthenticationCredentialsNotFoundException("탈퇴한 회원입니다.");
+        }
+        String userName = existingUser.getName();
+        return JwtUtil.createJwt(userName, secretKey,expireMs);
+    }
+
     public User changePassword(String userName, ChangePasswordDto changePasswordDto) {
             User user = userRepository.findByName(userName)
                     .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
@@ -173,4 +192,6 @@ public class UserServiceImpl {
             user.setPassword(changePasswordDto.getNewPassword());
             return userRepository.save(user);
         }
+
+
 }

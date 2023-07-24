@@ -50,6 +50,9 @@ dependencies {
 
 	// javax.xml.bind.datatypeconverter
 	implementation 'javax.xml.bind:jaxb-api:2.3.0'
+
+	//oauth
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }
 
 tasks.named('test') {

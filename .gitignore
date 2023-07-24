@@ -41,3 +41,6 @@ application-jwt.yml
 
 ### User Service Debug ###
 UserServiceDebug.java
+
+### application-oauth.yml ###
+application-oauth.yml

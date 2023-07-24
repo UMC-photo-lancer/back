@@ -11,6 +11,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import shop.photolancer.photolancer.service.PrincipalOauth2UserService;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 
 @Configuration
@@ -19,6 +20,7 @@ import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 public class AuthenticationConfig {
     private final UserServiceImpl userService;
     private final PasswordEncoder passwordEncoder;
+    private final PrincipalOauth2UserService principalOauth2UserService;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -36,6 +38,12 @@ public class AuthenticationConfig {
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt사용하는 경우 사용함
+                .and()
+                .oauth2Login()
+                .defaultSuccessUrl("/")
+                .userInfoEndpoint()
+                .userService(principalOauth2UserService) // 로그인 성공 실패시 적용할 핸들러를 등록해야 할 듯 .. ?
+                .and()
                 .and()
                 .addFilterBefore(new JwtFilter(userService,secretKey), UsernamePasswordAuthenticationFilter.class) // 받은 token을 푸려면 secret key가 있어야 하므로 secretkey를 넣어줌, JwtFilter를 UsernamePasswordAuthenticationFilter앞에다 넣는 거임
                 .build();
