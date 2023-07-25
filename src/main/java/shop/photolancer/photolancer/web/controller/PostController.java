@@ -48,7 +48,7 @@ public class PostController {
     @PutMapping("/{id}/like")
     public ResponseEntity updateLike(@PathVariable Long id) {
         try {
-             postService.updateLike(id, 1L);
+             postService.updateLike(id, 5L);
 
             return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.POST_LIKE_SUCCESS), HttpStatus.OK);
         } catch (Exception e){
