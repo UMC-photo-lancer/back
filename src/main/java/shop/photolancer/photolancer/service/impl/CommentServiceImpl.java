@@ -55,4 +55,11 @@ public class CommentServiceImpl implements CommentService {
                 -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다"));
         commentRepository.delete(comment);
     }
+
+    @Override
+    public void deleteRecomment(Long recommentId) {
+        Comment comment = commentRepository.findById(recommentId).orElseThrow(()
+                -> new IllegalArgumentException("해당 대댓글이 존재하지 않습니다."));
+        commentRepository.delete(comment);
+    }
 }
