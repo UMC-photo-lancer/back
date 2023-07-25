@@ -8,4 +8,6 @@ public interface CommentService {
     void uploadRecomment(CommentRequestDto.CommentUploadDto request, Long userId, Long postId, Long commentId);
 
     void deleteComment(Long commentId);
+
+    void deleteRecomment(Long recommentId);
 }

@@ -48,4 +48,14 @@ public class CommentController {
             return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
         }
     }
+    // 대댓글 삭제
+    @DeleteMapping("/re/{recommentId}")
+    public ResponseEntity deleteRecomment(@PathVariable Long recommentId) {
+        try {
+            commentService.deleteRecomment(recommentId);
+            return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.RECOMMENT_DELETE_SUCCESS), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
+        }
+    }
 }
