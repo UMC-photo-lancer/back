@@ -20,7 +20,7 @@ public class CommentController {
     public ResponseEntity uploadComment(@RequestBody CommentRequestDto.CommentUploadDto request,
                                         @PathVariable Long postId) {
         try {
-            commentService.uploadComment(request, 5L, postId);
+            commentService.uploadComment(request, 1L, postId);
 
             return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.COMMENT_UPLOAD_SUCCESS), HttpStatus.OK);
         } catch (Exception e){
@@ -31,10 +31,20 @@ public class CommentController {
     public ResponseEntity uploadRecomment(@RequestBody CommentRequestDto.CommentUploadDto request,
                                           @PathVariable Long postId, @PathVariable Long commentId) {
         try {
-            commentService.uploadRecomment(request, 5L, postId, commentId);
+            commentService.uploadRecomment(request, 1L, postId, commentId);
 
             return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.RECOMMENT_UPLOAD_SUCCESS), HttpStatus.OK);
         } catch (Exception e){
+            return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity deleteComment(@PathVariable Long commentId) {
+        try {
+            commentService.deleteComment(commentId);
+            return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.COMMENT_DELETE_SUCCESS), HttpStatus.OK);
+        } catch (Exception e) {
             return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
         }
     }
