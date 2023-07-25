@@ -31,12 +31,12 @@ public class User extends BaseEntity {
 
     private String password;
 
-    @Column(columnDefinition = "Boolean default false")
-    private Boolean isAdmin;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     private String refreshToken;
 
-    private Long socialId;
+    private String socialId;
 
     @Enumerated(EnumType.STRING)
     private SocialType socialType;

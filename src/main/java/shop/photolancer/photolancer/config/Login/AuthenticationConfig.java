@@ -11,7 +11,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import shop.photolancer.photolancer.service.PrincipalOauth2UserService;
+import shop.photolancer.photolancer.config.oauth2.handler.OAuth2LoginFailureHandler;
+import shop.photolancer.photolancer.config.oauth2.handler.OAuth2LoginSuccessHandler;
+import shop.photolancer.photolancer.service.impl.CustomOAuth2UserService;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 
 @Configuration
@@ -20,14 +22,16 @@ import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 public class AuthenticationConfig {
     private final UserServiceImpl userService;
     private final PasswordEncoder passwordEncoder;
-    private final PrincipalOauth2UserService principalOauth2UserService;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Value("${jwt.secret}")
     private String secretKey;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
+        httpSecurity
                 .httpBasic().disable() // 인증을 ui가 아닌 token으로 할꺼기 때문
                 .csrf().disable()
                 .cors().and()
@@ -40,12 +44,14 @@ public class AuthenticationConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt사용하는 경우 사용함
                 .and()
                 .oauth2Login()
-                .defaultSuccessUrl("/")
+                .successHandler(oAuth2LoginSuccessHandler) // 동의하고 계속하기를 눌렀을 때 Handler 설정
+                .failureHandler(oAuth2LoginFailureHandler) // 소셜 로그인 실패 시 핸들러 설정
                 .userInfoEndpoint()
-                .userService(principalOauth2UserService) // 로그인 성공 실패시 적용할 핸들러를 등록해야 할 듯 .. ?
-                .and()
-                .and()
-                .addFilterBefore(new JwtFilter(userService,secretKey), UsernamePasswordAuthenticationFilter.class) // 받은 token을 푸려면 secret key가 있어야 하므로 secretkey를 넣어줌, JwtFilter를 UsernamePasswordAuthenticationFilter앞에다 넣는 거임
-                .build();
+                .userService(customOAuth2UserService); // customUserService 설정
+//                .and()
+        httpSecurity
+                .addFilterBefore(new JwtFilter(userService,secretKey), UsernamePasswordAuthenticationFilter.class); // 받은 token을 푸려면 secret key가 있어야 하므로 secretkey를 넣어줌, JwtFilter를 UsernamePasswordAuthenticationFilter앞에다 넣는 거임
+
+        return httpSecurity.build();
     }
 }

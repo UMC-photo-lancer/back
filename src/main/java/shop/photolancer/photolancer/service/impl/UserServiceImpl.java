@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import shop.photolancer.photolancer.config.Login.utils.JwtUtil;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.Purpose;
+import shop.photolancer.photolancer.domain.enums.Role;
 import shop.photolancer.photolancer.domain.enums.UserStatus;
 import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.web.dto.ChangePasswordDto;
@@ -113,6 +114,7 @@ public class UserServiceImpl {
                 .email(userInfo.getEmail())
                 .purpose(Purpose.valueOf(userInfo.getPurpose()))
                 .status(UserStatus.ACTIVE)
+                .role(Role.USER)
                 .point(0)
                 .build();
 
