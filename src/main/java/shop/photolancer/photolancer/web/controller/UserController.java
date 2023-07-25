@@ -80,11 +80,9 @@ public class UserController {
 
     @Operation(summary = "회원 탈퇴를 진행합니다.")
     @PutMapping(value = "/withdrawal")
-    public ResponseEntity<?> withdrawUser(Authentication authentication) {
+    public ResponseEntity<?> withdrawUser() {
         try {
-            String userName = authentication.getName();
-//            log.info("userName나오지롱:{}",userName);
-            User user = userServiceImpl.findUserByUserName(userName);
+            User user = userServiceImpl.getCurrentUser();
             userServiceImpl.deactivateUser(user);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NoSuchElementException e) {
@@ -94,16 +92,14 @@ public class UserController {
 
     @Operation(summary = "회원 정보를 수정합니다.")
     @PutMapping(value = "/update")
-    public ResponseEntity<?> updateUser(Authentication authentication,
-                                        @RequestBody UserUpdateRequestDto requestDto) {
+    public ResponseEntity<?> updateUser(@RequestBody UserUpdateRequestDto requestDto) {
         try {
             userServiceImpl.checkUserNickNameDuplication(requestDto);
         } catch (IllegalStateException e){
             return new ResponseEntity<>("별명이 중복 됩니다.", HttpStatus.BAD_REQUEST);
         }
         try {
-            String userName = authentication.getName();
-            User user = userServiceImpl.findUserByUserName(userName);
+            User user = userServiceImpl.getCurrentUser();
             User updatedUser = userServiceImpl.updateUser(requestDto, user);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NoSuchElementException e) {
@@ -124,10 +120,11 @@ public class UserController {
 
     @Operation(summary = "비밀번호를 변경합니다.")
     @PutMapping("/change-password")
-    public ResponseEntity<?> changePassword(Authentication authentication,@RequestBody ChangePasswordDto changePasswordDto) {
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDto changePasswordDto) {
         try {
-            String userName = authentication.getName();
-            User user = userServiceImpl.changePassword(userName, changePasswordDto);
+            User user = userServiceImpl.getCurrentUser();
+            String userName = user.getName();
+            userServiceImpl.changePassword(userName, changePasswordDto);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

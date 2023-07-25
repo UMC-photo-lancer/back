@@ -181,28 +181,27 @@ public class UserServiceImpl {
         String userName = existingUser.getName();
         return JwtUtil.createJwt(userName, secretKey,expireMs);
     }
-    public User changePassword(String userName, ChangePasswordDto changePasswordDto) {
+    public void changePassword(String userName, ChangePasswordDto changePasswordDto) {
             User user = userRepository.findByName(userName)
                     .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
-
             if (passwordEncoder.matches(changePasswordDto.getNewPassword(), user.getPassword())){
                 throw new IllegalArgumentException("입력한 비밀번호가 이전 비밀번호와 같습니다.");
             }
             if (!changePasswordDto.getNewPassword().equals(changePasswordDto.getNewAgainPassword())) {
                 throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
             }
-//            user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
-            user.setPassword(changePasswordDto.getNewPassword());
-            return userRepository.save(user);
+            user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+            userRepository.save(user);
     }
     public User getCurrentUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || authentication.getPrincipal().equals("anonymousUser")) {
+        if (authentication == null) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED, "로그인 되지 않았습니다."
             );
         }
-        return (User) authentication.getPrincipal();
+        String userName = authentication.getName();
+        User user = findUserByUserName(userName);
+        return user;
     }
 }
