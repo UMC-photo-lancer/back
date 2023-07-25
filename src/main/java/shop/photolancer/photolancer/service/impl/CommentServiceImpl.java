@@ -12,6 +12,8 @@ import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.service.CommentService;
 import shop.photolancer.photolancer.web.dto.CommentRequestDto;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
@@ -47,4 +49,10 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(comment);
     }
 
+    @Override
+    public void deleteComment(Long commentId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(()
+                -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다"));
+        commentRepository.delete(comment);
+    }
 }
