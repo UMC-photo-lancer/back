@@ -14,4 +14,13 @@ public class UserResponseDto {
         private String profileUrl;
     }
 
+    @Getter
+    @Builder
+    public static class PostUserDto{
+        private Long id;
+        private Integer level;
+        private String nickname;
+        private String profileUrl;
+    }
+
 }
