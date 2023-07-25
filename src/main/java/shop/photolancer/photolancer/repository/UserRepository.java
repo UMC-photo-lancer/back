@@ -2,6 +2,7 @@ package shop.photolancer.photolancer.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import shop.photolancer.photolancer.domain.User;
+import shop.photolancer.photolancer.domain.enums.SocialType;
 
 import java.util.Optional;
 
@@ -17,4 +18,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByName(String userName);
 
     User findByEmail(String email);
+
+    Optional<User> findBySocialTypeAndSocialId(SocialType socialType, String id);
 }
