@@ -13,7 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import shop.photolancer.photolancer.config.oauth2.handler.OAuth2LoginFailureHandler;
 import shop.photolancer.photolancer.config.oauth2.handler.OAuth2LoginSuccessHandler;
-import shop.photolancer.photolancer.service.impl.CustomOAuth2UserService;
+import shop.photolancer.photolancer.config.oauth2.service.CustomOAuth2UserService;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 
 @Configuration
@@ -36,7 +36,7 @@ public class AuthenticationConfig {
                 .csrf().disable()
                 .cors().and()
                 .authorizeRequests()
-                .antMatchers("/api/v1/users/join","/api/v1/users/login","/api/v1/users/find-id").permitAll() // join과 login은 언제나 가능해야 하기 때문
+                .antMatchers("/api/v1/users/join","/api/v1/users/login","/api/v1/users/find-id","/api/v1/users/find-pw").permitAll() // join과 login은 언제나 가능해야 하기 때문
                 .antMatchers(HttpMethod.POST,"/api/v1/**").authenticated() // 위의 두가지를 제외한 모든 포스트 요청을 인증필요로 막아놓음, 두번째 파라미터에 api작성가능
 //                .requestMatchers("/api/v1/users/password").authenticated()
                 .and()
