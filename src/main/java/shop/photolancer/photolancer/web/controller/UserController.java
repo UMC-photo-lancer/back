@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.*;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.UserStatus;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
-import shop.photolancer.photolancer.web.dto.ChangePasswordDto;
-import shop.photolancer.photolancer.web.dto.UserJoinRequestDto;
-import shop.photolancer.photolancer.web.dto.UserLoginDto;
-import shop.photolancer.photolancer.web.dto.UserUpdateRequestDto;
+import shop.photolancer.photolancer.web.dto.*;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.regex.Pattern;
+
 @Api(tags = "사용자 관련 API")
 @RestController
 @RequiredArgsConstructor
@@ -142,5 +142,21 @@ public class UserController {
         }catch (AuthenticationCredentialsNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    @Operation(summary = "비밀번호를 찾습니다.")
+    @PostMapping(value = "find-pw")
+    public ResponseEntity<?> findPassword(@RequestParam("memberEmail") String memberEmail){
+        Map<String, Object> validResult = new HashMap<>();
+
+        if(!Pattern.matches("^[a-zA-Z0-9+-\\_.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$", memberEmail)) {
+            validResult.put("valid_email", "올바르지 않은 이메일 형식입니다.");
+            return new ResponseEntity<>(validResult, HttpStatus.BAD_REQUEST);
+        }
+        MailDTO mailDto = userServiceImpl.createMailAndChangePassword(memberEmail);
+        userServiceImpl.mailSend(mailDto);
+        validResult.put("success", "메일이 성공적으로 전송되었습니다.");
+
+        return new ResponseEntity<>(validResult, HttpStatus.OK);
     }
 }

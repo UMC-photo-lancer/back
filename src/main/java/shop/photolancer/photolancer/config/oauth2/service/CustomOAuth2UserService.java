@@ -1,4 +1,4 @@
-package shop.photolancer.photolancer.service.impl;
+package shop.photolancer.photolancer.config.oauth2.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

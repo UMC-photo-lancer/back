@@ -44,3 +44,6 @@ UserServiceDebug.java
 
 ### application-oauth.yml ###
 application-oauth.yml
+
+### mail.yml ###
+application-mail.yml
