@@ -32,7 +32,7 @@ public class UserController {
     // 3. 회원가입(이름,이메일,비밀번호,비밀번호확인) -> done
     // 4. 비밀번호 찾기 -> done
     // 5. 회원정보 수정 (닉네임 -> Null일 경우 자기 닉네임,소개,북마크 설정) -> done/bookmark연동 필요
-    // 6. 유저 Level,point, 닉네임, 한줄소개, 관심 키워드, 팔로워,포스트, 팔로잉, 타이틀 반환
+    // 6. 유저 Level,point, 닉네임, 한줄소개, 관심 키워드, 팔로워,포스트, 팔로잉, 타이틀 반환 -> 팔로워, 포스트수, 팔로잉 수, 타이틀 수정 필요
     // 7. 회원 탈퇴 -> done
     // 8. 유저 검색(nikname기반 검색 포스트 개수,팔로워수, 팔로잉 수, 한줄 소개 관심키워드 보여줌)
     // 9. 아이디 찾기 -> done
@@ -172,13 +172,24 @@ public class UserController {
         return new ResponseEntity<>(validResult, HttpStatus.OK);
     }
 
+    @Operation(summary = "유저의 정보를 반환합니다.")
+    @GetMapping(value = "info")
+    public ResponseEntity<?> getUserInformation(){
+        //Level,point, 닉네임, 한줄소개, 관심 키워드, 팔로워,포스트, 팔로잉, 타이틀 반환
+        // level, point, nickname, profile_url, explane
+        // 팔로워 전체수 반환, 필로잉 전체 수 반환, 포스트 전체 수 반환
+        // 현재 로그인 된 사용자의 이름 (아이디) 을 가지고 옵니다.
+        User user = userServiceImpl.getCurrentUser();
 
+        // UserInfoResponse DTO를 생성합니다.
+        UserInfoResponseDto userInfoResponse = new UserInfoResponseDto();
+        userInfoResponse.setLevel(user.getLevel());
+        userInfoResponse.setPoint(user.getPoint());
+        userInfoResponse.setNickname(user.getNickname());
+        userInfoResponse.setProfileUrl(user.getProfileUrl());
+        userInfoResponse.setExplane(user.getExplane());
 
-//    @Operation(summary = "유저의 정보를 반환합니다.")
-//    @GetMapping(value = "info")
-//    public ResponseEntity<?> getUserInformation(){
-//        //Level,point, 닉네임, 한줄소개, 관심 키워드, 팔로워,포스트, 팔로잉, 타이틀 반환
-//        // level, point, nickname, profile_url, explane,
-//        // 팔로워 전체수 반환, 필로잉 전체 수 반환, 포스트 전체 수 반환
-//    }
+        // DTO를 리턴합니다.
+        return ResponseEntity.ok(userInfoResponse);
+    }
 }
