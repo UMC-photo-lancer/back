@@ -25,7 +25,7 @@ public class UserJoinRequestDto {
     private String name;
 
     @NotBlank(message = "아이디는 필수 입력 값입니다.")
-    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "아이디는 영문과 숫자의 조합이어야 합니다.")
+    @Pattern(regexp = "^[a-zA-Z0-9]{8,15}$", message = "아이디는 8자 이상 15자 이하의 영문과 숫자의 조합이어야 합니다.")
     private String user_id;
 
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
