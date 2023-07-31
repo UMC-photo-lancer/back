@@ -26,10 +26,7 @@ import shop.photolancer.photolancer.web.dto.UserJoinRequestDto;
 import shop.photolancer.photolancer.web.dto.UserUpdateRequestDto;
 
 import javax.transaction.Transactional;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
@@ -145,7 +142,18 @@ public class UserServiceImpl {
         if(user.getStatus().equals(UserStatus.INACTIVE)) {
             throw new IllegalArgumentException("해당 사용자는 탈퇴한 사용자입니다.");
         }
-        return user.getUserId();
+        String userId = user.getUserId();
+        // 사용자 아이디 뒷 4자리를 *로 바꿔서 보내야함
+        if(userId.length() <= 4) {
+            // 사용자 ID가 4자리 이하인 경우 전체를 *로 변경
+            char[] asterisks = new char[userId.length()];
+            Arrays.fill(asterisks, '*');
+            return new String(asterisks);
+        } else {
+            // 사용자 아이디 뒷 4자리를 *로 바꿈
+            String front = userId.substring(0, userId.length() - 4);
+            return front + "****";
+        }
     }
 
     //임시 비밀번호로 업데이트
@@ -223,6 +231,21 @@ public class UserServiceImpl {
         mailDto.setMessage("안녕하세요. Photo Lancer 임시비밀번호 안내 관련 이메일 입니다." + " 회원님의 임시 비밀번호는 "
                 + tmpPw + " 입니다." + "로그인 후에 비밀번호를 변경을 해주세요");
         updatePassword(tmpPw,memberEmail);
+        return mailDto;
+    }
+
+    public MailDTO createMailAndFindId(String name, String email) {
+        User user = userRepository.findByNameAndEmail(name, email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+        if(user.getStatus().equals(UserStatus.INACTIVE)) {
+            throw new IllegalArgumentException("해당 사용자는 탈퇴한 사용자입니다.");
+        }
+        String userId = user.getUserId();
+        MailDTO mailDto = new MailDTO();
+        mailDto.setAddress(email);
+        mailDto.setTitle("Photo Lancer 아이디 안내 이메일 입니다.");
+        mailDto.setMessage("안녕하세요. Photo Lancer 아이디 안내 관련 이메일 입니다." + " 회원님의 아이디는 "
+                + userId + " 입니다.");
         return mailDto;
     }
 
