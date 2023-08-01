@@ -30,6 +30,8 @@ public class ResponseMessage {
     public static final String POST_UPLOAD_SUCCESS = "포스트 업로드 성공";
     public static final String POST_LIKE_SUCCESS = "포스트 좋아요 성공";
 
+    public static final String POST_DELETE_SUCCESS = "포스트 삭제 성공";
+
     // notice
     public static final String NOTICE_UPLOAD_SUCCESS = "공지 업로드 성공";
 
@@ -38,4 +40,5 @@ public class ResponseMessage {
     public static final String RECOMMENT_UPLOAD_SUCCESS = "대댓글 업로드 성공";
     public static final String COMMENT_DELETE_SUCCESS = "댓글 삭제 성공";
     public static final String RECOMMENT_DELETE_SUCCESS = "대댓글 삭제 성공";
+
 }

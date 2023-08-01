@@ -18,7 +18,7 @@ public class PostImage {
     @Column(nullable = false)
     private String uri;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 }

@@ -5,7 +5,8 @@ import shop.photolancer.photolancer.domain.mapping.PostImage;
 
 import java.util.List;
 
-public interface ImgRepository extends JpaRepository<PostImage, Long> {
+public interface PostImgRepository extends JpaRepository<PostImage, Long> {
     List<PostImage> findByPostId(Long postId);
 
+    void deleteByPostId(Long postId);
 }

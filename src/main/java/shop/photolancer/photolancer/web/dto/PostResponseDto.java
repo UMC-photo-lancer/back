@@ -27,5 +27,4 @@ public class PostResponseDto {
         private boolean isSale;
 //        private User user;
     }
-
 }
