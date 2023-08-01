@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shop.photolancer.photolancer.converter.ChatConverter;
 import shop.photolancer.photolancer.domain.ChatRoom;
 import shop.photolancer.photolancer.domain.Message;
 import shop.photolancer.photolancer.domain.User;
@@ -14,6 +15,7 @@ import shop.photolancer.photolancer.repository.ChatRepository;
 import shop.photolancer.photolancer.repository.MessageRepository;
 import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.service.ChatService;
+import shop.photolancer.photolancer.web.dto.MessageDto;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -26,6 +28,7 @@ public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
+    private final ChatConverter chatConverter;
 
     //팔로잉 채팅 목록 불러오기
     @Override
@@ -82,6 +85,19 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public List<Message> getChatHistory() {
         return chatHistory;
+    }
+
+    @Override
+    @Transactional
+    public MessageDto saveMessage(MessageDto messageDTO) {
+        // DTO를 Entity로 변환
+        Message message = chatConverter.toEntity(messageDTO);
+
+        // Entity를 저장
+        Message savedMessage = messageRepository.save(message);
+
+        // 저장된 Entity를 다시 DTO로 변환하여 반환
+        return chatConverter.toDTO(savedMessage);
     }
 
 }

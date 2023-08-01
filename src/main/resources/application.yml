@@ -28,9 +28,6 @@ spring:
     multipart:
       max-file-size: 50MB
       max-request-size: 50MB
-  redis:
-    host: ${REDIS_HOST}
-    port: ${REDIS_PORT}
   profiles:
     include:
       - jwt
@@ -56,3 +53,7 @@ logging:
       amazonaws:
         util:
           EC2MetadataUtils: ERROR
+
+security:
+  headers:
+    frame: false
