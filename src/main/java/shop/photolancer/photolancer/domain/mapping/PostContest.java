@@ -1,5 +1,6 @@
 package shop.photolancer.photolancer.domain.mapping;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import shop.photolancer.photolancer.domain.Contest;
 import shop.photolancer.photolancer.domain.Post;
