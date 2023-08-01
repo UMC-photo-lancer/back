@@ -21,12 +21,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
-    private final ImgRepository imgRepository;
+    private final PostImgRepository postImgRepository;
     private final PostConverter postConverter;
     private final BookMarkServiceImpl bookmarkService;
     private final PostBookmarkRepository postBookmarkRepository;
     private final UserRepository userRepository;
     private final PostLikeRepository postLikeRepository;
+
 
 
     @Override
@@ -37,7 +38,7 @@ public class PostServiceImpl implements PostService {
         postRepository.save(post);
         for (String imgUrl : imgPaths) {
             PostImage postImage = postConverter.toPostImage(imgUrl, post);
-            imgRepository.save(postImage);
+            postImgRepository.save(postImage);
         }
         for (String bookmarkName : bookmarkList) {
             Bookmark bookmark = bookmarkService.createBookmark(bookmarkName);
@@ -51,7 +52,7 @@ public class PostServiceImpl implements PostService {
     public PostResponseDto.PostDetailDto searchById(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(()
                 -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
-        List<PostImage> postImageList = imgRepository.findByPostId(postId);
+        List<PostImage> postImageList = postImgRepository.findByPostId(postId);
         List<String> postImageUri = new ArrayList<>();
         List<PostBookmark> postBookmarkList = postBookmarkRepository.findByPostIdWithBookmark(postId);
         List<String> postBookmarkNameList = new ArrayList<>();
@@ -84,5 +85,10 @@ public class PostServiceImpl implements PostService {
         }catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    @Override
+    public void deletePost(Long postId) {
+        postRepository.deleteById(postId);
     }
 }

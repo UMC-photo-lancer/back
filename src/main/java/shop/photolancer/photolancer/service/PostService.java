@@ -12,4 +12,6 @@ public interface PostService {
     PostResponseDto.PostDetailDto searchById(Long postId);
 
     void updateLike(Long postId, Long userId);
+
+    void deletePost(Long postId);
 }

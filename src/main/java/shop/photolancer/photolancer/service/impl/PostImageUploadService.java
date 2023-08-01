@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import shop.photolancer.photolancer.domain.mapping.PostImage;
+import shop.photolancer.photolancer.repository.PostImgRepository;
 import shop.photolancer.photolancer.service.S3UploadService;
 
 import java.io.IOException;
@@ -15,6 +17,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +25,7 @@ public class PostImageUploadService implements S3UploadService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
     private final AmazonS3 amazonS3;
+    private final PostImgRepository postImgRepository;
     @Override
     public List<String> upload(List<MultipartFile> multipartFile) {
         List<String> imgUrlList = new ArrayList<>();
@@ -48,6 +52,22 @@ public class PostImageUploadService implements S3UploadService {
         return UUID.randomUUID().toString().concat(getFileExtension(fileName));
     }
 
+    // file 삭제
+    public void deleteFile(Long postId) {
+        try {
+                List<PostImage> postImages  = postImgRepository.findByPostId(postId);
+                List<String> postImageUriList = postImages.stream().map(PostImage::getUri).collect(Collectors.toList());
+
+                for (String p : postImageUriList) {
+                    String fileName = p.substring(p.lastIndexOf('/' ) + 1);
+                    amazonS3.deleteObject(bucket+"/post/image", fileName);
+                }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
     private String getFileExtension(String fileName) {
         if (fileName.length() == 0) {
 
@@ -65,4 +85,5 @@ public class PostImageUploadService implements S3UploadService {
         }
         return fileName.substring(fileName.lastIndexOf("."));
     }
+
 }
