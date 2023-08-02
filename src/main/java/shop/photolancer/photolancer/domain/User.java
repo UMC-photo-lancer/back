@@ -65,10 +65,10 @@ public class User extends BaseEntity {
     private Double experience;
 
     private String profileUrl;
-
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
+    private String title;
     public void updatePoint(Integer amount){
         if (this.point == null){
             this.point = 0;

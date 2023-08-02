@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import shop.photolancer.photolancer.config.Login.utils.JwtUtil;
 import shop.photolancer.photolancer.domain.User;
@@ -20,13 +21,12 @@ import shop.photolancer.photolancer.domain.enums.Purpose;
 import shop.photolancer.photolancer.domain.enums.Role;
 import shop.photolancer.photolancer.domain.enums.UserStatus;
 import shop.photolancer.photolancer.repository.UserRepository;
-import shop.photolancer.photolancer.web.dto.ChangePasswordDto;
-import shop.photolancer.photolancer.web.dto.MailDTO;
-import shop.photolancer.photolancer.web.dto.UserJoinRequestDto;
-import shop.photolancer.photolancer.web.dto.UserUpdateRequestDto;
+import shop.photolancer.photolancer.web.dto.*;
 
 import javax.transaction.Transactional;
+import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -260,4 +260,27 @@ public class UserServiceImpl {
         System.out.println("message"+message);
         javaMailSender.send(message);
     }
+
+//    public void uploadProfile(String bucketName, String userName, MultipartFile file) {
+//        try {
+//            String originalFileName = file.getOriginalFilename();
+//            String savedFileName = UUID.randomUUID().toString() + "_" + originalFileName;
+//
+////            String fileUrl = s3Service.uploadFile(savedFileName); // S3에 파일 업로드 후 URL 반환
+//
+////            User save_profile = UserRepository.save(
+////                    User.builder()
+////                            .profile_url(fileUrl)
+////                            .build();
+////            )
+////            File fileUploadEntity = new File(originalFileName, savedFileName, fileUrl);
+////            return fileUrl;
+//        } catch (IOException e) {
+//            return "Error occurred while uploading file.";
+//        }
+//    }
+
+//    public List<UserListRequestDto.Info> getaAllUser() {
+//        return userRepository.map(UserInfoResponseDto.Info::of).collect(Collectors.toList())
+//    }
 }
