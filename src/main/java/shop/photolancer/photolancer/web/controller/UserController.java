@@ -1,6 +1,7 @@
 package shop.photolancer.photolancer.web.controller;
 
 
+import com.amazonaws.services.s3.AmazonS3;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.UserStatus;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
@@ -37,9 +39,11 @@ public class UserController {
     // 8. 유저 검색(nikname기반 검색 포스트 개수,팔로워수, 팔로잉 수, 한줄 소개 관심키워드 보여줌)
     // 9. 아이디 찾기 -> done
     // 10. 비밀번호 변경 -> done
-    // 11. 유저 프로필 설정
+    // 11. 유저 프로필 사진 설정
+    // 12. 유저 타이틀 수정 -> done
 
     private final UserServiceImpl userServiceImpl;
+    private AmazonS3 s3Client;
 
     // 휴면 계정, 즉 탈퇴한 계정일 경우의 회원가입 얘기하기
     @Operation(summary = "회원가입을 진행합니다.")
@@ -120,7 +124,7 @@ public class UserController {
     }
 
     @Operation(summary = "유저의 full 아이디를 이메일을 통해 반환합니다.")
-    @PostMapping(value = "find-id-mail")
+    @PostMapping(value = "/find-id-mail")
     public ResponseEntity<?> findPassword(@RequestParam String name, @RequestParam String email){
         Map<String, Object> validResult = new HashMap<>();
         MailDTO mailDto = userServiceImpl.createMailAndFindId(name,email);
@@ -157,7 +161,7 @@ public class UserController {
     }
 
     @Operation(summary = "비밀번호를 찾습니다.")
-    @PostMapping(value = "find-pw")
+    @PostMapping(value = "/find-pw")
     public ResponseEntity<?> findPassword(@RequestParam("memberEmail") String memberEmail){
         Map<String, Object> validResult = new HashMap<>();
 
@@ -173,7 +177,7 @@ public class UserController {
     }
 
     @Operation(summary = "유저의 정보를 반환합니다.")
-    @GetMapping(value = "info")
+    @GetMapping(value = "/info")
     public ResponseEntity<?> getUserInformation(){
         //Level,point, 닉네임, 한줄소개, 관심 키워드, 팔로워,포스트, 팔로잉, 타이틀 반환
         // level, point, nickname, profile_url, explane
@@ -188,8 +192,32 @@ public class UserController {
         userInfoResponse.setNickname(user.getNickname());
         userInfoResponse.setProfileUrl(user.getProfileUrl());
         userInfoResponse.setExplane(user.getExplane());
+        userInfoResponse.setTitle(user.getTitle());
 
         // DTO를 리턴합니다.
         return ResponseEntity.ok(userInfoResponse);
     }
+
+    @Operation(summary = "유저의 타이틀을 수정합니다.")
+    @PostMapping(value = "/edit-title")
+    public ResponseEntity<?> editTitle(@RequestParam("memberTitle") String memberTitle){
+        User user = userServiceImpl.getCurrentUser();
+        user.setTitle(memberTitle);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+//    @Operation(summary = "전체유저를 반환합니다.")
+//    @GetMapping(value = "/list/all-user")
+//    public ResponseEntity<List<UserListRequestDto>> getAllUser(){
+//        return ResponseEntity.ok(userServiceImpl.getaAllUser());
+//    }
+
+//    @Operation(summary = "유저의 프로필 사진을 수정합니다.")
+//    @PostMapping(value = "/{bucketName}/uploadProfile")
+//    public ResponseEntity<?> uploadProfile(@PathVariable("bucketName") String bucketName,@RequestPart("file") MultipartFile file){
+//        User user = userServiceImpl.getCurrentUser();
+//        String userName = user.getName();
+//        userServiceImpl.uploadProfile(bucketName,userName,file);
+//        return ResponseEntity.ok().build();
+//    }
 }
