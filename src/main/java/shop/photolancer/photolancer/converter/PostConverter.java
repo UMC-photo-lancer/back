@@ -72,10 +72,12 @@ public class PostConverter {
                 .build();
     }
     // awards에 보이는 페이지
-    public PostResponseDto.PostAwardsDto toPostAwardsDto(Contest contest, List<PostResponseDto.PostContestDto> postContests) {
+    public PostResponseDto.PostAwardsDto toPostAwardsDto(Contest contest, List<PostResponseDto.PostContestDto> postContests,
+                                                         List<Contest> contestList) {
         return PostResponseDto.PostAwardsDto.builder()
                 .contest(contest)
                 .postContests(postContests)
+                .contestList(contestList)
                 .build();
     }
     // postContest의 dto

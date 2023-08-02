@@ -46,7 +46,7 @@ public class ExploreServiceImpl implements ExploreService {
         return recentPhotoPage;
     }
 
-    // 대회 get요청
+     // 대회 get요청
     @Override
     public PostResponseDto.PostAwardsDto photoAwards() {
         Contest contest = contestRepository.findById(3L).orElseThrow();
@@ -56,5 +56,17 @@ public class ExploreServiceImpl implements ExploreService {
                 .map(recentPhoto -> postConverter.toPostContestDto(recentPhoto, postConverter.toPostList(recentPhoto.getPost())))
                 .toList();
         return postConverter.toPostAwardsDto(contest, postContestList);
+    }
+
+    @Override
+    public PostResponseDto.PostAwardsDto chagePhotoAward(Long id) {
+        Contest contest = contestRepository.findById(id).orElseThrow();
+        List<Contest> contestList = contestRepository.findAll();
+        List<Ranked> ranked = Arrays.asList(Ranked.FIRST, Ranked.SECOND, Ranked.THIRD);
+        List<PostContest> postContests = postContestRepository.findByContestAndRankedIn(contest, ranked);
+        List<PostResponseDto.PostContestDto> postContestList = postContests.stream()
+                .map(recentPhoto -> postConverter.toPostContestDto(recentPhoto, postConverter.toPostList(recentPhoto.getPost())))
+                .toList();
+        return postConverter.toPostAwardsDto(contest, postContestList, contestList);
     }
 }

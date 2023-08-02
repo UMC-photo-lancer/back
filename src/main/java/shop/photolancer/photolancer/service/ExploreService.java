@@ -11,4 +11,5 @@ public interface ExploreService {
 
     PostResponseDto.PostAwardsDto photoAwards();
 
+    PostResponseDto.PostAwardsDto chagePhotoAward(Long id);
 }

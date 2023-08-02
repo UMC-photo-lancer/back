@@ -38,6 +38,7 @@ public class PostResponseDto {
     public static class PostAwardsDto {
         private Contest contest;
         private List<PostResponseDto.PostContestDto> postContests;
+        private List<Contest> contestList;
     }
 
     @Getter
