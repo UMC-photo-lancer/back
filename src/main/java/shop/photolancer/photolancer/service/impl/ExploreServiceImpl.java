@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 import shop.photolancer.photolancer.converter.PostConverter;
 import shop.photolancer.photolancer.domain.Contest;
 import shop.photolancer.photolancer.domain.Post;
+import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.Ranked;
 import shop.photolancer.photolancer.domain.mapping.PostContest;
-import shop.photolancer.photolancer.repository.ContestRepository;
-import shop.photolancer.photolancer.repository.PostContestRepository;
-import shop.photolancer.photolancer.repository.PostRepository;
+import shop.photolancer.photolancer.domain.mapping.UserPhoto;
+import shop.photolancer.photolancer.repository.*;
 import shop.photolancer.photolancer.service.ExploreService;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
 
@@ -26,13 +26,27 @@ public class ExploreServiceImpl implements ExploreService {
     private final PostRepository postRepository;
     private final ContestRepository contestRepository;
     private final PostContestRepository postContestRepository;
+    private final UserPhotoRepository userPhotoRepository;
+    private final UserRepository userRepository;
+
     @Override
     public Page<PostResponseDto.PostListDto> hotPhoto(Pageable request) {
         Page<Post> postImageList = postRepository.findAll(request);
 
+        User user = userRepository.findById(1L).orElseThrow(()
+                -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+
         Page<PostResponseDto.PostListDto> hotPhotoPage = postImageList.map(
-                hotPhoto -> postConverter.toPostList(hotPhoto)
-        );
+                hotPhoto -> {
+                    UserPhoto userPhoto = userPhotoRepository.findByUserAndPost(user, hotPhoto);
+                    if (userPhoto == null) {
+                        PostResponseDto.PostListDto postListDto = postConverter.toPostList(hotPhoto, false);
+                        return postListDto;
+                    }
+                    PostResponseDto.PostListDto postListDto = postConverter.toPostList(hotPhoto, true);
+
+                    return postListDto;
+        });
         return hotPhotoPage;
     }
 
@@ -40,9 +54,20 @@ public class ExploreServiceImpl implements ExploreService {
     public Page<PostResponseDto.PostListDto> recentPhoto(Pageable request) {
         Page<Post> postImageList = postRepository.findAll(request);
 
+        User user = userRepository.findById(1L).orElseThrow(()
+                -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+
         Page<PostResponseDto.PostListDto> recentPhotoPage = postImageList.map(
-                recentPhoto -> postConverter.toPostList(recentPhoto)
-        );
+                recentPhoto -> {
+                    UserPhoto userPhoto = userPhotoRepository.findByUserAndPost(user, recentPhoto);
+                    if (userPhoto == null) {
+                        PostResponseDto.PostListDto postListDto = postConverter.toPostList(recentPhoto, false);
+                        return postListDto;
+                    }
+                    PostResponseDto.PostListDto postListDto = postConverter.toPostList(recentPhoto, true);
+
+                    return postListDto;
+                });
         return recentPhotoPage;
     }
 
@@ -51,11 +76,26 @@ public class ExploreServiceImpl implements ExploreService {
     public PostResponseDto.PostAwardsDto photoAwards() {
         Contest contest = contestRepository.findById(1L).orElseThrow();
         List<Contest> contestList = contestRepository.findAll();
+
+        User user = userRepository.findById(1L).orElseThrow(()
+                -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+
         List<Ranked> ranked = Arrays.asList(Ranked.FIRST, Ranked.SECOND, Ranked.THIRD);
         List<PostContest> postContests = postContestRepository.findByContestAndRankedIn(contest, ranked);
+
         List<PostResponseDto.PostContestDto> postContestList = postContests.stream()
-                .map(recentPhoto -> postConverter.toPostContestDto(recentPhoto, postConverter.toPostList(recentPhoto.getPost())))
+                .map(photo -> {
+                    UserPhoto userPhoto = userPhotoRepository.findByUserAndPost(user, photo.getPost());
+
+                    if (userPhoto == null) {
+                        return postConverter.toPostContestDto(photo, postConverter.toPostList(photo.getPost(), false));
+                    }
+
+                    return postConverter.toPostContestDto(photo,postConverter.toPostList(photo.getPost(), true));
+
+                })
                 .toList();
+
         return postConverter.toPostAwardsDto(contest, postContestList, contestList);
     }
 
@@ -65,8 +105,21 @@ public class ExploreServiceImpl implements ExploreService {
         List<Contest> contestList = contestRepository.findAll();
         List<Ranked> ranked = Arrays.asList(Ranked.FIRST, Ranked.SECOND, Ranked.THIRD);
         List<PostContest> postContests = postContestRepository.findByContestAndRankedIn(contest, ranked);
+
+        User user = userRepository.findById(1L).orElseThrow(()
+                -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+
         List<PostResponseDto.PostContestDto> postContestList = postContests.stream()
-                .map(recentPhoto -> postConverter.toPostContestDto(recentPhoto, postConverter.toPostList(recentPhoto.getPost())))
+                .map(photo -> {
+                    UserPhoto userPhoto = userPhotoRepository.findByUserAndPost(user, photo.getPost());
+
+                    if (userPhoto == null) {
+                        return postConverter.toPostContestDto(photo, postConverter.toPostList(photo.getPost(), false));
+                    }
+
+                    return postConverter.toPostContestDto(photo,postConverter.toPostList(photo.getPost(), true));
+
+                })
                 .toList();
         return postConverter.toPostAwardsDto(contest, postContestList, contestList);
     }

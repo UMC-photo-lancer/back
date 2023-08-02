@@ -6,11 +6,9 @@ import shop.photolancer.photolancer.domain.Bookmark;
 import shop.photolancer.photolancer.domain.Contest;
 import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
-import shop.photolancer.photolancer.domain.mapping.PostBookmark;
-import shop.photolancer.photolancer.domain.mapping.PostContest;
-import shop.photolancer.photolancer.domain.mapping.PostImage;
-import shop.photolancer.photolancer.domain.mapping.PostLike;
+import shop.photolancer.photolancer.domain.mapping.*;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
+import shop.photolancer.photolancer.web.dto.UserResponseDto;
 
 import java.util.List;
 
@@ -30,7 +28,8 @@ public class PostConverter {
     }
 
     public PostResponseDto.PostDetailDto toPostDetail(Post post, List<String> postImageUri,
-                                                      List<String> postBookmarkName) {
+                                                      List<String> postBookmarkName,
+                                                       Boolean isUserPhoto) {
         return PostResponseDto.PostDetailDto.builder()
                 .content(post.getContent())
                 .isSale(post.getIsSale())
@@ -38,6 +37,7 @@ public class PostConverter {
                 .point(post.getPoint())
                 .postImages(postImageUri)
                 .bookmarks(postBookmarkName)
+                .isUserPhoto(isUserPhoto)
                 .build();
     }
     public PostImage toPostImage(String uri, Post post) {
@@ -54,7 +54,7 @@ public class PostConverter {
                 .build();
     }
 
-    public PostResponseDto.PostListDto toPostList(Post post) {
+    public PostResponseDto.PostListDto toPostList(Post post, Boolean isUserPhoto) {
         return PostResponseDto.PostListDto.builder()
                 .postId(post.getId())
                 .likeCount(post.getLikeCount())
@@ -62,6 +62,7 @@ public class PostConverter {
                 .thumbNailUri(post.getThumbNailUri())
                 .isSale(post.getIsSale())
 //                .user(postImage.getPost().getUser())
+                .isUserPhoto(isUserPhoto)
                 .build();
     }
 
@@ -86,6 +87,12 @@ public class PostConverter {
                 .post(post)
                 .id(postContest.getId())
                 .ranked(postContest.getRanked())
+                .build();
+    }
+
+    public PostResponseDto.UserPhotoDto toUserPhotoDto(UserPhoto userPhoto) {
+        return PostResponseDto.UserPhotoDto.builder()
+                .id(userPhoto.getId())
                 .build();
     }
 }

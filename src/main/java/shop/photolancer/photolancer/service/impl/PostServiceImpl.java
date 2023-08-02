@@ -9,6 +9,7 @@ import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.mapping.PostBookmark;
 import shop.photolancer.photolancer.domain.mapping.PostImage;
 import shop.photolancer.photolancer.domain.mapping.PostLike;
+import shop.photolancer.photolancer.domain.mapping.UserPhoto;
 import shop.photolancer.photolancer.repository.*;
 import shop.photolancer.photolancer.service.PostService;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
@@ -27,6 +28,7 @@ public class PostServiceImpl implements PostService {
     private final PostBookmarkRepository postBookmarkRepository;
     private final UserRepository userRepository;
     private final PostLikeRepository postLikeRepository;
+    private final UserPhotoRepository userPhotoRepository;
 
 
 
@@ -63,7 +65,16 @@ public class PostServiceImpl implements PostService {
         for (PostBookmark p : postBookmarkList) {
             postBookmarkNameList.add(p.getBookmark().getName());
         }
-        return  postConverter.toPostDetail(post, postImageUri, postBookmarkNameList);
+
+        User user = userRepository.findById(1L).orElseThrow(()
+                -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+
+        UserPhoto userPhoto = userPhotoRepository.findByUserAndPost(user, post);
+        if (userPhoto == null) {
+            return  postConverter.toPostDetail(post, postImageUri, postBookmarkNameList, false);
+        }
+
+        return  postConverter.toPostDetail(post, postImageUri, postBookmarkNameList, true);
     }
 
     @Override
