@@ -3,9 +3,11 @@ package shop.photolancer.photolancer.converter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import shop.photolancer.photolancer.domain.Bookmark;
+import shop.photolancer.photolancer.domain.Contest;
 import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.mapping.PostBookmark;
+import shop.photolancer.photolancer.domain.mapping.PostContest;
 import shop.photolancer.photolancer.domain.mapping.PostImage;
 import shop.photolancer.photolancer.domain.mapping.PostLike;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
@@ -67,6 +69,21 @@ public class PostConverter {
         return PostLike.builder()
                 .user(user)
                 .post(post)
+                .build();
+    }
+    // awards에 보이는 페이지
+    public PostResponseDto.PostAwardsDto toPostAwardsDto(Contest contest, List<PostResponseDto.PostContestDto> postContests) {
+        return PostResponseDto.PostAwardsDto.builder()
+                .contest(contest)
+                .postContests(postContests)
+                .build();
+    }
+    // postContest의 dto
+    public PostResponseDto.PostContestDto toPostContestDto(PostContest postContest, PostResponseDto.PostListDto post) {
+        return PostResponseDto.PostContestDto.builder()
+                .post(post)
+                .id(postContest.getId())
+                .ranked(postContest.getRanked())
                 .build();
     }
 }

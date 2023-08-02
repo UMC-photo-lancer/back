@@ -27,4 +27,9 @@ public class ExploreController {
                                                            Pageable request) {
         return exploreService.recentPhoto(request);
     }
+
+    @GetMapping("/awards")
+    public PostResponseDto.PostAwardsDto photoAwards() {
+        return exploreService.photoAwards();
+    }
 }

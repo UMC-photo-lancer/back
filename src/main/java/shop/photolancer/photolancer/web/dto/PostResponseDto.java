@@ -2,8 +2,13 @@ package shop.photolancer.photolancer.web.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import shop.photolancer.photolancer.domain.Contest;
+import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
+import shop.photolancer.photolancer.domain.enums.Ranked;
+import shop.photolancer.photolancer.domain.mapping.PostContest;
 
+import javax.persistence.*;
 import java.util.List;
 
 public class PostResponseDto {
@@ -26,5 +31,20 @@ public class PostResponseDto {
         private String thumbNailUri;
         private boolean isSale;
 //        private User user;
+    }
+
+    @Getter
+    @Builder
+    public static class PostAwardsDto {
+        private Contest contest;
+        private List<PostResponseDto.PostContestDto> postContests;
+    }
+
+    @Getter
+    @Builder
+    public static class PostContestDto {
+        private Long id;
+        private Ranked ranked;
+        private PostResponseDto.PostListDto post;
     }
 }

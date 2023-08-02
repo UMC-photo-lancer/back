@@ -8,4 +8,7 @@ public interface ExploreService {
     Page<PostResponseDto.PostListDto> hotPhoto(Pageable request);
 
     Page<PostResponseDto.PostListDto> recentPhoto(Pageable request);
+
+    PostResponseDto.PostAwardsDto photoAwards();
+
 }
