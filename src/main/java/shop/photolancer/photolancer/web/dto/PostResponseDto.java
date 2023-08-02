@@ -7,6 +7,7 @@ import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.Ranked;
 import shop.photolancer.photolancer.domain.mapping.PostContest;
+import shop.photolancer.photolancer.domain.mapping.UserPhoto;
 
 import javax.persistence.*;
 import java.util.List;
@@ -21,6 +22,7 @@ public class PostResponseDto {
         private Integer point;
         private List<String> postImages;
         private List<String> bookmarks;
+        private Boolean isUserPhoto;
     }
     @Getter
     @Builder
@@ -31,6 +33,7 @@ public class PostResponseDto {
         private String thumbNailUri;
         private boolean isSale;
 //        private User user;
+        private Boolean isUserPhoto;
     }
 
     @Getter
@@ -47,5 +50,11 @@ public class PostResponseDto {
         private Long id;
         private Ranked ranked;
         private PostResponseDto.PostListDto post;
+    }
+
+    @Getter
+    @Builder
+    public static class UserPhotoDto {
+        private Long id;
     }
 }
