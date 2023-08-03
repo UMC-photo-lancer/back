@@ -41,4 +41,6 @@ public class ResponseMessage {
     public static final String COMMENT_DELETE_SUCCESS = "댓글 삭제 성공";
     public static final String RECOMMENT_DELETE_SUCCESS = "대댓글 삭제 성공";
 
+    //follow, following
+    public static final String FOLLOW_REQUEST_SUCCESS = "팔로우 요청 성공";
 }
