@@ -4,6 +4,8 @@ import io.swagger.models.auth.In;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import java.util.List;
+
 @Builder
 @Setter
 @Getter
@@ -18,4 +20,8 @@ public class UserInfoResponseDto {
     private String profileUrl;
     private String explane;
     private String title;
+    private Integer num_follower;
+    private Integer num_post;
+    private Integer num_following;
+    private List<String> bookmark;
 }

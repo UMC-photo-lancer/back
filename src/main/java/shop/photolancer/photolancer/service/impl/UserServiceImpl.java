@@ -115,8 +115,14 @@ public class UserServiceImpl {
                 .email(userInfo.getEmail())
                 .purpose(Purpose.valueOf(userInfo.getPurpose()))
                 .status(UserStatus.ACTIVE)
-                .role(Role.USER)
+                .role(Role.GUEST)
                 .point(0)
+                .level(1)
+                .num_follower(0)
+                .num_following(0)
+                .num_post(0)
+                .num_notification(0)
+                .isPro(false)
                 .build();
 
         // 사용자 등록

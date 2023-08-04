@@ -34,7 +34,7 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private String refreshToken;
+//    private String refreshToken;
 
     private String socialId;
 
@@ -44,11 +44,11 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Purpose purpose;
 
-    @Enumerated(EnumType.STRING)
-    private Ability ability;
+//    @Enumerated(EnumType.STRING)
+//    private Ability ability;
 
-    @Enumerated(EnumType.STRING)
-    private Sex sex;
+//    @Enumerated(EnumType.STRING)
+//    private Sex sex;
 
     private String explane;
 
@@ -57,6 +57,7 @@ public class User extends BaseEntity {
 
     @Column(columnDefinition = "Boolean default false")
     private Boolean isPro;
+    // 15레벨 이상일때 pro
 
     @Column(columnDefinition = "Integer default 0")
     private Integer point;
@@ -65,8 +66,17 @@ public class User extends BaseEntity {
     private Double experience;
 
     private String profileUrl;
+
     @Enumerated(EnumType.STRING)
     private UserStatus status;
+
+    private Integer num_following;
+
+    private Integer num_follower;
+
+    private Integer num_post;
+
+    private Integer num_notification;
 
     private String title;
     public void updatePoint(Integer amount){
@@ -79,7 +89,7 @@ public class User extends BaseEntity {
         this.password = passwordEncoder.encode(this.password);
     }
 
-    public void updateRefreshToken(String updateRefreshToken) {
-        this.refreshToken = updateRefreshToken;
-    }
+//    public void updateRefreshToken(String updateRefreshToken) {
+//        this.refreshToken = updateRefreshToken;
+//    }
 }
