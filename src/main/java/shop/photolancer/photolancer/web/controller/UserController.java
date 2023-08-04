@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.UserStatus;
+import shop.photolancer.photolancer.domain.mapping.UserBookmark;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 import shop.photolancer.photolancer.web.dto.*;
 
@@ -41,6 +42,9 @@ public class UserController {
     // 10. 비밀번호 변경 -> done
     // 11. 유저 프로필 사진 설정
     // 12. 유저 타이틀 수정 -> done
+    // 13. level, 경험치 계산 하기
+    // 14. 공지 관리용 관리자 모드 만들기
+    // 15. 북마크 -> user bookmark 만들기!!!
 
     private final UserServiceImpl userServiceImpl;
     private AmazonS3 s3Client;
@@ -193,6 +197,10 @@ public class UserController {
         userInfoResponse.setProfileUrl(user.getProfileUrl());
         userInfoResponse.setExplane(user.getExplane());
         userInfoResponse.setTitle(user.getTitle());
+        userInfoResponse.setNum_follower(user.getNum_follower());
+        userInfoResponse.setNum_post(user.getNum_post());
+        userInfoResponse.setNum_following(user.getNum_following());
+//        userInfoResponse.setBookmark(UserBookmark.);
 
         // DTO를 리턴합니다.
         return ResponseEntity.ok(userInfoResponse);
@@ -206,7 +214,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-//    @Operation(summary = "전체유저를 반환합니다.")
+//    @Operation(summary = "전체유저를 이름을 반환합니다.")
 //    @GetMapping(value = "/list/all-user")
 //    public ResponseEntity<List<UserListRequestDto>> getAllUser(){
 //        return ResponseEntity.ok(userServiceImpl.getaAllUser());

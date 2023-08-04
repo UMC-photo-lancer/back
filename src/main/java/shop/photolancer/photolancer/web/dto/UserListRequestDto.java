@@ -9,28 +9,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 import shop.photolancer.photolancer.domain.User;
-
-@Schema(description = "전체유저 반환")
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@Schema(description = "유저 전체 이름 반환")
 public class UserListRequestDto {
-    @Builder
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    static public class Info {
-        private Integer num_follower;
-        private Integer num_post;
-        private Integer num_following;
-        private String explane;
-        private List<String> bookmark;
-    }
 
-    public static UserListRequestDto.Info of (User user){
-        return Info.builder()
-//                .bookmark()
-//                .num_follower()
-//                .num_following()
-//                .explane(user.getExplane())
-//                .bookmark()
-                .build();
-    }
 }
