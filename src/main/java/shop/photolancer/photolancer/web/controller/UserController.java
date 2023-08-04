@@ -16,13 +16,13 @@ import org.springframework.web.multipart.MultipartFile;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.UserStatus;
 import shop.photolancer.photolancer.domain.mapping.UserBookmark;
+import shop.photolancer.photolancer.service.impl.UserBookmarkServiceImpl;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 import shop.photolancer.photolancer.web.dto.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Api(tags = "사용자 관련 API")
 @RestController
@@ -47,6 +47,7 @@ public class UserController {
     // 15. 북마크 -> user bookmark 만들기!!!
 
     private final UserServiceImpl userServiceImpl;
+    private final UserBookmarkServiceImpl userBookmarkServiceImpl;
     private AmazonS3 s3Client;
 
     // 휴면 계정, 즉 탈퇴한 계정일 경우의 회원가입 얘기하기
@@ -200,7 +201,12 @@ public class UserController {
         userInfoResponse.setNum_follower(user.getNum_follower());
         userInfoResponse.setNum_post(user.getNum_post());
         userInfoResponse.setNum_following(user.getNum_following());
-//        userInfoResponse.setBookmark(UserBookmark.);
+        List<BookmarkDto> bookmarkDtos = userBookmarkServiceImpl.findBookmarksByUser(user);
+        List<String> bookmarkContents = new ArrayList<>();
+        for (BookmarkDto bookmarkDto : bookmarkDtos) {
+            bookmarkContents.addAll(bookmarkDto.getContent());
+        }
+        userInfoResponse.setBookmark(bookmarkContents);
 
         // DTO를 리턴합니다.
         return ResponseEntity.ok(userInfoResponse);
