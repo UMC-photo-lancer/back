@@ -16,9 +16,9 @@ import java.util.List;
 @Component
 public class PostConverter {
     public Post toPost(String content, Integer likeCount, Integer point,
-                       Boolean isSale, String thumbNailUri) {
+                       Boolean isSale, String thumbNailUri, User user) {
         return Post.builder()
-//                .user(user)
+                .user(user)
                 .content(content)
                 .likeCount(likeCount)
                 .isSale(isSale)
