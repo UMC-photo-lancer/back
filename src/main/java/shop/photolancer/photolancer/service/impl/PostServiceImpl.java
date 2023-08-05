@@ -23,10 +23,11 @@ public class PostServiceImpl implements PostService {
     private final PostConverter postConverter;
     private final BookMarkServiceImpl bookmarkService;
     private final PostBookmarkRepository postBookmarkRepository;
-    private final UserRepository userRepository;
     private final PostLikeRepository postLikeRepository;
     private final UserPhotoRepository userPhotoRepository;
     private final SavedPostRepository savedPostRepository;
+    private final PostLikeServiceImpl postLikeService;
+    private final SavedPostServiceImpl savedPostService;
 
 
 
@@ -50,13 +51,15 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional(readOnly = true)
-    public PostResponseDto.PostDetailDto searchById(Long postId) {
+    public PostResponseDto.PostDetailDto searchById(Long postId, User user) {
         Post post = postRepository.findById(postId).orElseThrow(()
                 -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
         List<PostImage> postImageList = postImgRepository.findByPostId(postId);
         List<String> postImageUri = new ArrayList<>();
         List<PostBookmark> postBookmarkList = postBookmarkRepository.findByPostIdWithBookmark(postId);
         List<String> postBookmarkNameList = new ArrayList<>();
+        Boolean savedPost = savedPostService.isSavedPost(post, user);
+        Boolean postLike = postLikeService.likeStatus(post, user);
 
         for (PostImage p : postImageList) {
             postImageUri.add(p.getUri());
@@ -65,15 +68,12 @@ public class PostServiceImpl implements PostService {
             postBookmarkNameList.add(p.getBookmark().getName());
         }
 
-        User user = userRepository.findById(1L).orElseThrow(()
-                -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
-
         UserPhoto userPhoto = userPhotoRepository.findByUserAndPost(user, post);
         if (userPhoto == null) {
-            return  postConverter.toPostDetail(post, postImageUri, postBookmarkNameList, false);
+            return  postConverter.toPostDetail(post, postImageUri, postBookmarkNameList, false, postLike, savedPost);
         }
 
-        return  postConverter.toPostDetail(post, postImageUri, postBookmarkNameList, true);
+        return  postConverter.toPostDetail(post, postImageUri, postBookmarkNameList, true, postLike, savedPost);
     }
 
     @Override

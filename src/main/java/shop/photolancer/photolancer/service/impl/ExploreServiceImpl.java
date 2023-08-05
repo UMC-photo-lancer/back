@@ -12,6 +12,7 @@ import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.Ranked;
 import shop.photolancer.photolancer.domain.mapping.PostContest;
+import shop.photolancer.photolancer.domain.mapping.SavedPost;
 import shop.photolancer.photolancer.domain.mapping.UserPhoto;
 import shop.photolancer.photolancer.repository.*;
 import shop.photolancer.photolancer.service.ExploreService;
@@ -30,6 +31,8 @@ public class ExploreServiceImpl implements ExploreService {
     private final PostContestRepository postContestRepository;
     private final UserPhotoRepository userPhotoRepository;
     private final UserServiceImpl userService;
+    private final SavedPostServiceImpl savedPostService;
+    private final PostLikeServiceImpl postLikeService;
 
     @Override
     public Page<PostResponseDto.PostListDto> hotPhoto(Pageable request) {
@@ -39,12 +42,14 @@ public class ExploreServiceImpl implements ExploreService {
 
         Page<PostResponseDto.PostListDto> hotPhotoPage = postImageList.map(
                 hotPhoto -> {
+                    Boolean savedPost = savedPostService.isSavedPost(hotPhoto, user);
+                    Boolean likeStatus = postLikeService.likeStatus(hotPhoto, user);
                     UserPhoto userPhoto = userPhotoRepository.findByUserAndPost(user, hotPhoto);
                     if (userPhoto == null) {
-                        PostResponseDto.PostListDto postListDto = postConverter.toPostList(hotPhoto, false);
+                        PostResponseDto.PostListDto postListDto = postConverter.toPostList(hotPhoto, false, savedPost, likeStatus);
                         return postListDto;
                     }
-                    PostResponseDto.PostListDto postListDto = postConverter.toPostList(hotPhoto, true);
+                    PostResponseDto.PostListDto postListDto = postConverter.toPostList(hotPhoto, true,  savedPost, likeStatus);
 
                     return postListDto;
         });
@@ -59,12 +64,14 @@ public class ExploreServiceImpl implements ExploreService {
 
         Page<PostResponseDto.PostListDto> recentPhotoPage = postImageList.map(
                 recentPhoto -> {
+                    Boolean savedPost = savedPostService.isSavedPost(recentPhoto, user);
+                    Boolean likeStatus = postLikeService.likeStatus(recentPhoto, user);
                     UserPhoto userPhoto = userPhotoRepository.findByUserAndPost(user, recentPhoto);
                     if (userPhoto == null) {
-                        PostResponseDto.PostListDto postListDto = postConverter.toPostList(recentPhoto, false);
+                        PostResponseDto.PostListDto postListDto = postConverter.toPostList(recentPhoto, false, savedPost, likeStatus);
                         return postListDto;
                     }
-                    PostResponseDto.PostListDto postListDto = postConverter.toPostList(recentPhoto, true);
+                    PostResponseDto.PostListDto postListDto = postConverter.toPostList(recentPhoto, true, savedPost, likeStatus);
 
                     return postListDto;
                 });
@@ -84,13 +91,15 @@ public class ExploreServiceImpl implements ExploreService {
 
         List<PostResponseDto.PostContestDto> postContestList = postContests.stream()
                 .map(photo -> {
+                    Boolean savedPost = savedPostService.isSavedPost(photo.getPost(), user);
+                    Boolean likeStatus = postLikeService.likeStatus(photo.getPost(), user);
                     UserPhoto userPhoto = userPhotoRepository.findByUserAndPost(user, photo.getPost());
 
                     if (userPhoto == null) {
-                        return postConverter.toPostContestDto(photo, postConverter.toPostList(photo.getPost(), false));
+                        return postConverter.toPostContestDto(photo, postConverter.toPostList(photo.getPost(), false, savedPost, likeStatus));
                     }
 
-                    return postConverter.toPostContestDto(photo,postConverter.toPostList(photo.getPost(), true));
+                    return postConverter.toPostContestDto(photo,postConverter.toPostList(photo.getPost(), true, savedPost, likeStatus));
 
                 })
                 .toList();
@@ -109,13 +118,15 @@ public class ExploreServiceImpl implements ExploreService {
 
         List<PostResponseDto.PostContestDto> postContestList = postContests.stream()
                 .map(photo -> {
+                    Boolean savedPost = savedPostService.isSavedPost(photo.getPost(), user);
+                    Boolean likeStatus = postLikeService.likeStatus(photo.getPost(), user);
                     UserPhoto userPhoto = userPhotoRepository.findByUserAndPost(user, photo.getPost());
 
                     if (userPhoto == null) {
-                        return postConverter.toPostContestDto(photo, postConverter.toPostList(photo.getPost(), false));
+                        return postConverter.toPostContestDto(photo, postConverter.toPostList(photo.getPost(), false, savedPost, likeStatus));
                     }
 
-                    return postConverter.toPostContestDto(photo,postConverter.toPostList(photo.getPost(), true));
+                    return postConverter.toPostContestDto(photo,postConverter.toPostList(photo.getPost(), true, savedPost, likeStatus));
 
                 })
                 .toList();

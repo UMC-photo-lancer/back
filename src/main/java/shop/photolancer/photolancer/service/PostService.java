@@ -10,7 +10,7 @@ public interface PostService {
     void upload(String content, Integer likeCount, Boolean isSale,
                 Integer point, List<String> imgPaths, List<String> bookmarkList, User user);
 
-    PostResponseDto.PostDetailDto searchById(Long postId);
+    PostResponseDto.PostDetailDto searchById(Long postId, User user);
 
     void updateLike(Long postId, User user);
 

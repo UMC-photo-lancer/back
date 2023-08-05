@@ -33,6 +33,9 @@ public class FollowServiceImpl implements FollowService {
     private final PostRepository postRepository;
     private final PostConverter postConverter;
     private final UserPhotoRepository userPhotoRepository;
+    private final SavedPostServiceImpl savedPostService;
+    private final PostLikeServiceImpl postLikeService;
+
     @Override
     public void requestFollow(String followingName, Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
@@ -59,11 +62,13 @@ public class FollowServiceImpl implements FollowService {
                     List<PostResponseDto.PostListDto> posts =
                             postList.stream().map(post -> {
                                 UserPhoto userPhoto = userPhotoRepository.findByUserAndPost(user, post);
+                                Boolean savedPost = savedPostService.isSavedPost(post, user);
+                                Boolean likeStatus = postLikeService.likeStatus(post, user);
                                 if (userPhoto == null) {
-                                    PostResponseDto.PostListDto postListDto = postConverter.toPostList(post, false);
+                                    PostResponseDto.PostListDto postListDto = postConverter.toPostList(post, false, savedPost, likeStatus);
                                     return postListDto;
                                 }
-                                PostResponseDto.PostListDto postListDto = postConverter.toPostList(post, true);
+                                PostResponseDto.PostListDto postListDto = postConverter.toPostList(post, true, savedPost, likeStatus);
                                 return postListDto;
                             }).toList();
                     return followConverter.toFollowingUsersPosts(following, posts);
