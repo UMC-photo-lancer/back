@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
+import shop.photolancer.photolancer.domain.mapping.PostLike;
 import shop.photolancer.photolancer.domain.mapping.SavedPost;
 import shop.photolancer.photolancer.repository.SavedPostRepository;
 
@@ -21,5 +22,22 @@ public class SavedPostServiceImpl {
         else {
             return true;
         }
+    }
+
+    public Long findSavedPost(Post post, User user) {
+        SavedPost savedPost = savedPostRepository.findByPostAndUser(post, user);
+        if (savedPost == null) {
+            return null;
+        }
+        else {
+            return savedPost.getId();
+        }
+    }
+
+    public void savePost(SavedPost savedPost) {
+        savedPostRepository.save(savedPost);
+    }
+    public void deleteSavedPost(Long savedPostId) {
+        savedPostRepository.deleteById(savedPostId);
     }
 }

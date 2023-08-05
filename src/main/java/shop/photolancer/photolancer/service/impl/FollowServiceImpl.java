@@ -11,10 +11,8 @@ import shop.photolancer.photolancer.converter.PostConverter;
 import shop.photolancer.photolancer.domain.Follow;
 import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
-import shop.photolancer.photolancer.domain.mapping.UserPhoto;
 import shop.photolancer.photolancer.repository.FollowRepository;
 import shop.photolancer.photolancer.repository.PostRepository;
-import shop.photolancer.photolancer.repository.UserPhotoRepository;
 import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.service.FollowService;
 import shop.photolancer.photolancer.web.dto.FollowingResponseDto;
@@ -32,9 +30,9 @@ public class FollowServiceImpl implements FollowService {
     private final UserServiceImpl userService;
     private final PostRepository postRepository;
     private final PostConverter postConverter;
-    private final UserPhotoRepository userPhotoRepository;
     private final SavedPostServiceImpl savedPostService;
     private final PostLikeServiceImpl postLikeService;
+    private final UserPhotoServiceImpl userPhotoService;
 
     @Override
     public void requestFollow(String followingName, Long userId) {
@@ -61,14 +59,10 @@ public class FollowServiceImpl implements FollowService {
 
                     List<PostResponseDto.PostListDto> posts =
                             postList.stream().map(post -> {
-                                UserPhoto userPhoto = userPhotoRepository.findByUserAndPost(user, post);
+                                Boolean isUserPhoto = userPhotoService.isUserPhoto(post, user);
                                 Boolean savedPost = savedPostService.isSavedPost(post, user);
                                 Boolean likeStatus = postLikeService.likeStatus(post, user);
-                                if (userPhoto == null) {
-                                    PostResponseDto.PostListDto postListDto = postConverter.toPostList(post, false, savedPost, likeStatus);
-                                    return postListDto;
-                                }
-                                PostResponseDto.PostListDto postListDto = postConverter.toPostList(post, true, savedPost, likeStatus);
+                                PostResponseDto.PostListDto postListDto = postConverter.toPostList(post, isUserPhoto, savedPost, likeStatus);
                                 return postListDto;
                             }).toList();
                     return followConverter.toFollowingUsersPosts(following, posts);

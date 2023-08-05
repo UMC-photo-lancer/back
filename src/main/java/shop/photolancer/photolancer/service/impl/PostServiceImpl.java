@@ -23,11 +23,9 @@ public class PostServiceImpl implements PostService {
     private final PostConverter postConverter;
     private final BookMarkServiceImpl bookmarkService;
     private final PostBookmarkRepository postBookmarkRepository;
-    private final PostLikeRepository postLikeRepository;
-    private final UserPhotoRepository userPhotoRepository;
-    private final SavedPostRepository savedPostRepository;
     private final PostLikeServiceImpl postLikeService;
     private final SavedPostServiceImpl savedPostService;
+    private final UserPhotoServiceImpl userPhotoService;
 
 
 
@@ -68,12 +66,9 @@ public class PostServiceImpl implements PostService {
             postBookmarkNameList.add(p.getBookmark().getName());
         }
 
-        UserPhoto userPhoto = userPhotoRepository.findByUserAndPost(user, post);
-        if (userPhoto == null) {
-            return  postConverter.toPostDetail(post, postImageUri, postBookmarkNameList, false, postLike, savedPost);
-        }
+        Boolean isUserPhoto = userPhotoService.isUserPhoto(post, user);
 
-        return  postConverter.toPostDetail(post, postImageUri, postBookmarkNameList, true, postLike, savedPost);
+        return  postConverter.toPostDetail(post, postImageUri, postBookmarkNameList, isUserPhoto, postLike, savedPost);
     }
 
     @Override
@@ -81,14 +76,14 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(postId).orElseThrow(()
                 -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
         try {
-            PostLike postLike = postLikeRepository.findByPostAndUser(post, user);
-            if(postLike == null) {
+            Long postLikeId = postLikeService.findPostLike(post, user);
+            if(postLikeId == null) {
                 postRepository.updateLikeCount(postId, post.getLikeCount()+1);
-                postLikeRepository.save(postConverter.toPostLike(post, user));
+                postLikeService.updateLike(postConverter.toPostLike(post, user));
             }
             else {
                 postRepository.updateLikeCount(postId, post.getLikeCount()-1);
-                postLikeRepository.delete(postLike);
+                postLikeService.deleteLike(postLikeId);
             }
         }catch (Exception e) {
             System.out.println(e);
@@ -103,13 +98,13 @@ public class PostServiceImpl implements PostService {
     @Override
     public void savePost(Long postId, User user) {
         Post post = postRepository.findById(postId).orElseThrow();
-        SavedPost savedPost = savedPostRepository.findByPostAndUser(post, user);
+        Long savedPostId = savedPostService.findSavedPost(post, user);
 
-        if (savedPost == null) {
-            savedPostRepository.save(postConverter.toSavedPost(user, post));
+        if (savedPostId == null) {
+            savedPostService.savePost(postConverter.toSavedPost(user, post));
         }
         else {
-            savedPostRepository.delete(savedPost);
+            savedPostService.deleteSavedPost(savedPostId);
         }
     }
 }
