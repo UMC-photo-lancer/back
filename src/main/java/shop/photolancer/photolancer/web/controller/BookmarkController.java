@@ -9,29 +9,45 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.service.impl.PostBookmarkServiceImpl;
+import shop.photolancer.photolancer.web.dto.PostResponseDto;
+
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/bookmark")
 public class BookmarkController {
     public final PostBookmarkServiceImpl postBookmarkService;
+    @GetMapping
+    public Page<PostResponseDto.PostListDto> bookmarkDefault(@PageableDefault(size = 12, sort = "post.likeCount", direction = Sort.Direction.DESC)
+                                                      Pageable request) {
+        return postBookmarkService.postBookmarkDefaultList(request);
+    }
+    @GetMapping("/popular")
+    public Page<PostResponseDto.PostListDto> bookmarkDefaultpopular(@PageableDefault(size = 12, sort = "post.likeCount", direction = Sort.Direction.DESC)
+                                                             Pageable request) {
+        return postBookmarkService.postBookmarkDefaultList(request);
+    }
+    @GetMapping("/recent")
+    public Page<PostResponseDto.PostListDto> bookmarkDefaultRecent(@PageableDefault(size = 12, sort = "post.createdAt", direction = Sort.Direction.DESC)
+                                                             Pageable request) {
+        return postBookmarkService.postBookmarkDefaultList(request);
+    }
 
     @GetMapping("/{bookmarkName}")
-    public Page<Post> bookmarkPhoto(@PageableDefault(size = 12, sort = "post.likeCount",
+    public Page<PostResponseDto.PostListDto> bookmarkPhoto(@PageableDefault(size = 12, sort = "post.likeCount",
             direction = Sort.Direction.DESC) Pageable request, @PathVariable String bookmarkName) {
         return postBookmarkService.postBookmarkList(request, bookmarkName);
     }
 
     @GetMapping("/{bookmarkName}/recent")
-    public Page<Post> bookmarkRecentPhoto(@PageableDefault(size = 12, sort = "post.createdAt",
+    public Page<PostResponseDto.PostListDto> bookmarkRecentPhoto(@PageableDefault(size = 12, sort = "post.createdAt",
             direction = Sort.Direction.DESC) Pageable request, @PathVariable String bookmarkName) {
         return postBookmarkService.postBookmarkList(request, bookmarkName);
     }
 
     @GetMapping("/{bookmarkName}/popular")
-    public Page<Post> bookmarkPopularPhoto(@PageableDefault(size = 12, sort = "post.likeCount",
+    public Page<PostResponseDto.PostListDto> bookmarkPopularPhoto(@PageableDefault(size = 12, sort = "post.likeCount",
             direction = Sort.Direction.DESC) Pageable request, @PathVariable String bookmarkName) {
         return postBookmarkService.postBookmarkList(request, bookmarkName);
     }
