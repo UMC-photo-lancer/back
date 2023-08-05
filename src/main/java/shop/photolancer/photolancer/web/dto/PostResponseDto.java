@@ -33,7 +33,7 @@ public class PostResponseDto {
         private String createdAt;
         private String thumbNailUri;
         private boolean isSale;
-//        private User user;
+        private UserResponseDto.PostUserDto user;
         private Boolean isUserPhoto;
     }
 
