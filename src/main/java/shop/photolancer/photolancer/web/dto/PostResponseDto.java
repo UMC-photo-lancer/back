@@ -2,6 +2,7 @@ package shop.photolancer.photolancer.web.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.data.domain.Page;
 import shop.photolancer.photolancer.domain.Contest;
 import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
@@ -56,5 +57,13 @@ public class PostResponseDto {
     @Builder
     public static class UserPhotoDto {
         private Long id;
+    }
+
+    @Getter
+    @Builder
+    public static class PostExploreDto {
+        private List<PostResponseDto.PostListDto> hotPhotoList;
+        private List<PostResponseDto.PostListDto> recentPhotoList;
+        private PostResponseDto.PostAwardsDto awardPhotoList;
     }
 }

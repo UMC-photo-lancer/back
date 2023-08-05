@@ -2,7 +2,9 @@ package shop.photolancer.photolancer.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import shop.photolancer.photolancer.converter.PostConverter;
 import shop.photolancer.photolancer.domain.Contest;
@@ -72,7 +74,7 @@ public class ExploreServiceImpl implements ExploreService {
      // 대회 get요청
     @Override
     public PostResponseDto.PostAwardsDto photoAwards() {
-        Contest contest = contestRepository.findById(1L).orElseThrow();
+        Contest contest = contestRepository.findFirstByOrderByIdAsc();
         List<Contest> contestList = contestRepository.findAll();
 
         User user = userService.getCurrentUser();
@@ -118,5 +120,15 @@ public class ExploreServiceImpl implements ExploreService {
                 })
                 .toList();
         return postConverter.toPostAwardsDto(contest, postContestList, contestList);
+    }
+
+    public PostResponseDto.PostExploreDto exploreDefault() {
+        Pageable pageableRecent = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Pageable pageableHot = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "likeCount"));
+        List<PostResponseDto.PostListDto> hotPhotoPage = hotPhoto(pageableHot).getContent();
+        List<PostResponseDto.PostListDto> recentPhotoPage = recentPhoto(pageableRecent).getContent();
+        PostResponseDto.PostAwardsDto photoAward = photoAwards();
+
+        return postConverter.toPostExploreDto(hotPhotoPage, recentPhotoPage, photoAward);
     }
 }

@@ -102,4 +102,14 @@ public class PostConverter {
                 .user(user)
                 .build();
     }
+
+    public PostResponseDto.PostExploreDto toPostExploreDto(List<PostResponseDto.PostListDto> hotPhotoPage,
+                                                           List<PostResponseDto.PostListDto> recentPhotoPage,
+                                                           PostResponseDto.PostAwardsDto awardPhotoList) {
+        return PostResponseDto.PostExploreDto.builder()
+                .awardPhotoList(awardPhotoList)
+                .hotPhotoList(hotPhotoPage)
+                .recentPhotoList(recentPhotoPage)
+                .build();
+    }
 }
