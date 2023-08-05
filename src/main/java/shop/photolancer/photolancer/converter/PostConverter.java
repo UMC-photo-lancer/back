@@ -95,4 +95,11 @@ public class PostConverter {
                 .id(userPhoto.getId())
                 .build();
     }
+
+    public SavedPost toSavedPost(User user, Post post) {
+        return SavedPost.builder()
+                .post(post)
+                .user(user)
+                .build();
+    }
 }

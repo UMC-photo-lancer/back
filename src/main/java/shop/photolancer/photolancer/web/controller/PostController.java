@@ -71,4 +71,16 @@ public class PostController {
             return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PutMapping("/{id}/save")
+    public ResponseEntity savePost(@PathVariable Long id) {
+        try {
+            User user = userService.getCurrentUser();
+            postService.savePost(id, user);
+
+            return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.POST_SAVE_SUCCESS), HttpStatus.OK);
+        }  catch (Exception e) {
+            return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
+        }
+    }
 }

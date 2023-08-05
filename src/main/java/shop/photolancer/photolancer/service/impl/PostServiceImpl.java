@@ -6,10 +6,7 @@ import shop.photolancer.photolancer.converter.PostConverter;
 import shop.photolancer.photolancer.domain.Bookmark;
 import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
-import shop.photolancer.photolancer.domain.mapping.PostBookmark;
-import shop.photolancer.photolancer.domain.mapping.PostImage;
-import shop.photolancer.photolancer.domain.mapping.PostLike;
-import shop.photolancer.photolancer.domain.mapping.UserPhoto;
+import shop.photolancer.photolancer.domain.mapping.*;
 import shop.photolancer.photolancer.repository.*;
 import shop.photolancer.photolancer.service.PostService;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
@@ -29,6 +26,7 @@ public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
     private final PostLikeRepository postLikeRepository;
     private final UserPhotoRepository userPhotoRepository;
+    private final SavedPostRepository savedPostRepository;
 
 
 
@@ -100,5 +98,18 @@ public class PostServiceImpl implements PostService {
     @Override
     public void deletePost(Long postId) {
         postRepository.deleteById(postId);
+    }
+
+    @Override
+    public void savePost(Long postId, User user) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        SavedPost savedPost = savedPostRepository.findByPostAndUser(post, user);
+
+        if (savedPost == null) {
+            savedPostRepository.save(postConverter.toSavedPost(user, post));
+        }
+        else {
+            savedPostRepository.delete(savedPost);
+        }
     }
 }
