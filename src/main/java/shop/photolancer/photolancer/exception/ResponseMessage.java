@@ -43,4 +43,5 @@ public class ResponseMessage {
 
     //follow, following
     public static final String FOLLOW_REQUEST_SUCCESS = "팔로우 요청 성공";
+    public static final String POST_SAVE_SUCCESS = "포스트 저장 성공";
 }

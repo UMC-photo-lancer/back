@@ -15,4 +15,6 @@ public interface PostService {
     void updateLike(Long postId, User user);
 
     void deletePost(Long postId);
+
+    void savePost(Long postId, User user);
 }
