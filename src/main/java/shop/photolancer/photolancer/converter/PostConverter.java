@@ -29,7 +29,9 @@ public class PostConverter {
 
     public PostResponseDto.PostDetailDto toPostDetail(Post post, List<String> postImageUri,
                                                       List<String> postBookmarkName,
-                                                       Boolean isUserPhoto) {
+                                                      Boolean isUserPhoto,
+                                                      Boolean likeStatus,
+                                                      Boolean isSavedPost) {
         return PostResponseDto.PostDetailDto.builder()
                 .content(post.getContent())
                 .isSale(post.getIsSale())
@@ -38,6 +40,9 @@ public class PostConverter {
                 .postImages(postImageUri)
                 .bookmarks(postBookmarkName)
                 .isUserPhoto(isUserPhoto)
+                .likeStatus(likeStatus)
+                .isSavedPost(isSavedPost)
+                .user(userConverter.toUserProfile(post.getUser()))
                 .build();
     }
     public PostImage toPostImage(String uri, Post post) {
@@ -54,7 +59,8 @@ public class PostConverter {
                 .build();
     }
 
-    public PostResponseDto.PostListDto toPostList(Post post, Boolean isUserPhoto) {
+    public PostResponseDto.PostListDto toPostList(Post post, Boolean isUserPhoto, Boolean isSavedPost,
+                                                  Boolean likeStatus) {
         return PostResponseDto.PostListDto.builder()
                 .postId(post.getId())
                 .likeCount(post.getLikeCount())
@@ -63,6 +69,8 @@ public class PostConverter {
                 .isSale(post.getIsSale())
                 .user(userConverter.toUserProfile(post.getUser()))
                 .isUserPhoto(isUserPhoto)
+                .isSavedPost(isSavedPost)
+                .likeStatus(likeStatus)
                 .build();
     }
 

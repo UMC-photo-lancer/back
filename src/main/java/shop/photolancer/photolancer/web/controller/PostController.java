@@ -46,7 +46,8 @@ public class PostController {
     }
     @GetMapping("/{id}")
     public PostResponseDto.PostDetailDto postDetail(@PathVariable Long id) {
-        return postService.searchById(id);
+        User user = userService.getCurrentUser();
+        return postService.searchById(id, user);
     }
 
     @PutMapping("/{id}/like")

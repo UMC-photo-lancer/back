@@ -2,15 +2,9 @@ package shop.photolancer.photolancer.web.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.data.domain.Page;
 import shop.photolancer.photolancer.domain.Contest;
-import shop.photolancer.photolancer.domain.Post;
-import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.Ranked;
-import shop.photolancer.photolancer.domain.mapping.PostContest;
-import shop.photolancer.photolancer.domain.mapping.UserPhoto;
 
-import javax.persistence.*;
 import java.util.List;
 
 public class PostResponseDto {
@@ -24,6 +18,9 @@ public class PostResponseDto {
         private List<String> postImages;
         private List<String> bookmarks;
         private Boolean isUserPhoto;
+        private Boolean likeStatus;
+        private Boolean isSavedPost;
+        private UserResponseDto.PostUserDto user;
     }
     @Getter
     @Builder
@@ -35,6 +32,8 @@ public class PostResponseDto {
         private boolean isSale;
         private UserResponseDto.PostUserDto user;
         private Boolean isUserPhoto;
+        private Boolean likeStatus;
+        private Boolean isSavedPost;
     }
 
     @Getter
