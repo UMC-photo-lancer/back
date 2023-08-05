@@ -49,8 +49,7 @@ public class FollowServiceImpl implements FollowService {
         }
 
     @Override
-    public Page<FollowingResponseDto.FollowingUserPostsDto> followingUsersPosts(Pageable pageable) {
-        User user = userService.findUserByUserName("조승연");
+    public Page<FollowingResponseDto.FollowingUserPostsDto> followingUsersPosts(Pageable pageable, User user) {
         Page<Follow> followingList = followRepository.findByFollower(user, pageable);
 
         List<FollowingResponseDto.FollowingUserPostsDto> followingUsersPosts =

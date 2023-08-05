@@ -27,14 +27,13 @@ public class ExploreServiceImpl implements ExploreService {
     private final ContestRepository contestRepository;
     private final PostContestRepository postContestRepository;
     private final UserPhotoRepository userPhotoRepository;
-    private final UserRepository userRepository;
+    private final UserServiceImpl userService;
 
     @Override
     public Page<PostResponseDto.PostListDto> hotPhoto(Pageable request) {
         Page<Post> postImageList = postRepository.findAll(request);
 
-        User user = userRepository.findById(1L).orElseThrow(()
-                -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+        User user = userService.getCurrentUser();
 
         Page<PostResponseDto.PostListDto> hotPhotoPage = postImageList.map(
                 hotPhoto -> {
@@ -54,8 +53,7 @@ public class ExploreServiceImpl implements ExploreService {
     public Page<PostResponseDto.PostListDto> recentPhoto(Pageable request) {
         Page<Post> postImageList = postRepository.findAll(request);
 
-        User user = userRepository.findById(1L).orElseThrow(()
-                -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+        User user = userService.getCurrentUser();
 
         Page<PostResponseDto.PostListDto> recentPhotoPage = postImageList.map(
                 recentPhoto -> {
@@ -77,8 +75,7 @@ public class ExploreServiceImpl implements ExploreService {
         Contest contest = contestRepository.findById(1L).orElseThrow();
         List<Contest> contestList = contestRepository.findAll();
 
-        User user = userRepository.findById(1L).orElseThrow(()
-                -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+        User user = userService.getCurrentUser();
 
         List<Ranked> ranked = Arrays.asList(Ranked.FIRST, Ranked.SECOND, Ranked.THIRD);
         List<PostContest> postContests = postContestRepository.findByContestAndRankedIn(contest, ranked);
@@ -106,8 +103,7 @@ public class ExploreServiceImpl implements ExploreService {
         List<Ranked> ranked = Arrays.asList(Ranked.FIRST, Ranked.SECOND, Ranked.THIRD);
         List<PostContest> postContests = postContestRepository.findByContestAndRankedIn(contest, ranked);
 
-        User user = userRepository.findById(1L).orElseThrow(()
-                -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+        User user = userService.getCurrentUser();
 
         List<PostResponseDto.PostContestDto> postContestList = postContests.stream()
                 .map(photo -> {

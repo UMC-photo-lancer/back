@@ -34,9 +34,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void upload(String content, Integer likeCount, Boolean isSale,
-                       Integer point, List<String> imgPaths, List<String> bookmarkList) {
+                       Integer point, List<String> imgPaths, List<String> bookmarkList,
+                       User user) {
 
-        Post post = postConverter.toPost(content, likeCount, point, isSale, imgPaths.get(0));
+        Post post = postConverter.toPost(content, likeCount, point, isSale, imgPaths.get(0), user);
         postRepository.save(post);
         for (String imgUrl : imgPaths) {
             PostImage postImage = postConverter.toPostImage(imgUrl, post);
@@ -78,9 +79,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void updateLike(Long postId, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(()
-                -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+    public void updateLike(Long postId, User user) {
         Post post = postRepository.findById(postId).orElseThrow(()
                 -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
         try {

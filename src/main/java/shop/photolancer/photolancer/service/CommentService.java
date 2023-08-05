@@ -7,9 +7,9 @@ import shop.photolancer.photolancer.web.dto.CommentResponseDto;
 import java.util.List;
 
 public interface CommentService {
-    void uploadComment(CommentRequestDto.CommentUploadDto request, Long userId, Long postId);
+    void uploadComment(CommentRequestDto.CommentUploadDto request, Long postId);
 
-    void uploadRecomment(CommentRequestDto.CommentUploadDto request, Long userId, Long postId, Long commentId);
+    void uploadRecomment(CommentRequestDto.CommentUploadDto request, Long postId, Long commentId);
 
     void deleteComment(Long commentId);
 

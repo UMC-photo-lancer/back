@@ -9,11 +9,9 @@ import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.repository.CommentRepository;
 import shop.photolancer.photolancer.repository.PostRepository;
-import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.service.CommentService;
 import shop.photolancer.photolancer.web.dto.CommentRequestDto;
 import shop.photolancer.photolancer.web.dto.CommentResponseDto;
-import shop.photolancer.photolancer.web.dto.UserResponseDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,16 +20,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
+    public final UserServiceImpl userService;
     private final CommentConverter commentConverter;
     private final CommentRepository commentRepository;
     private final UserConverter userConverter;
     @Override
-    public void uploadComment(CommentRequestDto.CommentUploadDto request, Long userId,
-                       Long postId) {
+    public void uploadComment(CommentRequestDto.CommentUploadDto request, Long postId) {
 
-        User user = userRepository.findById(userId).orElseThrow(()
-                -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+        User user = userService.getCurrentUser();
         Post post = postRepository.findById(postId).orElseThrow(()
                 -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
 
@@ -41,10 +37,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void uploadRecomment(CommentRequestDto.CommentUploadDto request, Long userId,
-                                Long postId, Long commentId) {
-        User user = userRepository.findById(userId).orElseThrow(()
-                -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+    public void uploadRecomment(CommentRequestDto.CommentUploadDto request, Long postId, Long commentId) {
+        User user = userService.getCurrentUser();
         Post post = postRepository.findById(postId).orElseThrow(()
                 -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
         Comment recomment = commentRepository.findById(commentId).orElseThrow(()
@@ -56,16 +50,28 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void deleteComment(Long commentId) {
+        User user = userService.getCurrentUser();
         Comment comment = commentRepository.findById(commentId).orElseThrow(()
                 -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다"));
-        commentRepository.delete(comment);
+        if (user == comment.getUser()) {
+            commentRepository.delete(comment);
+        }
+        else {
+            System.out.println("유저가 아닙니다.");
+        }
     }
 
     @Override
     public void deleteRecomment(Long recommentId) {
+        User user = userService.getCurrentUser();
         Comment comment = commentRepository.findById(recommentId).orElseThrow(()
                 -> new IllegalArgumentException("해당 대댓글이 존재하지 않습니다."));
-        commentRepository.delete(comment);
+        if (user == comment.getUser()) {
+            commentRepository.delete(comment);
+        }
+        else {
+            System.out.println("유저가 아닙니다.");
+        }
     }
 
     @Override
