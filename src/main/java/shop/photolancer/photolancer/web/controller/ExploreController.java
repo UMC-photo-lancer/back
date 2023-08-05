@@ -14,6 +14,12 @@ import shop.photolancer.photolancer.web.dto.PostResponseDto;
 @RequestMapping("/explore")
 public class ExploreController {
     public final ExploreServiceImpl exploreService;
+
+    @GetMapping
+    public PostResponseDto.PostExploreDto exploreDefault() {
+        return exploreService.exploreDefault();
+    }
+
     @GetMapping("/popular")
     public Page<PostResponseDto.PostListDto> hotPhoto(@PageableDefault(size = 12, sort = "likeCount", direction = Sort.Direction.DESC)
                                                    Pageable request) {
