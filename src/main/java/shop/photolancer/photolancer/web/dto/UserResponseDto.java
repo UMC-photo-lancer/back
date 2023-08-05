@@ -22,5 +22,4 @@ public class UserResponseDto {
         private String nickname;
         private String profileUrl;
     }
-
 }
