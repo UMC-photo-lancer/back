@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import shop.photolancer.photolancer.converter.PostConverter;
 import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
-import shop.photolancer.photolancer.domain.mapping.UserPhoto;
 import shop.photolancer.photolancer.repository.PostBookmarkRepository;
 import shop.photolancer.photolancer.repository.UserPhotoRepository;
 import shop.photolancer.photolancer.service.PostBookmarkService;
@@ -21,10 +20,10 @@ public class PostBookmarkServiceImpl implements PostBookmarkService {
     private final PostBookmarkRepository postBookmarkRepository;
     private final UserServiceImpl userService;
     private final UserBookmarkServiceImpl userBookmarkService;
-    private final UserPhotoRepository userPhotoRepository;
     private final PostConverter postConverter;
     private final PostLikeServiceImpl postLikeService;
     private final SavedPostServiceImpl savedPostService;
+    private final UserPhotoServiceImpl userPhotoService;
 
     public Page<PostResponseDto.PostListDto> postBookmarkDefaultList(Pageable request) {
 
@@ -38,12 +37,8 @@ public class PostBookmarkServiceImpl implements PostBookmarkService {
                 hotPhoto -> {
                     Boolean savedPost = savedPostService.isSavedPost(hotPhoto, user);
                     Boolean likeStatus = postLikeService.likeStatus(hotPhoto, user);
-                    UserPhoto userPhoto = userPhotoRepository.findByUserAndPost(user, hotPhoto);
-                    if (userPhoto == null) {
-                        PostResponseDto.PostListDto postListDto = postConverter.toPostList(hotPhoto, false, savedPost, likeStatus);
-                        return postListDto;
-                    }
-                    PostResponseDto.PostListDto postListDto = postConverter.toPostList(hotPhoto, true, savedPost, likeStatus);
+                    Boolean isUserPhoto = userPhotoService.isUserPhoto(hotPhoto, user);
+                    PostResponseDto.PostListDto postListDto = postConverter.toPostList(hotPhoto, isUserPhoto, savedPost, likeStatus);
 
                     return postListDto;
                 });
@@ -59,12 +54,8 @@ public class PostBookmarkServiceImpl implements PostBookmarkService {
                 photo -> {
                     Boolean savedPost = savedPostService.isSavedPost(photo, user);
                     Boolean likeStatus = postLikeService.likeStatus(photo, user);
-                    UserPhoto userPhoto = userPhotoRepository.findByUserAndPost(user, photo);
-                    if (userPhoto == null) {
-                        PostResponseDto.PostListDto postListDto = postConverter.toPostList(photo, false, savedPost, likeStatus);
-                        return postListDto;
-                    }
-                    PostResponseDto.PostListDto postListDto = postConverter.toPostList(photo, true, savedPost, likeStatus);
+                    Boolean isUserPhoto = userPhotoService.isUserPhoto(photo, user);
+                    PostResponseDto.PostListDto postListDto = postConverter.toPostList(photo, isUserPhoto, savedPost, likeStatus);
 
                     return postListDto;
                 });
