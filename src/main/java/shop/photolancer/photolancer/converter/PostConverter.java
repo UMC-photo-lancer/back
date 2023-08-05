@@ -8,13 +8,13 @@ import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.mapping.*;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
-import shop.photolancer.photolancer.web.dto.UserResponseDto;
 
 import java.util.List;
 
 @RequiredArgsConstructor
 @Component
 public class PostConverter {
+    private final UserConverter userConverter;
     public Post toPost(String content, Integer likeCount, Integer point,
                        Boolean isSale, String thumbNailUri, User user) {
         return Post.builder()
@@ -61,7 +61,7 @@ public class PostConverter {
                 .createdAt(post.getCreatedAt().toString().substring(0, 10))
                 .thumbNailUri(post.getThumbNailUri())
                 .isSale(post.getIsSale())
-//                .user(postImage.getPost().getUser())
+                .user(userConverter.toUserProfile(post.getUser()))
                 .isUserPhoto(isUserPhoto)
                 .build();
     }
