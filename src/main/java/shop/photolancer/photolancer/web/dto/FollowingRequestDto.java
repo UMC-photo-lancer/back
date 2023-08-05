@@ -2,7 +2,7 @@ package shop.photolancer.photolancer.web.dto;
 
 import lombok.*;
 
-public class FollowRequestDto {
+public class FollowingRequestDto {
 
     @Builder
     @Getter
