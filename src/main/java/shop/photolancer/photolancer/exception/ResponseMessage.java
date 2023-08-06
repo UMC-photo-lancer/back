@@ -44,4 +44,6 @@ public class ResponseMessage {
     //follow, following
     public static final String FOLLOW_REQUEST_SUCCESS = "팔로우 요청 성공";
     public static final String POST_SAVE_SUCCESS = "포스트 저장 성공";
+    public static final String INVALID_REQUEST = "유효한 요청이 아닙니다";
+    public static final String NOTICE_NOT_ADMIN = "관리자가 아닙니다";
 }

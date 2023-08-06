@@ -3,6 +3,7 @@ package shop.photolancer.photolancer.converter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import shop.photolancer.photolancer.domain.Notice;
+import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.Category;
 import shop.photolancer.photolancer.web.dto.NoticeResponseDto;
 
@@ -12,12 +13,13 @@ import java.time.LocalDateTime;
 @Component
 public class NoticeConverter {
 
-    public Notice toNotice(String content, String title, Category category, Boolean isPublic) {
+    public Notice toNotice(String content, String title, Category category, Boolean isPublic, User user) {
         return Notice.builder()
                 .content(content)
                 .title(title)
                 .category(category)
                 .isPublic(isPublic)
+                .user(user)
                 .build();
     }
 
