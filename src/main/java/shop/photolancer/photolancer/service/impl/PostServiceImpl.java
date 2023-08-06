@@ -1,6 +1,8 @@
 package shop.photolancer.photolancer.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import shop.photolancer.photolancer.converter.PostConverter;
 import shop.photolancer.photolancer.domain.Bookmark;
@@ -26,6 +28,7 @@ public class PostServiceImpl implements PostService {
     private final PostLikeServiceImpl postLikeService;
     private final SavedPostServiceImpl savedPostService;
     private final UserPhotoServiceImpl userPhotoService;
+    private final UserServiceImpl userService;
 
 
 
@@ -106,5 +109,22 @@ public class PostServiceImpl implements PostService {
         else {
             savedPostService.deleteSavedPost(savedPostId);
         }
+    }
+
+    public Page<PostResponseDto.PostListDto> myPosts(Pageable pageable) {
+        User user = userService.getCurrentUser();
+        Page<Post> myPostList = postRepository.findByUser(user, pageable);
+
+        Page<PostResponseDto.PostListDto> myPostPage = myPostList.map(
+                myPost -> {
+                    Boolean savedPost = savedPostService.isSavedPost(myPost, user);
+                    Boolean likeStatus = postLikeService.likeStatus(myPost, user);
+                    Boolean isUserPhoto = userPhotoService.isUserPhoto(myPost, user);
+                    PostResponseDto.PostListDto postListDto = postConverter.toPostList(myPost, isUserPhoto,  savedPost, likeStatus);
+
+                    return postListDto;
+                });
+        return myPostPage;
+
     }
 }

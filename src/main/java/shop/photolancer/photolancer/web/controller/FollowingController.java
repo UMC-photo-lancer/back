@@ -16,7 +16,6 @@ import shop.photolancer.photolancer.web.dto.FollowingRequestDto;
 import shop.photolancer.photolancer.web.dto.FollowingResponseDto;
 import shop.photolancer.photolancer.web.dto.base.DefaultRes;
 
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
