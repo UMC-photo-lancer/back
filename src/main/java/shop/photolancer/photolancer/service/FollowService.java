@@ -5,10 +5,8 @@ import org.springframework.data.domain.Pageable;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.web.dto.FollowingResponseDto;
 
-import java.util.List;
-
 public interface FollowService {
-    void requestFollow(String followingName, Long userId);
+    void requestFollow(Long followingUserId, Long userId);
 
     Page<FollowingResponseDto.FollowingUserPostsDto> followingUsersPosts(Pageable pageable, User user);
 }

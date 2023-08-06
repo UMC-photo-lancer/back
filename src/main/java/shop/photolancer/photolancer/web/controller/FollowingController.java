@@ -26,10 +26,10 @@ public class FollowingController {
     public final FollowServiceImpl followService;
     public final UserServiceImpl userService;
     @PostMapping("/request")
-    public ResponseEntity requestFollow(@RequestBody FollowingRequestDto.RequestFollowDto followingUserName) {
+    public ResponseEntity requestFollow(@RequestBody FollowingRequestDto.RequestFollowDto followingUserId) {
         try {
             User user = userService.getCurrentUser();
-            followService.requestFollow(followingUserName.getFollowingUserName(), user.getId());
+            followService.requestFollow(followingUserId.getFollowingUserId(), user.getId());
 
             return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.FOLLOW_REQUEST_SUCCESS), HttpStatus.OK);
         } catch (Exception e) {

@@ -21,5 +21,6 @@ public class UserResponseDto {
         private Integer level;
         private String nickname;
         private String profileUrl;
+        private String name;
     }
 }

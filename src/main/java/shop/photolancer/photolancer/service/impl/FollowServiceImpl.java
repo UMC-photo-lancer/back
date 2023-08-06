@@ -24,7 +24,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FollowServiceImpl implements FollowService {
 
-    private final UserRepository userRepository;
     private final FollowRepository followRepository;
     private final FollowConverter followConverter;
     private final UserServiceImpl userService;
@@ -35,16 +34,20 @@ public class FollowServiceImpl implements FollowService {
     private final UserPhotoServiceImpl userPhotoService;
 
     @Override
-    public void requestFollow(String followingName, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow();
-        User followingUser = userService.findUserByUserName(followingName);
+    public void requestFollow(Long followingUserId, Long userId) {
+        User user = userService.findUserById(userId);
+        User followingUser = userService.findUserById(followingUserId);
         Follow follow = followRepository.findByFollowerAndFollowing(user, followingUser);
-            // user following 수 추가
+
             if (follow == null) {
                 Follow following = followConverter.toFollow(user, followingUser);
+                user.setNum_following(user.getNum_following()+1);
+                user.setNum_follower(user.getNum_follower()+1);
                 followRepository.save(following);
             }
             else {
+                user.setNum_following(user.getNum_following()-1);
+                user.setNum_follower(user.getNum_follower()-1);
                 followRepository.delete(follow);
             }
         }

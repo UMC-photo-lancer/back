@@ -14,6 +14,7 @@ public class UserConverter {
                 .level(user.getLevel())
                 .profileUrl(user.getProfileUrl())
                 .nickname(user.getNickname())
+                .name(user.getName())
                 .build();
     }
 }
