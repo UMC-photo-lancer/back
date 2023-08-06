@@ -9,6 +9,6 @@ public class FollowingRequestDto {
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class RequestFollowDto {
-        private String followingUserName;
+        private Long followingUserId;
     }
 }
