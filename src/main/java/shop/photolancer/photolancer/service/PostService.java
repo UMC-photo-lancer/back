@@ -1,5 +1,7 @@
 package shop.photolancer.photolancer.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.web.dto.PostRequestDto;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
@@ -17,4 +19,8 @@ public interface PostService {
     void deletePost(Long postId);
 
     void savePost(Long postId, User user);
+
+    Page<PostResponseDto.PostListDto> savedPosts(Pageable pageable);
+
+    Page<PostResponseDto.PostListDto> myPosts(Pageable pageable);
 }
