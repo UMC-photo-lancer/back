@@ -103,6 +103,7 @@ public class ChatRoomController {
                                           @RequestParam(defaultValue = "1") Long last, @RequestBody ChatRequestDto request) {
         try {
             User user = userService.getCurrentUser();
+
             Long otherUserId = request.getOtherUserId();
 
             User otherUser = userRepository.findById(otherUserId).orElseThrow(() -> new NoSuchElementException("User not found."));
@@ -127,4 +128,32 @@ public class ChatRoomController {
             return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
         }
     }
+
+    //채팅 검색
+    @PostMapping("/search")
+    @ResponseBody
+    public ResponseEntity searchRoom(@RequestParam String nickname) {
+        try {
+            User user = userService.getCurrentUser();
+
+            Long userId = user.getId();
+
+            ChatRoom chatRoom = chatService.searchRoom(user, nickname);
+
+            // 상대방 정보를 가져옴
+            User receiver = chatRoom.getReceiver().getId().equals(userId) ? chatRoom.getSender() : chatRoom.getReceiver();
+
+            UserResponseDto.ChatUserDto response = new UserResponseDto.ChatUserDto(
+                    receiver.getId(),
+                    receiver.getLevel(),
+                    receiver.getNickname(),
+                    receiver.getProfileUrl());
+
+
+            return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.SEARCH_CHAT_ROOM_SUCCESS, response), HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
