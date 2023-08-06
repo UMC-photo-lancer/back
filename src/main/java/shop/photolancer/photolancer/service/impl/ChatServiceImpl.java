@@ -105,4 +105,14 @@ public class ChatServiceImpl implements ChatService {
     public Message findLastMessageByChatRoomId(Long chatRoomId) {
         return messageRepository.findTopByChatRoomIdOrderByCreatedAtDesc(chatRoomId);
     }
+
+    @Transactional
+    @Override
+    public ChatRoom searchRoom(User user, String nickname){
+        User otherUser = userRepository.findByNickname(nickname);
+
+        ChatRoom chatRoom = chatRoomRepository.findBySenderOrReceiver(user, otherUser);
+
+        return chatRoom;
+    }
 }

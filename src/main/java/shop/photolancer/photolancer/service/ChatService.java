@@ -10,4 +10,5 @@ public interface ChatService {
     ChatRoom createRoom(User user, Long receiverId);
     Page<Message> findMessages(Long chatId, Long last);
     Message findLastMessageByChatRoomId(Long chatRoomId);
+    ChatRoom searchRoom(User user, String nickname);
 }
