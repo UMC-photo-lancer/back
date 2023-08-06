@@ -3,9 +3,10 @@ package shop.photolancer.photolancer.exception;
 public class ResponseMessage {
 
     //chat
-    public static final String FOLLOWING_CHATS_READ_SUCCESS = "팔로잉 채팅 목록 불러오기 성공";
-    public static final String MESSAGE_READ_SUCCESS = "채팅 내용 불러오기 성공";
-
+    public static final String CHATS_READ_SUCCESS = "채팅 목록 불러오기 성공";
+    public static final String CREATE_CHAT_ROOM_SUCCESS = "채팅방 생성 성공";
+    public static final String MESSAGE_READ_SUCCESS = "채팅방 불러오기 성공";
+    public static final String SEARCH_CHAT_ROOM_SUCCESS = "채팅방 검색 성공";
     //payment
     public static final String CHARGE_POINT_SUCCESS = "포인트 충전 성공";
     public static final String TRADE_LOG_READ_SUCCESS = "거래 내역 조회 성공";

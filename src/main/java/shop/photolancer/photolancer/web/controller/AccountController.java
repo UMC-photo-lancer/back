@@ -36,11 +36,9 @@ public class AccountController {
     @ApiOperation(value = "계좌 목록 불러오기 API")
     @ApiResponse(code = 200, message = "계좌 목록 불러오기 성공")
     @GetMapping()
-    public ResponseEntity exchangeWindow(Authentication authentication){
+    public ResponseEntity exchangeWindow(){
         try {
-            String userName = authentication.getName();
-
-            User user = userService.findUserByUserName(userName);
+            User user = userService.getCurrentUser();
 
             List<PaymentResponseDto.ExchangeDto> response = paymentService.getExchange(user);
 
@@ -53,11 +51,9 @@ public class AccountController {
     @ApiOperation(value = "계좌 추가 API")
     @ApiResponse(code = 200, message = "계좌 추가 성공")
     @PostMapping()
-    public ResponseEntity addAccount(Authentication authentication, @RequestBody AccountRequestDto.AccountDto request){
+    public ResponseEntity addAccount(@RequestBody AccountRequestDto.AccountDto request){
         try {
-            String userName = authentication.getName();
-
-            User user = userService.findUserByUserName(userName);
+            User user = userService.getCurrentUser();
 
             String bank = request.getBank();
             String accountNumber = request.getAccountNumber();
@@ -80,11 +76,9 @@ public class AccountController {
     @ApiImplicitParam(name = "account-id", value = "계좌 ID", required = true, dataType = "Long", example = "1", paramType = "path")
     @ApiResponse(code = 200, message = "메인 계좌 설정 성공")
     @PatchMapping("/{account-id}")
-    public ResponseEntity mainAccount(Authentication authentication, @PathVariable("account-id") Long accountId){
+    public ResponseEntity mainAccount(@PathVariable("account-id") Long accountId){
         try {
-            String userName = authentication.getName();
-
-            User user = userService.findUserByUserName(userName);
+            User user = userService.getCurrentUser();
 
             accountService.updateIsMain(user, accountId);
 
@@ -98,11 +92,9 @@ public class AccountController {
     @ApiImplicitParam(name = "account-id", value = "계좌 ID", required = true, dataType = "Long", example = "1", paramType = "path")
     @ApiResponse(code = 200, message = "계좌 수정 성공")
     @PutMapping("/{account-id}")
-    public ResponseEntity updateAccount(Authentication authentication, @PathVariable("account-id") Long accountId, @RequestBody AccountRequestDto.AccountDto request){
+    public ResponseEntity updateAccount(@PathVariable("account-id") Long accountId, @RequestBody AccountRequestDto.AccountDto request){
         try {
-            String userName = authentication.getName();
-
-            User user = userService.findUserByUserName(userName);
+            User user = userService.getCurrentUser();
 
             String bank = request.getBank();
             String accountNumber = request.getAccountNumber();
@@ -125,11 +117,9 @@ public class AccountController {
     @ApiImplicitParam(name = "account-id", value = "계좌 ID", required = true, dataType = "Long", example = "1", paramType = "path")
     @ApiResponse(code = 200, message = "계좌 삭제 성공")
     @DeleteMapping("/{account-id}")
-    public ResponseEntity deleteAccount(Authentication authentication, @PathVariable("account-id") Long accountId){
+    public ResponseEntity deleteAccount(@PathVariable("account-id") Long accountId){
         try {
-            String userName = authentication.getName();
-
-            User user = userService.findUserByUserName(userName);
+            User user = userService.getCurrentUser();
 
             accountService.deleteAccount(user, accountId);
 

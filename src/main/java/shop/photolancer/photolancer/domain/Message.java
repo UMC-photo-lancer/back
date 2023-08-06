@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Entity
 @Builder
-@Getter @Setter
+@Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Message extends BaseEntity {
@@ -17,14 +17,18 @@ public class Message extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "chat_id")
-    private ChatRoom chat;
+    @JoinColumn(name = "room_id")
+    private ChatRoom chatRoom;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "sender_id")
     private User sender;
 
-    @Column(nullable = false)
     private String content;
 
+    public Message(ChatRoom chatRoom, User sender, String content) {
+        this.chatRoom = chatRoom;
+        this.sender = sender;
+        this.content = content;
+    }
 }

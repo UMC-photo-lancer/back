@@ -7,5 +7,6 @@ import shop.photolancer.photolancer.domain.ChatRoom;
 import shop.photolancer.photolancer.domain.Message;
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
-    Page<Message> findByChat(Pageable pageable, ChatRoom chat);
+    Page<Message> findByChatRoom(Pageable pageable, ChatRoom chat);
+    Message findTopByChatRoomIdOrderByCreatedAtDesc(Long roomId);
 }

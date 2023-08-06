@@ -3,20 +3,11 @@ package shop.photolancer.photolancer.service;
 import org.springframework.data.domain.Page;
 import shop.photolancer.photolancer.domain.ChatRoom;
 import shop.photolancer.photolancer.domain.Message;
-import shop.photolancer.photolancer.web.dto.MessageDto;
-
-import java.util.List;
+import shop.photolancer.photolancer.domain.User;
 
 public interface ChatService {
-
-    Page<ChatRoom> findFollowingChats(Long userId, Long last);
-
+    Page<ChatRoom> findAllChats(Long userId, Long last);
+    ChatRoom createRoom(User user, Long receiverId);
     Page<Message> findMessages(Long chatId, Long last);
-
-    void processMessage(Message message);
-
-    List<Message> getChatHistory();
-
-    MessageDto saveMessage(MessageDto messageDTO);
-
+    Message findLastMessageByChatRoomId(Long chatRoomId);
 }
