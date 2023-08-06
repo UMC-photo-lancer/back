@@ -9,11 +9,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.Category;
+import shop.photolancer.photolancer.domain.enums.Role;
 import shop.photolancer.photolancer.exception.ResponseMessage;
 import shop.photolancer.photolancer.exception.StatusCode;
 import shop.photolancer.photolancer.service.NoticeService;
 import shop.photolancer.photolancer.service.impl.NoticeFileUploadService;
+import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 import shop.photolancer.photolancer.web.dto.NoticeRequestDto;
 import shop.photolancer.photolancer.web.dto.NoticeResponseDto;
 import shop.photolancer.photolancer.web.dto.base.DefaultRes;
@@ -26,19 +29,33 @@ import java.util.List;
 public class NoticeController {
     private final NoticeService noticeService;
     private final NoticeFileUploadService noticeFileUploadService;
+    private final UserServiceImpl userService;
     @PostMapping
-    public ResponseEntity noticeUpload(@RequestPart("NoticeContent") NoticeRequestDto.NoticeUploadDto request,
-                             @RequestPart("NoticeFile") List<MultipartFile> multipartFiles) {
+    public ResponseEntity noticeUpload(
+            @RequestPart(value = "NoticeContent") NoticeRequestDto.NoticeUploadDto request,
+            @RequestPart(value = "NoticeFile", required = false) List<MultipartFile> multipartFiles) {
         try {
-            List<String> filePaths = noticeFileUploadService.upload(multipartFiles);
-            String content = request.getContent();
-            String title = request.getTitle();
-            Category category = request.getCategory();
-            Boolean isPublic = request.getIsPublic();
-            noticeService.upload(content, title, category, isPublic, filePaths);
-            return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.NOTICE_UPLOAD_SUCCESS), HttpStatus.OK);
+            User user = userService.getCurrentUser();
+            if (user.getRole() == Role.ADMIN) {
+                String content = request.getContent();
+                String title = request.getTitle();
+                Category category = request.getCategory();
+                Boolean isPublic = request.getIsPublic();
+
+                List<String> filePaths = null;
+                if (multipartFiles != null && !multipartFiles.isEmpty()) {
+                    filePaths = noticeFileUploadService.upload(multipartFiles);
+                    noticeService.upload(content, title, category, isPublic, filePaths, user);
+                }
+                else {
+                    noticeService.upload(content, title, category, isPublic, user);
+                }
+                return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.NOTICE_UPLOAD_SUCCESS), HttpStatus.OK);
+            }
+            return new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOTICE_NOT_ADMIN), HttpStatus.BAD_REQUEST);
+
         } catch (Exception e) {
-            return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.INVALID_REQUEST), HttpStatus.BAD_REQUEST);
         }
     }
 
