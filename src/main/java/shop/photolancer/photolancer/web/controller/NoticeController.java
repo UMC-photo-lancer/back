@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import shop.photolancer.photolancer.converter.NoticeConverter;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.Category;
 import shop.photolancer.photolancer.domain.enums.Role;
@@ -30,6 +31,7 @@ public class NoticeController {
     private final NoticeService noticeService;
     private final NoticeFileUploadService noticeFileUploadService;
     private final UserServiceImpl userService;
+    private final NoticeConverter noticeConverter;
     @PostMapping
     public ResponseEntity noticeUpload(
             @RequestPart(value = "NoticeContent") NoticeRequestDto.NoticeUploadDto request,
@@ -60,20 +62,28 @@ public class NoticeController {
     }
 
     @GetMapping
-    public Page<NoticeResponseDto.NoticePagingDto> noticePage(@PageableDefault(size = 10, sort = "createdAt",
+    public NoticeResponseDto.NoticeListDto noticePage(@PageableDefault(size = 12, sort = "createdAt",
             direction = Sort.Direction.DESC) Pageable request) {
         try {
-            return noticeService.noticePage(request);
+            User user = userService.getCurrentUser();
+            if (user.getRole() == Role.ADMIN) {
+                return noticeConverter.toNoticeList(noticeService.noticePage(request), true);
+            }
+            return noticeConverter.toNoticeList(noticeService.noticePage(request), false);
         } catch (Exception e) {
             return null;
         }
     }
 
     @GetMapping("/category/{category}")
-    public Page<NoticeResponseDto.NoticePagingDto> noticePageCategory(
+    public NoticeResponseDto.NoticeListDto noticePageCategory(
             @PathVariable("category") String categoryValue,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageRequest) {
+        User user = userService.getCurrentUser();
         Category category = Category.valueOf(categoryValue.toUpperCase());
-        return noticeService.noticePageCategory(category, pageRequest);
+        if (user.getRole() == Role.ADMIN) {
+            return noticeConverter.toNoticeList(noticeService.noticePageCategory(category, pageRequest), true);
+        }
+        return noticeConverter.toNoticeList(noticeService.noticePageCategory(category, pageRequest), false);
     }
 }

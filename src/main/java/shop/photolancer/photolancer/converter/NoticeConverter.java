@@ -1,6 +1,7 @@
 package shop.photolancer.photolancer.converter;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import shop.photolancer.photolancer.domain.Notice;
 import shop.photolancer.photolancer.domain.User;
@@ -32,4 +33,12 @@ public class NoticeConverter {
                 .category(category)
                 .build();
     }
+    public NoticeResponseDto.NoticeListDto toNoticeList(Page<NoticeResponseDto.NoticePagingDto> noticePagingDto,
+                                                        Boolean isAdmin) {
+        return NoticeResponseDto.NoticeListDto.builder()
+                .isAdmin(isAdmin)
+                .NoticePagingDto(noticePagingDto)
+                .build();
+    }
+
 }
