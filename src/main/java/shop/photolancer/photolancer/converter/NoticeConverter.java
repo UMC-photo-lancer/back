@@ -6,9 +6,11 @@ import org.springframework.stereotype.Component;
 import shop.photolancer.photolancer.domain.Notice;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.Category;
+import shop.photolancer.photolancer.domain.mapping.NoticeFile;
 import shop.photolancer.photolancer.web.dto.NoticeResponseDto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Component
@@ -41,4 +43,23 @@ public class NoticeConverter {
                 .build();
     }
 
+    public NoticeResponseDto.NoticeDetailDto toNoticeDetail(Notice notice, List<NoticeResponseDto.NoticeFileDto> noticeFileList, Boolean isAdmin) {
+        return NoticeResponseDto.NoticeDetailDto.builder()
+                .noticeId(notice.getId())
+                .category(notice.getCategory())
+                .content(notice.getContent())
+                .noticeFileList(noticeFileList)
+                .createdAt(notice.getCreatedAt().toString().substring(0, 10))
+                .isAdmin(isAdmin)
+                .title(notice.getTitle())
+                .isPublic(notice.getIsPublic())
+                .build();
+    }
+
+    public NoticeResponseDto.NoticeFileDto toNoticeFile(NoticeFile noticeFile) {
+        return NoticeResponseDto.NoticeFileDto.builder()
+                .noticeFileId(noticeFile.getId())
+                .uri(noticeFile.getUri())
+                .build();
+    }
 }
