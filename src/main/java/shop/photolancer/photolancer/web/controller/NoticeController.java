@@ -1,7 +1,6 @@
 package shop.photolancer.photolancer.web.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -10,9 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import shop.photolancer.photolancer.converter.NoticeConverter;
+import shop.photolancer.photolancer.domain.Notice;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.Category;
 import shop.photolancer.photolancer.domain.enums.Role;
+import shop.photolancer.photolancer.domain.mapping.NoticeFile;
 import shop.photolancer.photolancer.exception.ResponseMessage;
 import shop.photolancer.photolancer.exception.StatusCode;
 import shop.photolancer.photolancer.service.NoticeService;
@@ -85,5 +86,17 @@ public class NoticeController {
             return noticeConverter.toNoticeList(noticeService.noticePageCategory(category, pageRequest), true);
         }
         return noticeConverter.toNoticeList(noticeService.noticePageCategory(category, pageRequest), false);
+    }
+
+    // 공지게시판 상세 조회
+    @GetMapping("/{id}")
+    public NoticeResponseDto.NoticeDetailDto noticeDetail(@PathVariable Long id) {
+        User user = userService.getCurrentUser();
+        Notice notice = noticeService.findNoticeById(id);
+        List<NoticeResponseDto.NoticeFileDto> noticeFile = noticeService.findNoticeFileByNotice(notice);
+        if (user.getRole() == Role.ADMIN) {
+            return noticeConverter.toNoticeDetail(notice, noticeFile, true);
+        }
+        return noticeConverter.toNoticeDetail(notice, noticeFile, false);
     }
 }

@@ -73,4 +73,19 @@ public class NoticeServiceImpl implements NoticeService {
                 ));
         return noticeCategoryPage;
     }
+
+    @Override
+    public Notice findNoticeById(Long noticeId) {
+        Notice notice = noticeRepository.findById(noticeId).orElseThrow();
+        return notice;
+    }
+
+    public List<NoticeResponseDto.NoticeFileDto> findNoticeFileByNotice(Notice notice) {
+        List<NoticeFile> noticeFiles = noticeFileRepository.findByNotice(notice);
+        List<NoticeResponseDto.NoticeFileDto> noticeFileDtos = noticeFiles.stream().map(
+                noticeFile -> noticeConverter.toNoticeFile(noticeFile)
+        ).toList();
+        return noticeFileDtos;
+    }
+
 }
