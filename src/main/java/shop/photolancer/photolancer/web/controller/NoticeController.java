@@ -13,7 +13,6 @@ import shop.photolancer.photolancer.domain.Notice;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.Category;
 import shop.photolancer.photolancer.domain.enums.Role;
-import shop.photolancer.photolancer.domain.mapping.NoticeFile;
 import shop.photolancer.photolancer.exception.ResponseMessage;
 import shop.photolancer.photolancer.exception.StatusCode;
 import shop.photolancer.photolancer.service.NoticeService;
@@ -79,7 +78,7 @@ public class NoticeController {
     @GetMapping("/category/{category}")
     public NoticeResponseDto.NoticeListDto noticePageCategory(
             @PathVariable("category") String categoryValue,
-            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageRequest) {
+            @PageableDefault(size = 12, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageRequest) {
         User user = userService.getCurrentUser();
         Category category = Category.valueOf(categoryValue.toUpperCase());
         if (user.getRole() == Role.ADMIN) {

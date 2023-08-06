@@ -22,7 +22,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAll(Pageable request);
 
 
-    List<Post> findByUser(User following);
+    List<Post> findByUser(User user);
+
+    Page<Post> findByUser(User user, Pageable pageable);
 
     @Query("SELECT p FROM Post p WHERE p.user = :user ORDER BY p.createdAt DESC")
     List<Post> findByUserOrderByCreatedAtDesc(@Param("user") User user, Pageable pageable);

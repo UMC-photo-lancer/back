@@ -13,7 +13,6 @@ import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.repository.FollowRepository;
 import shop.photolancer.photolancer.repository.PostRepository;
-import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.service.FollowService;
 import shop.photolancer.photolancer.web.dto.FollowingResponseDto;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
