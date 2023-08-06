@@ -1,6 +1,8 @@
 package shop.photolancer.photolancer.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
@@ -19,5 +21,9 @@ public class UserPhotoServiceImpl {
         else {
             return true;
         }
+    }
+
+    public Page<UserPhoto> findUserPhotoByUser(User user, Pageable pageable) {
+        return userPhotoRepository.findByUser(user, pageable);
     }
 }

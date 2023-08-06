@@ -23,4 +23,6 @@ public interface PostService {
     Page<PostResponseDto.PostListDto> savedPosts(Pageable pageable);
 
     Page<PostResponseDto.PostListDto> myPosts(Pageable pageable);
+
+    Page<PostResponseDto.PostListDto> boughtPhoto(Pageable pageable);
 }
