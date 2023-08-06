@@ -36,4 +36,14 @@ public class MyAlbumController {
         return null;
     }
 
+    @GetMapping("/bought-photo")
+    public Page<PostResponseDto.PostListDto> boughtPhoto(@PageableDefault(size = 12, sort = "post.createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        try {
+            return postService.boughtPhoto(pageable);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
+    }
+
 }
