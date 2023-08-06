@@ -26,4 +26,14 @@ public class MyAlbumController {
         }
         return null;
     }
+    @GetMapping("/saved-post")
+    public Page<PostResponseDto.PostListDto> savedPosts(@PageableDefault(size = 12, sort = "post.createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        try {
+            return postService.savedPosts(pageable);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
+    }
+
 }

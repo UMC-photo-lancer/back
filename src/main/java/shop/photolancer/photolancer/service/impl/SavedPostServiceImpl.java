@@ -2,10 +2,11 @@ package shop.photolancer.photolancer.service.impl;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
-import shop.photolancer.photolancer.domain.mapping.PostLike;
 import shop.photolancer.photolancer.domain.mapping.SavedPost;
 import shop.photolancer.photolancer.repository.SavedPostRepository;
 
@@ -39,5 +40,9 @@ public class SavedPostServiceImpl {
     }
     public void deleteSavedPost(Long savedPostId) {
         savedPostRepository.deleteById(savedPostId);
+    }
+
+    public Page<SavedPost> findUsersSavedPost(User user, Pageable pageable) {
+        return savedPostRepository.findByUser(user, pageable);
     }
 }

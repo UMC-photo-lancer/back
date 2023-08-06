@@ -111,6 +111,23 @@ public class PostServiceImpl implements PostService {
         }
     }
 
+    @Override
+    public Page<PostResponseDto.PostListDto> savedPosts(Pageable pageable) {
+        User user = userService.getCurrentUser();
+        Page<SavedPost> myPostList = savedPostService.findUsersSavedPost(user, pageable);
+        Page<PostResponseDto.PostListDto> myPostPage = myPostList.map(
+                myPost -> {
+                    Boolean savedPost = savedPostService.isSavedPost(myPost.getPost(), user);
+                    Boolean likeStatus = postLikeService.likeStatus(myPost.getPost(), user);
+                    Boolean isUserPhoto = userPhotoService.isUserPhoto(myPost.getPost(), user);
+                    PostResponseDto.PostListDto postListDto = postConverter.toPostList(myPost.getPost(), isUserPhoto,  savedPost, likeStatus);
+
+                    return postListDto;
+                });
+        return myPostPage;
+    }
+
+    @Override
     public Page<PostResponseDto.PostListDto> myPosts(Pageable pageable) {
         User user = userService.getCurrentUser();
         Page<Post> myPostList = postRepository.findByUser(user, pageable);
