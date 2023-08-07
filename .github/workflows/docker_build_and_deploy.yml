@@ -67,3 +67,6 @@ jobs:
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
+
+      - name: Check Docker container logs
+        run: docker logs '5588edb41ecb940dbfce47227f04b2b54e9796824f3229ba9e78aff5981170b1'
