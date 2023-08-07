@@ -52,11 +52,11 @@ jobs:
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKER_IMAGE_NAME: qkrwodbsfjq/photolancer:latest
 
-      - name: Pull and run Docker image on EC2
-        run: |
-          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "docker login --username $DOCKERHUB_USERNAME --password-stdin <<< $DOCKERHUB_PASSWORD"
-          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "docker pull $DOCKER_IMAGE_NAME"
-          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "docker run -d -p 80:8080 $DOCKER_IMAGE_NAME"
+      - name: Pull image from Docker Hub
+        run: docker pull qkrwodbsfjq/photolancer:latest
+
+      - name: Run Docker container with environment variables
+        run: docker run --name gocontainer -dp 80:8080 qkrwodbsfjq/photolancer:latest
 
         env:
           DOCKER_IMAGE_NAME: qkrwodbsfjq/photolancer:latest
