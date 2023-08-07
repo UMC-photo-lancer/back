@@ -7,6 +7,8 @@ public class ResponseMessage {
     public static final String CREATE_CHAT_ROOM_SUCCESS = "채팅방 생성 성공";
     public static final String MESSAGE_READ_SUCCESS = "채팅방 불러오기 성공";
     public static final String SEARCH_CHAT_ROOM_SUCCESS = "채팅방 검색 성공";
+    public static final String MESSAGE_SAVE_SUCCESS = "메시지 저장 성공";
+
     //payment
     public static final String CHARGE_POINT_SUCCESS = "포인트 충전 성공";
     public static final String TRADE_LOG_READ_SUCCESS = "거래 내역 조회 성공";
