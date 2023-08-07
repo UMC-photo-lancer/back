@@ -17,6 +17,12 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
+        with:
+          version: v0.7.0
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew #실행 권한 부여
+        shell: bash
 
       - name: Build Docker image and push to Docker Hub
         uses: docker/build-push-action@v2
