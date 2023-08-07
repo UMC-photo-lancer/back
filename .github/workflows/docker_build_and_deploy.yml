@@ -56,7 +56,7 @@ jobs:
         run: docker pull qkrwodbsfjq/photolancer:latest
 
       - name: Run Docker container with environment variables
-        run: docker run -i -t -p 80:8080 qkrwodbsfjq/photolancer:latest
+        run: docker run -d -p 80:8080 qkrwodbsfjq/photolancer:latest
 
         env:
           DOCKER_IMAGE_NAME: qkrwodbsfjq/photolancer:latest
