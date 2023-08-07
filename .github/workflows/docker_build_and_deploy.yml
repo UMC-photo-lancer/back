@@ -59,11 +59,11 @@ jobs:
         run: docker run --name photolancer -d -p 80:8080 qkrwodbsfjq/photolancer:latest
 
         env:
-          DB_URL: jdbc:mysql://3.39.28.127:3306/photolancer
-          DB_USERNAME: root
-          DB_PASSWORD: 346464
-          ACCESS_KEY: AKIAU7DZEUMKGEUDN7NT
-          SECRET_KEY: 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
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
 
       - name: Check Docker container logs
         run: docker logs photolancer
