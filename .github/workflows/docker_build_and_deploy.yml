@@ -21,7 +21,7 @@ jobs:
           version: v0.7.0
 
       - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
+        run: chmod +x ./gradlew #실행 권한 부여
         shell: bash
 
       - name: Docker Login
