@@ -115,4 +115,16 @@ public class ChatServiceImpl implements ChatService {
 
         return chatRoom;
     }
+
+    @Transactional
+    @Override
+    public void saveMessage(ChatRoom chatRoom, User sender, String content){
+        Message newMessage = Message.builder()
+                .chatRoom(chatRoom)
+                .sender(sender)
+                .content(content)
+                .build();
+
+        messageRepository.save(newMessage);
+    }
 }

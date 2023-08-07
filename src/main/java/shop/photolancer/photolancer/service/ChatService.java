@@ -11,4 +11,5 @@ public interface ChatService {
     Page<Message> findMessages(Long chatId, Long last);
     Message findLastMessageByChatRoomId(Long chatRoomId);
     ChatRoom searchRoom(User user, String nickname);
+    void saveMessage(ChatRoom chatRoom, User sender, String content);
 }
