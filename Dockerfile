@@ -1,3 +1,4 @@
 FROM openjdk:17
-COPY JAR_FILE=./*.jar /app/app.jar
+ARG JAR_FILE=./*.jar
+COPY ${JAR_FILE} app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
