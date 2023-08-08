@@ -7,15 +7,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.photolancer.photolancer.converter.AccountConverter;
 import shop.photolancer.photolancer.converter.PaymentConverter;
-import shop.photolancer.photolancer.domain.Account;
-import shop.photolancer.photolancer.domain.Charge;
-import shop.photolancer.photolancer.domain.Post;
-import shop.photolancer.photolancer.domain.User;
+import shop.photolancer.photolancer.domain.*;
+import shop.photolancer.photolancer.domain.enums.NoteType;
+import shop.photolancer.photolancer.domain.enums.NotificationType;
 import shop.photolancer.photolancer.domain.mapping.UserPhoto;
-import shop.photolancer.photolancer.repository.AccountRepository;
-import shop.photolancer.photolancer.repository.ChargeRepository;
-import shop.photolancer.photolancer.repository.PostRepository;
-import shop.photolancer.photolancer.repository.UserPhotoRepository;
+import shop.photolancer.photolancer.repository.*;
 import shop.photolancer.photolancer.service.PaymentService;
 import shop.photolancer.photolancer.web.dto.PaymentResponseDto;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +32,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final UserPhotoRepository userPhotoRepository;
     private final AccountRepository accountRepository;
     private final AccountConverter accountConverter;
+    private final NotificationRepository notificationRepository;
 
     @Override
     @Transactional
@@ -105,6 +102,22 @@ public class PaymentServiceImpl implements PaymentService {
 
         UserPhoto userPhoto = paymentConverter.toPurchase(post, user);
         userPhotoRepository.save(userPhoto);
+
+        Notification purchaseNote = Notification.builder()
+                .message(post.getUser().getNickname() + "님의 게시글을 구매했습니다.")
+                .type(NotificationType.POINT)
+                .point("+"+point+" Point")
+                .user(user)
+                .build();
+        notificationRepository.save(purchaseNote);
+
+        Notification saleNote = Notification.builder()
+                .message("Lv. " + user.getLevel() + " " + user.getNickname() + "님이 " + post.getUser().getNickname() + "님의 게시글을 구매했습니다.")
+                .type(NotificationType.POINT)
+                .point("-"+point+" Point")
+                .user(post.getUser())
+                .build();
+        notificationRepository.save(saleNote);
 
     }
 

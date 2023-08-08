@@ -26,6 +26,7 @@ public class ChatServiceImpl implements ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
+
     private final ChatMapper mapper;
     private Map<Long, ChatRoom> chatRooms;
 
@@ -35,8 +36,6 @@ public class ChatServiceImpl implements ChatService {
         chatRooms = new LinkedHashMap<>();
     }
 
-    //채팅 목록 불러오기
-    @Transactional
     @Override
     public Page<ChatRoom> findAllChats(Long userId, Long last){
         User user = userRepository.findById(userId)
@@ -56,7 +55,6 @@ public class ChatServiceImpl implements ChatService {
         return chatRooms;
     }
 
-    //채팅방 생성
     @Transactional
     @Override
     public ChatRoom createRoom(User user, Long receiverId) {
@@ -79,7 +77,6 @@ public class ChatServiceImpl implements ChatService {
         return chatRoom;
     }
 
-    @Transactional
     @Override
     public Page<Message> findMessages(Long chatId, Long last){
         ChatRoom chat = chatRoomRepository.findById(chatId)
