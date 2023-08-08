@@ -122,6 +122,8 @@ public class UserServiceImpl {
                 .num_following(0)
                 .num_post(0)
                 .num_notification(0)
+                .experience(0.0)
+                .explane("")
                 .isPro(false)
                 .build();
 

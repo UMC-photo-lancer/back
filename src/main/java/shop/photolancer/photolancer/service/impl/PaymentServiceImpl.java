@@ -16,8 +16,10 @@ import shop.photolancer.photolancer.service.PaymentService;
 import shop.photolancer.photolancer.web.dto.PaymentResponseDto;
 import org.springframework.data.domain.Pageable;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 
 
@@ -40,6 +42,20 @@ public class PaymentServiceImpl implements PaymentService {
         Charge charge = paymentConverter.toCharge(user, amount, paymentMethod);
 
         user.updatePoint(amount);
+
+        user.updateNotification();
+
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.KOREA);
+
+        Notification chargePoint = Notification.builder()
+                .message("포인트를 충전했습니다.")
+                .type(NotificationType.POINT)
+                .point("+"+numberFormat.format(amount)+" Point")
+                .userPoint("잔여 "+numberFormat.format(user.getPoint())+" Point")
+                .user(user)
+                .build();
+
+        notificationRepository.save(chargePoint);
 
         return chargeRepository.save(charge);
     }
@@ -84,6 +100,22 @@ public class PaymentServiceImpl implements PaymentService {
         user.updatePoint(-point);
 
         chargeRepository.save(charge);
+
+        user.updateNotification();
+
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.KOREA);
+
+        String formattedPoint = numberFormat.format(point);
+
+        Notification exchangeNote = Notification.builder()
+                .message("포인트를 환전했습니다.")
+                .type(NotificationType.POINT)
+                .point("-"+formattedPoint+" Point")
+                .userPoint("잔여 "+numberFormat.format(user.getPoint())+" Point")
+                .user(user)
+                .build();
+
+        notificationRepository.save(exchangeNote);
     }
 
     @Override
@@ -91,6 +123,8 @@ public class PaymentServiceImpl implements PaymentService {
     public void purchase(Long postId, User user){
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NoSuchElementException("Post not found"));
+
+        User postUser = post.getUser();
 
         Integer point = post.getPoint();
 
@@ -103,22 +137,31 @@ public class PaymentServiceImpl implements PaymentService {
         UserPhoto userPhoto = paymentConverter.toPurchase(post, user);
         userPhotoRepository.save(userPhoto);
 
+        user.updateNotification();
+
+        postUser.updateNotification();
+
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.KOREA);
+
+        String formattedPoint = numberFormat.format(point);
+
         Notification purchaseNote = Notification.builder()
-                .message(post.getUser().getNickname() + "님의 게시글을 구매했습니다.")
+                .message(postUser.getNickname() + "님의 게시글을 구매했습니다.")
                 .type(NotificationType.POINT)
-                .point("+"+point+" Point")
+                .point("+"+formattedPoint+" Point")
+                .userPoint("잔여 "+numberFormat.format(user.getPoint())+" Point")
                 .user(user)
                 .build();
         notificationRepository.save(purchaseNote);
 
         Notification saleNote = Notification.builder()
-                .message("Lv. " + user.getLevel() + " " + user.getNickname() + "님이 " + post.getUser().getNickname() + "님의 게시글을 구매했습니다.")
+                .message("Lv. " + user.getLevel() + " " + user.getNickname() + "님이 " + postUser.getNickname() + "님의 게시글을 구매했습니다.")
                 .type(NotificationType.POINT)
-                .point("-"+point+" Point")
+                .point("-"+formattedPoint+" Point")
+                .userPoint("잔여 "+numberFormat.format(user.getPoint())+" Point")
                 .user(post.getUser())
                 .build();
         notificationRepository.save(saleNote);
 
     }
-
 }
