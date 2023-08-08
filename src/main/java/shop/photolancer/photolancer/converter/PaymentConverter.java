@@ -3,16 +3,20 @@ package shop.photolancer.photolancer.converter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import shop.photolancer.photolancer.domain.Charge;
+import shop.photolancer.photolancer.domain.Notification;
 import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.NoteType;
+import shop.photolancer.photolancer.domain.enums.NotificationType;
 import shop.photolancer.photolancer.domain.enums.PaymentMethodType;
 import shop.photolancer.photolancer.domain.mapping.UserPhoto;
 import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.web.dto.PaymentResponseDto;
 
+import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -20,6 +24,8 @@ import java.util.stream.Collectors;
 public class PaymentConverter {
 
     private UserRepository userRepository;
+
+    NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.KOREA);
 
     public Charge toCharge(User user, Integer amount, String paymentMethod) {
         if (paymentMethod =="kakao") {
@@ -84,4 +90,46 @@ public class PaymentConverter {
                 .user(user)
                 .build();
     }
+
+    public Notification toChargeNotification(User user, Integer amount){
+        return Notification.builder()
+                .message("포인트를 충전했습니다.")
+                .type(NotificationType.POINT)
+                .point("+"+numberFormat.format(amount)+" Point")
+                .userPoint("잔여 "+numberFormat.format(user.getPoint())+" Point")
+                .user(user)
+                .build();
+    }
+
+    public Notification toExchangeNotification(User user, Integer point){
+        return Notification.builder()
+                .message("포인트를 환전했습니다.")
+                .type(NotificationType.POINT)
+                .point("-"+numberFormat.format(point)+" Point")
+                .userPoint("잔여 "+numberFormat.format(user.getPoint())+" Point")
+                .user(user)
+                .build();
+    }
+
+    public Notification toPurchaseNotification(User user, User postUser, Integer point){
+        return Notification.builder()
+                .message("Lv. " + postUser.getLevel() + " " + postUser.getNickname() + "님의 게시글을 구매했습니다.")
+                .type(NotificationType.POINT)
+                .point("-"+numberFormat.format(point)+" Point")
+                .userPoint("잔여 "+numberFormat.format(user.getPoint())+" Point")
+                .user(user)
+                .build();
+    }
+
+    public Notification toSaleNotification(User user, User postUser, Integer point){
+        return Notification.builder()
+                .message("Lv. " + user.getLevel() + " " + user.getNickname() + "님이 " + postUser.getNickname() + "님의 게시글을 구매했습니다.")
+                .type(NotificationType.POINT)
+                .point("+"+numberFormat.format(point)+" Point")
+                .userPoint("잔여 "+numberFormat.format(postUser.getPoint())+" Point")
+                .user(postUser)
+                .build();
+    }
+
+
 }

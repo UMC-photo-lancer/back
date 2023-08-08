@@ -49,10 +49,9 @@ public class MessageController {
             User user = userService.getCurrentUser();
 
             ChatRoom chatRoom = chatRoomRepository.findById(request.getRoomId()).orElseThrow(() -> new NoSuchElementException("ChatRoom not found."));
-            User sender = user; // 현재 사용자의 닉네임으로 설정
+            User sender = user;
             String content = request.getContent();
 
-            // 메시지 저장
             chatService.saveMessage(chatRoom, sender, content);
 
             return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.MESSAGE_SAVE_SUCCESS), HttpStatus.OK);

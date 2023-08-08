@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface ChargeRepository extends JpaRepository<Charge, Long> {
-    List<Charge> findAllByUserOrderByCreatedAtDesc(User user);
 
     Page<Charge>  findAllByUser(User user, Pageable pageable);
 }

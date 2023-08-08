@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import shop.photolancer.photolancer.converter.AccountConverter;
 import shop.photolancer.photolancer.converter.PaymentConverter;
 import shop.photolancer.photolancer.domain.*;
-import shop.photolancer.photolancer.domain.enums.NoteType;
 import shop.photolancer.photolancer.domain.enums.NotificationType;
 import shop.photolancer.photolancer.domain.mapping.UserPhoto;
 import shop.photolancer.photolancer.repository.*;
@@ -42,20 +41,11 @@ public class PaymentServiceImpl implements PaymentService {
         Charge charge = paymentConverter.toCharge(user, amount, paymentMethod);
 
         user.updatePoint(amount);
-
         user.updateNotification();
 
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.KOREA);
+        Notification chargeNotification = paymentConverter.toChargeNotification(user, amount);
 
-        Notification chargePoint = Notification.builder()
-                .message("포인트를 충전했습니다.")
-                .type(NotificationType.POINT)
-                .point("+"+numberFormat.format(amount)+" Point")
-                .userPoint("잔여 "+numberFormat.format(user.getPoint())+" Point")
-                .user(user)
-                .build();
-
-        notificationRepository.save(chargePoint);
+        notificationRepository.save(chargeNotification);
 
         return chargeRepository.save(charge);
     }
@@ -63,7 +53,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public List<Charge> getAllCharges(User user, Integer page){
         int pageSize = 10; // 페이지 당 출력할 아이템 수
+
         Pageable pageable = (Pageable) PageRequest.of(page-1, pageSize, Sort.by("createdAt").descending());
+
         return chargeRepository.findAllByUser(user, pageable).getContent();
     }
 
@@ -98,24 +90,12 @@ public class PaymentServiceImpl implements PaymentService {
         Charge charge = paymentConverter.toExchange(user, -point);
 
         user.updatePoint(-point);
-
-        chargeRepository.save(charge);
-
         user.updateNotification();
 
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.KOREA);
+        Notification exchangeNotification = paymentConverter.toExchangeNotification(user, point);
 
-        String formattedPoint = numberFormat.format(point);
-
-        Notification exchangeNote = Notification.builder()
-                .message("포인트를 환전했습니다.")
-                .type(NotificationType.POINT)
-                .point("-"+formattedPoint+" Point")
-                .userPoint("잔여 "+numberFormat.format(user.getPoint())+" Point")
-                .user(user)
-                .build();
-
-        notificationRepository.save(exchangeNote);
+        chargeRepository.save(charge);
+        notificationRepository.save(exchangeNotification);
     }
 
     @Override
@@ -123,45 +103,26 @@ public class PaymentServiceImpl implements PaymentService {
     public void purchase(Long postId, User user){
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NoSuchElementException("Post not found"));
-
         User postUser = post.getUser();
-
         Integer point = post.getPoint();
 
         Charge charge = paymentConverter.toPurchaseLog(user, -point);
 
-        chargeRepository.save(charge);
+        UserPhoto userPhoto = paymentConverter.toPurchase(post, user);
 
         user.updatePoint(-point);
-
-        UserPhoto userPhoto = paymentConverter.toPurchase(post, user);
-        userPhotoRepository.save(userPhoto);
-
+        postUser.updatePoint(point);
         user.updateNotification();
-
         postUser.updateNotification();
 
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.KOREA);
+        Notification purchaseNotification = paymentConverter.toPurchaseNotification(user, postUser, point);
 
-        String formattedPoint = numberFormat.format(point);
+        Notification saleNotification = paymentConverter.toSaleNotification(user, postUser, point);
 
-        Notification purchaseNote = Notification.builder()
-                .message(postUser.getNickname() + "님의 게시글을 구매했습니다.")
-                .type(NotificationType.POINT)
-                .point("+"+formattedPoint+" Point")
-                .userPoint("잔여 "+numberFormat.format(user.getPoint())+" Point")
-                .user(user)
-                .build();
-        notificationRepository.save(purchaseNote);
-
-        Notification saleNote = Notification.builder()
-                .message("Lv. " + user.getLevel() + " " + user.getNickname() + "님이 " + postUser.getNickname() + "님의 게시글을 구매했습니다.")
-                .type(NotificationType.POINT)
-                .point("-"+formattedPoint+" Point")
-                .userPoint("잔여 "+numberFormat.format(user.getPoint())+" Point")
-                .user(post.getUser())
-                .build();
-        notificationRepository.save(saleNote);
+        chargeRepository.save(charge);
+        userPhotoRepository.save(userPhoto);
+        notificationRepository.save(purchaseNotification);
+        notificationRepository.save(saleNotification);
 
     }
 }
