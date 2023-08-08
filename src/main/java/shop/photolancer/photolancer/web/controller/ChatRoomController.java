@@ -1,5 +1,9 @@
 package shop.photolancer.photolancer.web.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -25,7 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@Controller
+@Api(tags = "채팅 관련 API")
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/chat")
 public class ChatRoomController {
@@ -35,7 +40,9 @@ public class ChatRoomController {
     private final ChatMapper mapper;
     private final UserServiceImpl userService;
 
-    //채팅방 목록 반환
+    @ApiOperation(value = "채팅 목록 불러오기 API")
+    @ApiResponse(code = 200, message = "채팅 목록 불러오기 성공")
+    @ApiImplicitParam(name = "page", value = "페이지 번호", dataType = "int", example = "1", paramType = "query")
     @GetMapping("/rooms")
     public ResponseEntity getAllChatRooms(@RequestParam(defaultValue = "1") Long last) {
         try {
@@ -79,7 +86,9 @@ public class ChatRoomController {
         }
     }
 
-    // 채팅방 생성
+    @ApiOperation(value = "채팅방 생성 API")
+    @ApiImplicitParam(name = "receiver-id", value = "채팅 상대 ID", required = true, dataType = "Long", example = "1", paramType = "path")
+    @ApiResponse(code = 200, message = "채팅방 생성 성공")
     @PostMapping("/room/{receiver-id}")
     @ResponseBody
     public ResponseEntity createRoom(@PathVariable("receiver-id") Long receiverId) {
@@ -97,7 +106,9 @@ public class ChatRoomController {
     }
 
 
-    // 특정 채팅방 조회
+    @ApiOperation(value = "채팅방 불러오기 API")
+    @ApiImplicitParam(name = "chat-id", value = "채팅방 ID", required = true, dataType = "Long", example = "1", paramType = "path")
+    @ApiResponse(code = 200, message = "채팅방 불러오기 성공")
     @GetMapping("/room/{chat-id}")
     public ResponseEntity getChatMessages(@PathVariable("chat-id") Long chatId,
                                           @RequestParam(defaultValue = "1") Long last, @RequestBody ChatRequestDto request) {
@@ -129,9 +140,10 @@ public class ChatRoomController {
         }
     }
 
-    //채팅 검색
+    @ApiOperation(value = "채팅방 검색 API")
+    @ApiResponse(code = 200, message = "채팅방 검색 성공")
+    @ApiImplicitParam(name = "nickname", value = "검색하려는 유저 닉네임", dataType = "string", example = "오리난쟁", paramType = "query")
     @PostMapping("/search")
-    @ResponseBody
     public ResponseEntity searchRoom(@RequestParam String nickname) {
         try {
             User user = userService.getCurrentUser();
