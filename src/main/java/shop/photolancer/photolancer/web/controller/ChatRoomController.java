@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import shop.photolancer.photolancer.converter.ChatConverter;
 import shop.photolancer.photolancer.domain.ChatRoom;
 import shop.photolancer.photolancer.domain.Message;
 import shop.photolancer.photolancer.domain.User;
@@ -39,6 +39,7 @@ public class ChatRoomController {
     private final ChatService chatService;
     private final ChatMapper mapper;
     private final UserServiceImpl userService;
+    private final ChatConverter chatConverter;
 
     @ApiOperation(value = "채팅 목록 불러오기 API")
     @ApiResponse(code = 200, message = "채팅 목록 불러오기 성공")
@@ -123,12 +124,7 @@ public class ChatRoomController {
 
             List<Message> messageList = messages.getContent();
 
-            UserResponseDto.ChatUserDto userInfo = UserResponseDto.ChatUserDto.builder()
-                    .id(otherUserId)
-                    .level(otherUser.getLevel())
-                    .nickname(otherUser.getNickname())
-                    .profileUrl(otherUser.getProfileUrl())
-                    .build();
+            UserResponseDto.ChatUserDto userInfo = chatConverter.toUserInfo(otherUser);
 
             List<ChatResponseDto.MessageResponse> responses = mapper.messagesToMessageResponseDtos(messageList);
 
@@ -152,7 +148,7 @@ public class ChatRoomController {
 
             ChatRoom chatRoom = chatService.searchRoom(user, nickname);
 
-            // 상대방 정보를 가져옴
+            //상대방 정보 가져오기
             User receiver = chatRoom.getReceiver().getId().equals(userId) ? chatRoom.getSender() : chatRoom.getReceiver();
 
             UserResponseDto.ChatUserDto response = new UserResponseDto.ChatUserDto(

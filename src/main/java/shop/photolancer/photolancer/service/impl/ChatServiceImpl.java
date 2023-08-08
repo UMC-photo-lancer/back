@@ -6,18 +6,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shop.photolancer.photolancer.converter.ChatConverter;
 import shop.photolancer.photolancer.domain.ChatRoom;
 import shop.photolancer.photolancer.domain.Message;
 import shop.photolancer.photolancer.domain.User;
-import shop.photolancer.photolancer.mapper.ChatMapper;
 import shop.photolancer.photolancer.repository.ChatRoomRepository;
 import shop.photolancer.photolancer.repository.MessageRepository;
 import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.service.ChatService;
 
-import javax.annotation.PostConstruct;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Service
@@ -26,15 +23,7 @@ public class ChatServiceImpl implements ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
-
-    private final ChatMapper mapper;
-    private Map<Long, ChatRoom> chatRooms;
-
-    @PostConstruct
-    //의존관게 주입완료되면 실행되는 코드
-    private void init() {
-        chatRooms = new LinkedHashMap<>();
-    }
+    private final ChatConverter chatConverter;
 
     @Override
     public Page<ChatRoom> findAllChats(Long userId, Long last){
@@ -68,10 +57,8 @@ public class ChatServiceImpl implements ChatService {
         }
 
         //없으면 생성
-        ChatRoom chatRoom = ChatRoom.builder()
-                .sender(user)
-                .receiver(receiver)
-                .build();
+        ChatRoom chatRoom = chatConverter.toChatRoom(user, receiver);
+
         chatRoomRepository.save(chatRoom);
 
         return chatRoom;
@@ -116,11 +103,7 @@ public class ChatServiceImpl implements ChatService {
     @Transactional
     @Override
     public void saveMessage(ChatRoom chatRoom, User sender, String content){
-        Message newMessage = Message.builder()
-                .chatRoom(chatRoom)
-                .sender(sender)
-                .content(content)
-                .build();
+        Message newMessage = chatConverter.toMessage(chatRoom, sender, content);
 
         messageRepository.save(newMessage);
     }
