@@ -5,18 +5,17 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shop.photolancer.photolancer.domain.User;
+import shop.photolancer.photolancer.exception.CustomExceptions;
 import shop.photolancer.photolancer.exception.ResponseMessage;
 import shop.photolancer.photolancer.exception.StatusCode;
 import shop.photolancer.photolancer.service.AccountService;
 import shop.photolancer.photolancer.service.PaymentService;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
+import shop.photolancer.photolancer.web.controller.base.BaseController;
 import shop.photolancer.photolancer.web.dto.AccountRequestDto;
 import shop.photolancer.photolancer.web.dto.PaymentResponseDto;
 import shop.photolancer.photolancer.web.dto.base.DefaultRes;
@@ -25,12 +24,9 @@ import java.util.List;
 
 @Api(tags = "계좌 관련 API")
 @RestController
-@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/setting/account")
-public class AccountController {
-
-    private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
+public class AccountController extends BaseController {
     private final AccountService accountService;
     private final UserServiceImpl userService;
     private final PaymentService paymentService;
@@ -38,7 +34,7 @@ public class AccountController {
     @ApiOperation(value = "계좌 목록 불러오기 API")
     @ApiResponse(code = 200, message = "계좌 목록 불러오기 성공")
     @GetMapping()
-    public ResponseEntity exchangeWindow(){
+    public ResponseEntity getAccount(){
         try {
             logger.info("Received request: method={}, path={}, description={}", "GET", "/setting/account", "계좌 목록 불러오기 API");
 
@@ -47,8 +43,8 @@ public class AccountController {
             List<PaymentResponseDto.ExchangeDto> response = paymentService.getExchange(user);
 
             return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.ACCOUNT_READ_SUCCESS, response), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        } catch (CustomExceptions.GetAccountException e) {
+            return handleApiException(e, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -73,8 +69,8 @@ public class AccountController {
             accountService.add(user, bank, accountNumber);
 
             return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.ADD_ACCOUNT_SUCCESS), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        } catch (CustomExceptions.AddAccountException e) {
+            return handleApiException(e, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -91,8 +87,8 @@ public class AccountController {
             accountService.updateIsMain(user, accountId);
 
             return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.ACCOUNT_MAIN_SUCCESS), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        } catch (CustomExceptions.MainAccountException e) {
+            return handleApiException(e, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -118,8 +114,8 @@ public class AccountController {
             accountService.updateAccount(user, accountId, bank, accountNumber);
 
             return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.ACCOUNT_UPDATE_SUCCESS), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        } catch (CustomExceptions.UpdateAccountException e) {
+            return handleApiException(e, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -136,8 +132,8 @@ public class AccountController {
             accountService.deleteAccount(user, accountId);
 
             return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.ACCOUNT_DELETE_SUCCESS), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        } catch (CustomExceptions.DeleteAccountException e) {
+            return handleApiException(e, HttpStatus.BAD_REQUEST);
         }
     }
 
