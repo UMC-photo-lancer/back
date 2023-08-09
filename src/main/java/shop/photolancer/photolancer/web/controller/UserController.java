@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import shop.photolancer.photolancer.domain.User;
 
 import shop.photolancer.photolancer.domain.enums.Role;
+import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.service.impl.UserBookmarkServiceImpl;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 import shop.photolancer.photolancer.web.dto.*;
@@ -45,6 +46,7 @@ public class UserController {
 
     private final UserServiceImpl userServiceImpl;
     private final UserBookmarkServiceImpl userBookmarkServiceImpl;
+    protected final UserRepository userRepository;
     private AmazonS3 s3Client;
 
     // 휴면 계정, 즉 탈퇴한 계정일 경우의 회원가입 얘기하기
@@ -240,6 +242,7 @@ public class UserController {
     public ResponseEntity<?> editTitle(@RequestParam("memberTitle") String memberTitle){
         User user = userServiceImpl.getCurrentUser();
         user.setTitle(memberTitle);
+        userRepository.save(user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

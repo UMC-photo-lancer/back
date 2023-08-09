@@ -33,6 +33,8 @@ spring:
       - jwt
       - oauth
       - mail
+      - s3
+      - db
 
 logging.level:
   org.hibernate.SQL: INFO

@@ -9,6 +9,7 @@ import shop.photolancer.photolancer.config.oauth2.userinfo.OAuth2UserInfo;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.Role;
 import shop.photolancer.photolancer.domain.enums.SocialType;
+import shop.photolancer.photolancer.domain.enums.UserStatus;
 
 import java.util.Map;
 import java.util.UUID;
@@ -82,6 +83,16 @@ public class OAuthAttributes {
                 .password(socialType.toString() + UUID.randomUUID() + "socialPW")
                 .name(oauth2UserInfo.getName())
                 .role(Role.GUEST) // security 설정에서 role부분 확인하기
+                .status(UserStatus.ACTIVE)
+                .point(0)
+                .level(1)
+                .num_follower(0)
+                .num_following(0)
+                .num_post(0)
+                .num_notification(0)
+                .experience(0.0)
+                .explane("")
+                .isPro(false)
                 .build();
     }
 }
