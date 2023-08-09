@@ -243,6 +243,16 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Operation(summary = "공지용 관리자 모드로 반환합니다.")
+    @GetMapping(value = "/admin")
+    public ResponseEntity<?> convertAdmin(){
+        log.info("왜 안들어오지");
+        User user = userServiceImpl.getCurrentUser();
+        if (user.getRole().equals(Role.ADMIN))
+            return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+
 //    @Operation(summary = "전체유저를 이름을 반환합니다.")
 //    @GetMapping(value = "/list/all-user")
 //    public ResponseEntity<List<UserListRequestDto>> getAllUser(){
