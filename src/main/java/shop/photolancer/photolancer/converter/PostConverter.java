@@ -2,10 +2,8 @@ package shop.photolancer.photolancer.converter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import shop.photolancer.photolancer.domain.Bookmark;
-import shop.photolancer.photolancer.domain.Contest;
-import shop.photolancer.photolancer.domain.Post;
-import shop.photolancer.photolancer.domain.User;
+import shop.photolancer.photolancer.domain.*;
+import shop.photolancer.photolancer.domain.enums.NotificationType;
 import shop.photolancer.photolancer.domain.mapping.*;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
 
@@ -118,6 +116,15 @@ public class PostConverter {
                 .awardPhotoList(awardPhotoList)
                 .hotPhotoList(hotPhotoPage)
                 .recentPhotoList(recentPhotoPage)
+                .build();
+    }
+
+    public Notification toShareNotification(User sharedBy, User shareTo, Long postId){
+        return Notification.builder()
+                .message(sharedBy.getNickname() + "님이 게시글을 공유하였습니다.")
+                .type(NotificationType.SHARE)
+                .user(shareTo)
+                .postUri("http://photolancer.shop/post/" + postId)
                 .build();
     }
 }

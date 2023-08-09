@@ -31,4 +31,7 @@ public class Notification extends BaseEntity {
 
     @Column(nullable = false)
     private String message;
+
+    //type이 SHARE이면 postUri 반환
+    private String postUri;
 }

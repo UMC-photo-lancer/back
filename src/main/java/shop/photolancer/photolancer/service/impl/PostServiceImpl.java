@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import shop.photolancer.photolancer.converter.PostConverter;
 import shop.photolancer.photolancer.domain.Bookmark;
+import shop.photolancer.photolancer.domain.Notification;
 import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.mapping.*;
@@ -29,6 +30,7 @@ public class PostServiceImpl implements PostService {
     private final SavedPostServiceImpl savedPostService;
     private final UserPhotoServiceImpl userPhotoService;
     private final UserServiceImpl userService;
+    private final NotificationRepository notificationRepository;
 
 
 
@@ -39,6 +41,7 @@ public class PostServiceImpl implements PostService {
 
         Post post = postConverter.toPost(content, likeCount, point, isSale, imgPaths.get(0), user);
         postRepository.save(post);
+        user.setNum_post(user.getNum_post() + 1);
         for (String imgUrl : imgPaths) {
             PostImage postImage = postConverter.toPostImage(imgUrl, post);
             postImgRepository.save(postImage);
@@ -160,5 +163,11 @@ public class PostServiceImpl implements PostService {
                     return postListDto;
                 });
         return myPostPage;
+    }
+
+    @Override
+    public void sharePost(User sharedBy, User shareTo, Long postId) {
+        Notification notification = postConverter.toShareNotification(sharedBy, shareTo, postId);
+        notificationRepository.save(notification);
     }
 }
