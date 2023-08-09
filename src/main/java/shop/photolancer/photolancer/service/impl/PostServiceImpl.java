@@ -39,6 +39,7 @@ public class PostServiceImpl implements PostService {
 
         Post post = postConverter.toPost(content, likeCount, point, isSale, imgPaths.get(0), user);
         postRepository.save(post);
+        user.setNum_post(user.getNum_post() + 1);
         for (String imgUrl : imgPaths) {
             PostImage postImage = postConverter.toPostImage(imgUrl, post);
             postImgRepository.save(postImage);
@@ -161,4 +162,11 @@ public class PostServiceImpl implements PostService {
                 });
         return myPostPage;
     }
+
+//    @Override
+//    public void sharePost(User user, User shareUser, Long postId) {
+//        String notificationMsg = user.getName() + "님이 피드를 공유하였습니다";
+//
+//        notificationServiceImpl.save(notificationMsg, shareUser, postId);
+//    }
 }

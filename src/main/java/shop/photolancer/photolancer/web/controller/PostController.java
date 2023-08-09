@@ -84,4 +84,18 @@ public class PostController {
             return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/{id]/share")
+    public ResponseEntity sharePost(@PathVariable Long id, @RequestBody Long userId) {
+        try {
+            User user = userService.getCurrentUser();
+            User shareUser = userService.findUserById(userId);
+
+            postService.sharePost(user, shareUser, id);
+
+            return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.POST_SHARE_SUCCESS), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
+        }
+    }
 }

@@ -25,4 +25,6 @@ public interface PostService {
     Page<PostResponseDto.PostListDto> myPosts(Pageable pageable);
 
     Page<PostResponseDto.PostListDto> boughtPhoto(Pageable pageable);
+
+//    void sharePost(User user, User shareUser);
 }

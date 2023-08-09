@@ -31,7 +31,11 @@ public class ResponseMessage {
     public static final String POST_UPLOAD_SUCCESS = "포스트 업로드 성공";
     public static final String POST_LIKE_SUCCESS = "포스트 좋아요 성공";
 
+    public static final String POST_SHARE_SUCCESS = "포스트 공유 성공";
+
     public static final String POST_DELETE_SUCCESS = "포스트 삭제 성공";
+
+    public static final String POST_SAVE_SUCCESS = "포스트 저장 성공";
 
     // notice
     public static final String NOTICE_UPLOAD_SUCCESS = "공지 업로드 성공";
@@ -44,7 +48,7 @@ public class ResponseMessage {
 
     //follow, following
     public static final String FOLLOW_REQUEST_SUCCESS = "팔로우 요청 성공";
-    public static final String POST_SAVE_SUCCESS = "포스트 저장 성공";
     public static final String INVALID_REQUEST = "유효한 요청이 아닙니다";
     public static final String NOTICE_NOT_ADMIN = "관리자가 아닙니다";
+
 }
