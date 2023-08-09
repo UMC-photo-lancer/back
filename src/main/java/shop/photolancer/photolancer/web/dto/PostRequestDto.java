@@ -23,6 +23,6 @@ public class PostRequestDto {
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class PostShareDto {
-            private Long userId;
+            private List<Long> userId;
     }
 }
