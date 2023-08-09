@@ -16,6 +16,7 @@ import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 import shop.photolancer.photolancer.web.controller.base.BaseController;
 import shop.photolancer.photolancer.web.dto.PaymentRequestDto;
 import shop.photolancer.photolancer.web.dto.PaymentResponseDto;
+import shop.photolancer.photolancer.web.dto.UserResponseDto;
 import shop.photolancer.photolancer.web.dto.base.DefaultRes;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -85,7 +86,11 @@ public class PaymentController extends BaseController {
 
             User user = userService.getCurrentUser();
 
-            List<PaymentResponseDto.ExchangeDto> response = paymentService.getExchange(user);
+            List<PaymentResponseDto.ExchangeDto> accounts = paymentService.getExchange(user);
+
+            PaymentResponseDto.PaymentUserDto userInfo = paymentConverter.toUserInfo(user);
+
+            PaymentResponseDto.UserInfoAndAccounts response = new PaymentResponseDto.UserInfoAndAccounts(userInfo,accounts);
 
             return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.EXCHANGE_READ_SUCCESS, response), HttpStatus.OK);
         } catch (CustomExceptions.ExchangeWindowException e) {
