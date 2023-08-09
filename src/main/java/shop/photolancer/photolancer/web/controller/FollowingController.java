@@ -12,7 +12,7 @@ import shop.photolancer.photolancer.exception.ResponseMessage;
 import shop.photolancer.photolancer.exception.StatusCode;
 import shop.photolancer.photolancer.service.impl.FollowServiceImpl;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
-import shop.photolancer.photolancer.web.dto.FollowingRequestDto;
+import shop.photolancer.photolancer.web.dto.FollowRequestDto;
 import shop.photolancer.photolancer.web.dto.FollowingResponseDto;
 import shop.photolancer.photolancer.web.dto.UserResponseDto;
 import shop.photolancer.photolancer.web.dto.base.DefaultRes;
@@ -28,7 +28,7 @@ public class FollowingController {
     public final FollowServiceImpl followService;
     public final UserServiceImpl userService;
     @PostMapping("/request")
-    public ResponseEntity requestFollow(@RequestBody FollowingRequestDto.RequestFollowDto followingUserId) {
+    public ResponseEntity requestFollow(@RequestBody FollowRequestDto.RequestFollowDto followingUserId) {
         try {
             User user = userService.getCurrentUser();
             followService.requestFollow(followingUserId.getFollowingUserId(), user.getId());
