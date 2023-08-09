@@ -16,8 +16,9 @@ import shop.photolancer.photolancer.domain.enums.Purpose;
 public class UserUpdateRequestDto {
     private String nickname;
     private String explane;
+    private String purpose;
     // 추후 북마크 임포트하는 작업 필요
-    private String bookmark;
+//    private String bookmark;
 
 
     public User toEntity(){
