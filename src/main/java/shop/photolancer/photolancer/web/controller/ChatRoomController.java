@@ -5,8 +5,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +13,14 @@ import shop.photolancer.photolancer.converter.ChatConverter;
 import shop.photolancer.photolancer.domain.ChatRoom;
 import shop.photolancer.photolancer.domain.Message;
 import shop.photolancer.photolancer.domain.User;
+import shop.photolancer.photolancer.exception.CustomExceptions;
 import shop.photolancer.photolancer.exception.ResponseMessage;
 import shop.photolancer.photolancer.exception.StatusCode;
 import shop.photolancer.photolancer.mapper.ChatMapper;
 import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.service.ChatService;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
+import shop.photolancer.photolancer.web.controller.base.BaseController;
 import shop.photolancer.photolancer.web.dto.ChatRequestDto;
 import shop.photolancer.photolancer.web.dto.ChatResponseDto;
 import shop.photolancer.photolancer.web.dto.ChatRoomInfoAndMessages;
@@ -35,9 +35,8 @@ import java.util.NoSuchElementException;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/chat")
-public class ChatRoomController {
+public class ChatRoomController extends BaseController {
 
-    private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
     private final UserRepository userRepository;
     private final ChatService chatService;
     private final ChatMapper mapper;
@@ -87,8 +86,8 @@ public class ChatRoomController {
             }
 
             return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.CHATS_READ_SUCCESS, responses), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        } catch (CustomExceptions.GetAllChatRoomsException e) {
+            return handleApiException(e, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -108,11 +107,10 @@ public class ChatRoomController {
             Long response = chatRoom.getId();
 
             return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_CHAT_ROOM_SUCCESS, response), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        } catch (CustomExceptions.CreateRoomException e) {
+            return handleApiException(e, HttpStatus.BAD_REQUEST);
         }
     }
-
 
     @ApiOperation(value = "채팅방 불러오기 API")
     @ApiImplicitParam(name = "chat-id", value = "채팅방 ID", required = true, dataType = "Long", example = "1", paramType = "path")
@@ -140,8 +138,8 @@ public class ChatRoomController {
             ChatRoomInfoAndMessages result = new ChatRoomInfoAndMessages(userInfo, responses);
 
             return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.MESSAGE_READ_SUCCESS, result), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        } catch (CustomExceptions.GetChatMessagesException e) {
+            return handleApiException(e, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -170,8 +168,8 @@ public class ChatRoomController {
 
 
             return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.SEARCH_CHAT_ROOM_SUCCESS, response), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        } catch (CustomExceptions.SearchRoomException e) {
+            return handleApiException(e, HttpStatus.BAD_REQUEST);
         }
     }
 
