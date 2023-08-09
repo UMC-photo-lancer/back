@@ -9,7 +9,7 @@ import shop.photolancer.photolancer.domain.User;
 @NoArgsConstructor
 @Builder
 public class LoginResponseDto {
-    @JsonIgnore
+
     private User user;
 
     private String jwt;
