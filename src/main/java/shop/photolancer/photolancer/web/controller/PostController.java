@@ -17,6 +17,7 @@ import shop.photolancer.photolancer.web.dto.base.DefaultRes;
 
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -89,7 +90,9 @@ public class PostController {
     public ResponseEntity sharePost(@PathVariable Long id, @RequestBody PostRequestDto.PostShareDto userId) {
         try {
             User sharedBy = userService.getCurrentUser();
-            User shareTo = userService.findUserById(userId.getUserId());
+            List<User> shareTo = userId.getUserId().stream().map(
+                    user -> userService.findUserById(user)
+            ).collect(Collectors.toList());
 
             postService.sharePost(sharedBy, shareTo, id);
 

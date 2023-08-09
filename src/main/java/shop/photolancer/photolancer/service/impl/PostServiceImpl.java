@@ -17,6 +17,7 @@ import shop.photolancer.photolancer.web.dto.PostResponseDto;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -166,8 +167,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void sharePost(User sharedBy, User shareTo, Long postId) {
-        Notification notification = postConverter.toShareNotification(sharedBy, shareTo, postId);
-        notificationRepository.save(notification);
+    public void sharePost(User sharedBy, List<User> shareTo, Long postId) {
+        List<Notification> notifications = shareTo.stream().map(
+                shareToUser -> postConverter.toShareNotification(sharedBy, shareToUser, postId)
+        ).collect(Collectors.toList());
+
+        notificationRepository.saveAll(notifications);
     }
 }
