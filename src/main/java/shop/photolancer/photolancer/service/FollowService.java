@@ -14,4 +14,6 @@ public interface FollowService {
     Page<FollowingResponseDto.FollowingUserPostsDto> followingUsersPosts(Pageable pageable, User user);
 
     List<UserResponseDto.PostUserDto> followingUsers(User user);
+
+    List<UserResponseDto.FollowerUserDto> followerUsers(User user);
 }

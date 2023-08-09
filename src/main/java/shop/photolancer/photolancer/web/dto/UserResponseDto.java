@@ -31,4 +31,15 @@ public class UserResponseDto {
         private String profileUrl;
         private String name;
     }
+
+    @Getter
+    @Builder
+    public static class FollowerUserDto{
+        private Long id;
+        private Integer level;
+        private String nickname;
+        private String profileUrl;
+        private String name;
+        private Boolean isFollowing;
+    }
 }
