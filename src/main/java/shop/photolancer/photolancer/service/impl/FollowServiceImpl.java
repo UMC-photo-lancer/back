@@ -78,10 +78,28 @@ public class FollowServiceImpl implements FollowService {
 
     @Override
     public List<UserResponseDto.PostUserDto> followingUsers(User user) {
-        List<Follow> followings = followRepository.findFollowingByFollower(user);
+        List<Follow> followings = followRepository.findFollowByFollower(user);
         List<UserResponseDto.PostUserDto> followingList = followings.stream().map(
                 follow -> userConverter.toUserProfile(follow.getFollowing())
         ).collect(Collectors.toList());
         return followingList;
+    }
+
+    @Override
+    public List<UserResponseDto.FollowerUserDto> followerUsers(User user) {
+        List<Follow> followers = followRepository.findFollowByFollowing(user);
+        List<UserResponseDto.FollowerUserDto> followerList = followers.stream().map(
+                follow -> userConverter.toUserFollowerProfile(follow.getFollower(), isFollowing(follow.getFollower(), user))
+        ).collect(Collectors.toList());
+        return followerList;
+    }
+
+    public Boolean isFollowing(User follower, User user) {
+        Follow follow = followRepository.findByFollowerAndFollowing(user, follower);
+
+        if (follow == null) {
+            return false;
+        }
+        return true;
     }
 }

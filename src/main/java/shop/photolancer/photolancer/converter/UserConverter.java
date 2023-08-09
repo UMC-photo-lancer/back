@@ -17,4 +17,16 @@ public class UserConverter {
                 .name(user.getName())
                 .build();
     }
+
+    public UserResponseDto.FollowerUserDto toUserFollowerProfile(User user, Boolean isFollowing) {
+        return UserResponseDto.FollowerUserDto.builder()
+                .id(user.getId())
+                .level(user.getLevel())
+                .profileUrl(user.getProfileUrl())
+                .nickname(user.getNickname())
+                .name(user.getName())
+                .isFollowing(isFollowing)
+                .build();
+    }
+
 }
