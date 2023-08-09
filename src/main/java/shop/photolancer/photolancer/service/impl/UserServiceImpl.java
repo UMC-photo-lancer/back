@@ -6,14 +6,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import shop.photolancer.photolancer.config.Login.utils.JwtUtil;
 import shop.photolancer.photolancer.domain.User;
@@ -24,9 +22,7 @@ import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.web.dto.*;
 
 import javax.transaction.Transactional;
-import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -36,6 +32,7 @@ public class UserServiceImpl {
     protected final UserRepository userRepository;
     protected final PasswordEncoder passwordEncoder;
     protected final JavaMailSender javaMailSender;
+    protected final UserBookmarkServiceImpl userBookmarkService;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -82,9 +79,9 @@ public class UserServiceImpl {
         }
     }
 
-    public void checkUserNickNameDuplication(UserUpdateRequestDto requestDto) {
+    public void checkUserNickNameDuplication(UserUpdateRequestDto requestDto,String userNickname) {
         boolean userNickNameDuplicate = userRepository.existsByNickname(requestDto.toEntity().getNickname());
-        if (userNickNameDuplicate) {
+        if (userNickNameDuplicate && !requestDto.toEntity().getNickname().equals(userNickname)) {
             throw new IllegalStateException("이미 존재하는 닉네임입니다.");
         }
     }
@@ -137,10 +134,12 @@ public class UserServiceImpl {
         return userRepository.save(user);
     }
 
-    public User updateUser(UserUpdateRequestDto requestDto,User user) {
+    public User updateUser(UserUpdateRequestDto requestDto,User user, BookmarkDto bookmarkDto) {
         user.setNickname(requestDto.getNickname());
         user.setExplane(requestDto.getExplane());
-//        user.setBookmark(requestDto.getBookmark());
+        user.setPurpose(Purpose.fromStringIgnoreCase(requestDto.getPurpose()));
+        user.setRole(Role.USER);
+        userBookmarkService.registerBookmark(user,bookmarkDto);
         return userRepository.save(user);
     }
 
@@ -185,25 +184,68 @@ public class UserServiceImpl {
         return tmpPw;
     }
 
-    public String login(String userId, String password) {
+//    public LoginDto login(String userId, String password) {
+//        // 사용자 id를 사용하여 사용자를 데이터베이스에서 조회
+//        User user = userRepository.findByUserId(userId);
+//
+//        if (user == null) {
+//            throw new AuthenticationCredentialsNotFoundException("아이디가 잘못되었습니다.");
+//        }
+//
+//        // 조회한 사용자 정보와 입력한 비밀번호를 비교하여 일치하는지 확인합니다.
+//        if (!passwordEncoder.matches(password, user.getPassword())) {
+//            throw new AuthenticationCredentialsNotFoundException("비밀번호가 잘못되었습니다.");
+//        }
+//        // 탈퇴한 회원인지 확인
+//        if (user.getStatus().equals(UserStatus.INACTIVE)){
+//            throw new AuthenticationCredentialsNotFoundException("탈퇴한 회원입니다.");
+//        }
+//
+//        if (user.getRole().equals(Role.GUEST)) {
+//            throw new RoleGuestException("회원정보 수정이 필요합니다. 회원정보 수정창으로 redirect됩니다.");
+//        }
+//
+//        String userName = user.getName();
+//        String jwtToken = JwtUtil.createJwt(userName, secretKey, expireMs);
+//
+//        return new LoginDto(user, jwtToken);
+//    }
+    public LoginResponseDto login(String userId, String password) {
+        LoginResponseDto loginDto = new LoginResponseDto();
         // 사용자 id를 사용하여 사용자를 데이터베이스에서 조회
         User user = userRepository.findByUserId(userId);
 
         if (user == null) {
-            throw new AuthenticationCredentialsNotFoundException("아이디가 잘못되었습니다.");
+            loginDto.setErrorMessage("아이디가 잘못되었습니다.");
+            return loginDto;
         }
 
         // 조회한 사용자 정보와 입력한 비밀번호를 비교하여 일치하는지 확인합니다.
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new AuthenticationCredentialsNotFoundException("비밀번호가 잘못되었습니다.");
+            loginDto.setErrorMessage("비밀번호가 잘못되었습니다.");
+            return loginDto;
         }
+
         // 탈퇴한 회원인지 확인
-        if (user.getStatus().equals(UserStatus.INACTIVE)){
-            throw new AuthenticationCredentialsNotFoundException("탈퇴한 회원입니다.");
+        if (user.getStatus().equals(UserStatus.INACTIVE)) {
+            loginDto.setErrorMessage("탈퇴한 회원입니다.");
+            return loginDto;
         }
+
         String userName = user.getName();
-        return JwtUtil.createJwt(userName, secretKey,expireMs);
+        String jwtToken = JwtUtil.createJwt(userName, secretKey, expireMs);
+
+        loginDto.setUser(user);
+        loginDto.setJwt(jwtToken);
+
+        if (user.getRole().equals(Role.GUEST)) {
+            loginDto.setErrorMessage("회원정보 수정이 필요합니다. 회원정보 수정창으로 redirect됩니다.");
+            return loginDto;
+        }
+
+        return loginDto;
     }
+
     public void changePassword(String userName, ChangePasswordDto changePasswordDto) {
             User user = userRepository.findByName(userName)
                     .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
