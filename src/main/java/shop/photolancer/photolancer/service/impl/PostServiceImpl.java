@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import shop.photolancer.photolancer.converter.PostConverter;
 import shop.photolancer.photolancer.domain.Bookmark;
+import shop.photolancer.photolancer.domain.Notification;
 import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.mapping.*;
@@ -29,6 +30,7 @@ public class PostServiceImpl implements PostService {
     private final SavedPostServiceImpl savedPostService;
     private final UserPhotoServiceImpl userPhotoService;
     private final UserServiceImpl userService;
+    private final NotificationRepository notificationRepository;
 
 
 
@@ -163,10 +165,9 @@ public class PostServiceImpl implements PostService {
         return myPostPage;
     }
 
-//    @Override
-//    public void sharePost(User user, User shareUser, Long postId) {
-//        String notificationMsg = user.getName() + "님이 피드를 공유하였습니다";
-//
-//        notificationServiceImpl.save(notificationMsg, shareUser, postId);
-//    }
+    @Override
+    public void sharePost(User sharedBy, User shareTo, Long postId) {
+        Notification notification = postConverter.toShareNotification(sharedBy, shareTo, postId);
+        notificationRepository.save(notification);
+    }
 }
