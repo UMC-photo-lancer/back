@@ -45,12 +45,12 @@ public class FollowServiceImpl implements FollowService {
             if (follow == null) {
                 Follow following = followConverter.toFollow(user, followingUser);
                 user.setNum_following(user.getNum_following()+1);
-                user.setNum_follower(user.getNum_follower()+1);
+                followingUser.setNum_follower(followingUser.getNum_follower()+1);
                 followRepository.save(following);
             }
             else {
                 user.setNum_following(user.getNum_following()-1);
-                user.setNum_follower(user.getNum_follower()-1);
+                followingUser.setNum_follower(followingUser.getNum_follower()-1);
                 followRepository.delete(follow);
             }
         }
