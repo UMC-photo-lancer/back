@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import shop.photolancer.photolancer.converter.FollowConverter;
 import shop.photolancer.photolancer.converter.PostConverter;
+import shop.photolancer.photolancer.converter.UserConverter;
 import shop.photolancer.photolancer.domain.Follow;
 import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
@@ -16,8 +17,10 @@ import shop.photolancer.photolancer.repository.PostRepository;
 import shop.photolancer.photolancer.service.FollowService;
 import shop.photolancer.photolancer.web.dto.FollowingResponseDto;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
+import shop.photolancer.photolancer.web.dto.UserResponseDto;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +34,7 @@ public class FollowServiceImpl implements FollowService {
     private final SavedPostServiceImpl savedPostService;
     private final PostLikeServiceImpl postLikeService;
     private final UserPhotoServiceImpl userPhotoService;
+    private final UserConverter userConverter;
 
     @Override
     public void requestFollow(Long followingUserId, Long userId) {
@@ -70,5 +74,14 @@ public class FollowServiceImpl implements FollowService {
                     return followConverter.toFollowingUsersPosts(following, posts);
                 }).toList();
             return new PageImpl<>(followingUsersPosts, pageable, followingList.getTotalElements());
+    }
+
+    @Override
+    public List<UserResponseDto.PostUserDto> followingUsers(User user) {
+        List<Follow> followings = followRepository.findFollowingByFollower(user);
+        List<UserResponseDto.PostUserDto> followingList = followings.stream().map(
+                follow -> userConverter.toUserProfile(follow.getFollowing())
+        ).collect(Collectors.toList());
+        return followingList;
     }
 }
