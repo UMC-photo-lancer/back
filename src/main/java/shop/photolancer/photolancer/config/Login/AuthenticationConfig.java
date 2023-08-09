@@ -11,10 +11,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import shop.photolancer.photolancer.config.oauth2.handler.OAuth2LoginFailureHandler;
 import shop.photolancer.photolancer.config.oauth2.handler.OAuth2LoginSuccessHandler;
 import shop.photolancer.photolancer.config.oauth2.service.CustomOAuth2UserService;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
+
+import java.util.Arrays;
 
 @Configuration
 @RequiredArgsConstructor
@@ -34,7 +37,15 @@ public class AuthenticationConfig {
         httpSecurity
                 .httpBasic().disable() // 인증을 ui가 아닌 token으로 할꺼기 때문
                 .csrf().disable()
-                .cors().and()
+                .cors().configurationSource(request -> {
+                    var cors = new CorsConfiguration();
+                    cors.setAllowedOriginPatterns(Arrays.asList("*"));
+                    cors.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+                    cors.setAllowedHeaders(Arrays.asList("*"));
+                    cors.setAllowCredentials(true);
+                    return cors;
+                })
+                .and()
                 .authorizeRequests()
                 .antMatchers("/api/v1/users/join","/api/v1/users/login","/api/v1/users/find-id","/api/v1/users/find-pw","/api/v1/users/find-id-mail").permitAll() // join과 login은 언제나 가능해야 하기 때문
                 .antMatchers(HttpMethod.POST,"/api/v1/**").authenticated() // 위의 두가지를 제외한 모든 포스트 요청을 인증필요로 막아놓음, 두번째 파라미터에 api작성가능
