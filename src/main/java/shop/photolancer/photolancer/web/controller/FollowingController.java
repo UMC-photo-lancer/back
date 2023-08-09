@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.exception.ResponseMessage;
@@ -14,7 +15,10 @@ import shop.photolancer.photolancer.service.impl.FollowServiceImpl;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 import shop.photolancer.photolancer.web.dto.FollowingRequestDto;
 import shop.photolancer.photolancer.web.dto.FollowingResponseDto;
+import shop.photolancer.photolancer.web.dto.UserResponseDto;
 import shop.photolancer.photolancer.web.dto.base.DefaultRes;
+
+import java.util.List;
 
 
 @RestController
@@ -43,6 +47,18 @@ public class FollowingController {
         try {
             User user = userService.getCurrentUser();
             return followService.followingUsersPosts(pageable, user);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
+    }
+
+    // 팔로잉 유저 모아보기
+    @GetMapping("/users")
+    public List<UserResponseDto.PostUserDto> followingUsers (){
+        try {
+            User user = userService.getCurrentUser();
+            return followService.followingUsers(user);
         } catch (Exception e) {
             System.out.println(e);
         }
