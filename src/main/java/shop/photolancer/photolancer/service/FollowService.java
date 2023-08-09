@@ -16,4 +16,6 @@ public interface FollowService {
     List<UserResponseDto.PostUserDto> followingUsers(User user);
 
     List<UserResponseDto.FollowerUserDto> followerUsers(User user);
+
+    void deleteFollower(Long followerUserId, User user);
 }

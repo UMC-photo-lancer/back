@@ -52,5 +52,5 @@ public class ResponseMessage {
     public static final String FOLLOW_REQUEST_SUCCESS = "팔로우 요청 성공";
     public static final String INVALID_REQUEST = "유효한 요청이 아닙니다";
     public static final String NOTICE_NOT_ADMIN = "관리자가 아닙니다";
-
+    public static final String FOLLOWER_DELETE_SUCCESS = "팔로워 삭제 성공";
 }
