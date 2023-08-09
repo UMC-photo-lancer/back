@@ -2,32 +2,33 @@ package shop.photolancer.photolancer.web.controller;
 
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import shop.photolancer.photolancer.converter.PaymentConverter;
 import shop.photolancer.photolancer.domain.Charge;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.exception.ResponseMessage;
 import shop.photolancer.photolancer.exception.StatusCode;
-import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.service.PaymentService;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 import shop.photolancer.photolancer.web.dto.PaymentRequestDto;
 import shop.photolancer.photolancer.web.dto.PaymentResponseDto;
 import shop.photolancer.photolancer.web.dto.base.DefaultRes;
 
+import org.slf4j.Logger;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Api(tags = "결제 관련 API")
 @RestController
-@Slf4j
 @RequiredArgsConstructor
 public class PaymentController {
 
+    private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
     private final UserServiceImpl userService;
     private final PaymentService paymentService;
     private final PaymentConverter paymentConverter;
@@ -37,6 +38,8 @@ public class PaymentController {
     @PostMapping("/my-profile/charge")
     public ResponseEntity charge(@RequestBody PaymentRequestDto.ChargeDto request){
         try {
+            logger.info("Received request: method={}, path={}, description={}", "POST", "/my-profile/charge", "포인트 충전 API");
+
             User user = userService.getCurrentUser();
 
             Integer amount = request.getAmount();
@@ -62,6 +65,8 @@ public class PaymentController {
     @GetMapping("/my-profile/trade-log")
     public ResponseEntity tradeLog(@RequestParam(defaultValue = "1") Integer page){
         try {
+            logger.info("Received request: method={}, path={}, description={}", "GET", "/my-profile/trade-log", "거래 내역 조회 API");
+
             User user = userService.getCurrentUser();
 
             List<Charge> charges = paymentService.getAllCharges(user, page);
@@ -78,6 +83,8 @@ public class PaymentController {
     @GetMapping("/my-profile/exchange")
     public ResponseEntity exchangeWindow(){
         try {
+            logger.info("Received request: method={}, path={}, description={}", "GET", "/my-profile/exchange", "환전 창 불러오기 API");
+
             User user = userService.getCurrentUser();
 
             List<PaymentResponseDto.ExchangeDto> response = paymentService.getExchange(user);
@@ -93,6 +100,8 @@ public class PaymentController {
     @PostMapping("/my-profile/exchange")
     public ResponseEntity exchange(@RequestBody PaymentRequestDto.ExchangeDto request){
         try {
+            logger.info("Received request: method={}, path={}, description={}", "POST", "/my-profile/exchange", "포인트 환전 API");
+
             User user = userService.getCurrentUser();
 
             String bank = request.getBank();
@@ -121,6 +130,8 @@ public class PaymentController {
     @GetMapping("/{post-id}/purchase")
     public ResponseEntity purchaseWindow(@PathVariable("post-id") Long postId) {
         try {
+            logger.info("Received request: method={}, path={}, description={}", "GET", "/{post-id}/purchase", "사진 구매 창 불러오기 API");
+
             User user = userService.getCurrentUser();
 
             PaymentResponseDto.PurchaseDto response = paymentService.getPurchase(postId, user);
@@ -137,6 +148,8 @@ public class PaymentController {
     @PostMapping("/{post-id}/purchase")
     public ResponseEntity purchase(@PathVariable("post-id") Long postId){
         try {
+            logger.info("Received request: method={}, path={}, description={}", "POST", "/{post-id}/purchase", "사진 구매 API");
+
             User user = userService.getCurrentUser();
 
             paymentService.purchase(postId, user);

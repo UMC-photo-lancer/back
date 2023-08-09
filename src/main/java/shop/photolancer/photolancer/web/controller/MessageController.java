@@ -4,6 +4,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -30,6 +32,8 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @RequestMapping("/chat")
 public class MessageController {
+
+    private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
     private final ChatService chatService;
     private final UserServiceImpl userService;
     private final ChatRoomRepository chatRoomRepository;
@@ -46,6 +50,8 @@ public class MessageController {
     @PostMapping("/message")
     public ResponseEntity saveMessage(@RequestBody MessageRequestDto request){
         try {
+            logger.info("Received request: method={}, path={}, description={}", "POST", "/chat/message", "메시지 저장 API");
+
             User user = userService.getCurrentUser();
 
             ChatRoom chatRoom = chatRoomRepository.findById(request.getRoomId()).orElseThrow(() -> new NoSuchElementException("ChatRoom not found."));
