@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +30,7 @@ import java.util.List;
 @RequestMapping("/setting/account")
 public class AccountController {
 
+    private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
     private final AccountService accountService;
     private final UserServiceImpl userService;
     private final PaymentService paymentService;
@@ -37,6 +40,8 @@ public class AccountController {
     @GetMapping()
     public ResponseEntity exchangeWindow(){
         try {
+            logger.info("Received request: method={}, path={}, description={}", "GET", "/setting/account", "계좌 목록 불러오기 API");
+
             User user = userService.getCurrentUser();
 
             List<PaymentResponseDto.ExchangeDto> response = paymentService.getExchange(user);
@@ -52,6 +57,8 @@ public class AccountController {
     @PostMapping()
     public ResponseEntity addAccount(@RequestBody AccountRequestDto.AccountDto request){
         try {
+            logger.info("Received request: method={}, path={}, description={}", "POST", "/setting/account", "계좌 추가 API");
+
             User user = userService.getCurrentUser();
 
             String bank = request.getBank();
@@ -77,6 +84,8 @@ public class AccountController {
     @PatchMapping("/{account-id}")
     public ResponseEntity mainAccount(@PathVariable("account-id") Long accountId){
         try {
+            logger.info("Received request: method={}, path={}, description={}", "PATCH", "/setting/account/{account-id}", "메인 계좌 설정 API");
+
             User user = userService.getCurrentUser();
 
             accountService.updateIsMain(user, accountId);
@@ -93,6 +102,8 @@ public class AccountController {
     @PutMapping("/{account-id}")
     public ResponseEntity updateAccount(@PathVariable("account-id") Long accountId, @RequestBody AccountRequestDto.AccountDto request){
         try {
+            logger.info("Received request: method={}, path={}, description={}", "PUT", "/setting/account/{account-id}", "계좌 수정 API");
+
             User user = userService.getCurrentUser();
 
             String bank = request.getBank();
@@ -118,6 +129,8 @@ public class AccountController {
     @DeleteMapping("/{account-id}")
     public ResponseEntity deleteAccount(@PathVariable("account-id") Long accountId){
         try {
+            logger.info("Received request: method={}, path={}, description={}", "DELETE", "/setting/account/{account-id}", "계좌 삭제 API");
+
             User user = userService.getCurrentUser();
 
             accountService.deleteAccount(user, accountId);

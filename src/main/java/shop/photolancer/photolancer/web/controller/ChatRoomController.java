@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +37,7 @@ import java.util.NoSuchElementException;
 @RequestMapping("/chat")
 public class ChatRoomController {
 
+    private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
     private final UserRepository userRepository;
     private final ChatService chatService;
     private final ChatMapper mapper;
@@ -47,6 +50,8 @@ public class ChatRoomController {
     @GetMapping("/rooms")
     public ResponseEntity getAllChatRooms(@RequestParam(defaultValue = "1") Long last) {
         try {
+            logger.info("Received request: method={}, path={}, description={}", "GET", "/chat/rooms", "채팅 목록 불러오기 API");
+
             User user = userService.getCurrentUser();
             Long userId = user.getId();
 
@@ -94,6 +99,8 @@ public class ChatRoomController {
     @ResponseBody
     public ResponseEntity createRoom(@PathVariable("receiver-id") Long receiverId) {
         try {
+            logger.info("Received request: method={}, path={}, description={}", "POST", "/chat/room/{receiver-id}", "채팅방 생성 API");
+
             User user = userService.getCurrentUser();
 
             ChatRoom chatRoom = chatService.createRoom(user, receiverId);
@@ -114,6 +121,8 @@ public class ChatRoomController {
     public ResponseEntity getChatMessages(@PathVariable("chat-id") Long chatId,
                                           @RequestParam(defaultValue = "1") Long last, @RequestBody ChatRequestDto request) {
         try {
+            logger.info("Received request: method={}, path={}, description={}", "GET", "/chat/room/{chat-id}", "채팅방 불러오기 API");
+
             User user = userService.getCurrentUser();
 
             Long otherUserId = request.getOtherUserId();
@@ -142,6 +151,8 @@ public class ChatRoomController {
     @PostMapping("/search")
     public ResponseEntity searchRoom(@RequestParam String nickname) {
         try {
+            logger.info("Received request: method={}, path={}, description={}", "POST", "/chat/search", "채팅방 검색 API");
+
             User user = userService.getCurrentUser();
 
             Long userId = user.getId();
