@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.web.bind.annotation.*;
-import shop.photolancer.photolancer.domain.Bookmark;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.mapping.UserBookmark;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;

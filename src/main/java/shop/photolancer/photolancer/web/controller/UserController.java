@@ -6,23 +6,20 @@ import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import shop.photolancer.photolancer.domain.User;
-import shop.photolancer.photolancer.domain.enums.UserStatus;
-import shop.photolancer.photolancer.domain.mapping.UserBookmark;
+
+import shop.photolancer.photolancer.domain.enums.Role;
 import shop.photolancer.photolancer.service.impl.UserBookmarkServiceImpl;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 import shop.photolancer.photolancer.web.dto.*;
 
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Api(tags = "사용자 관련 API")
 @RestController
@@ -35,7 +32,7 @@ public class UserController {
     // 3. 회원가입(이름,이메일,비밀번호,비밀번호확인) -> done
     // 4. 비밀번호 찾기 -> done
     // 5. 회원정보 수정 (닉네임 -> Null일 경우 자기 닉네임,소개,북마크 설정) -> done/bookmark연동 필요
-    // 6. 유저 Level,point, 닉네임, 한줄소개, 관심 키워드, 팔로워,포스트, 팔로잉, 타이틀 반환 -> 팔로워, 포스트수, 팔로잉 수, 타이틀 수정 필요
+    // 6. 유저 Level,point, 닉네임, 한줄소개, 관심 키워드, 팔로워,포스트, 팔로잉, 타이틀 반환 -> 팔로워, 포스트수, 팔로잉 수, 타이틀 수정 필요 -> done
     // 7. 회원 탈퇴 -> done
     // 8. 유저 검색(nikname기반 검색 포스트 개수,팔로워수, 팔로잉 수, 한줄 소개 관심키워드 보여줌)
     // 9. 아이디 찾기 -> done
@@ -44,7 +41,7 @@ public class UserController {
     // 12. 유저 타이틀 수정 -> done
     // 13. level, 경험치 계산 하기
     // 14. 공지 관리용 관리자 모드 만들기
-    // 15. 북마크 -> user bookmark 만들기!!!
+    // 15. 북마크 -> user bookmark 만들기!!! -> done
 
     private final UserServiceImpl userServiceImpl;
     private final UserBookmarkServiceImpl userBookmarkServiceImpl;
@@ -59,11 +56,11 @@ public class UserController {
             return new ResponseEntity<>(validatorResult, HttpStatus.BAD_REQUEST);
         }
 
-        try {
-            userServiceImpl.checkUsernameDuplication(userDto);
-        } catch (IllegalStateException e){
-            return new ResponseEntity<>("이름이 중복 됩니다.", HttpStatus.BAD_REQUEST);
-        }
+//        try {
+//            userServiceImpl.checkUsernameDuplication(userDto);
+//        } catch (IllegalStateException e){
+//            return new ResponseEntity<>("이름이 중복 됩니다.", HttpStatus.BAD_REQUEST);
+//        }
 
         try {
             userServiceImpl.checkIdDuplication(userDto);
@@ -102,15 +99,18 @@ public class UserController {
 
     @Operation(summary = "회원 정보를 수정합니다.")
     @PutMapping(value = "/update")
-    public ResponseEntity<?> updateUser(@RequestBody UserUpdateRequestDto requestDto) {
+    public ResponseEntity<?> updateUser(@RequestBody UserUpdateWrapper wrapper) {
+        UserUpdateRequestDto requestDto = wrapper.getUserUpdateRequest();
+        BookmarkDto bookmarkDto = wrapper.getBookmarkDto();
+        User user = userServiceImpl.getCurrentUser();
+        String userNickname = user.getNickname();
         try {
-            userServiceImpl.checkUserNickNameDuplication(requestDto);
+            userServiceImpl.checkUserNickNameDuplication(requestDto,userNickname);
         } catch (IllegalStateException e){
             return new ResponseEntity<>("별명이 중복 됩니다.", HttpStatus.BAD_REQUEST);
         }
         try {
-            User user = userServiceImpl.getCurrentUser();
-            User updatedUser = userServiceImpl.updateUser(requestDto, user);
+            User updatedUser = userServiceImpl.updateUser(requestDto, user,bookmarkDto);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>("해당 사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
@@ -152,18 +152,41 @@ public class UserController {
         }
     }
 
+//    @Operation(summary = "로그인을 진행합니다.")
+//    @PostMapping(value = "/login")
+//    public ResponseEntity<LoginDto> login(@RequestBody UserLoginDto userLoginDto) {
+//        HttpHeaders headers = new HttpHeaders();
+//        try {
+//            String user_id = userLoginDto.getUser_id();
+//            String password = userLoginDto.getPassword();
+//            String result = userServiceImpl.login(user_id, password);
+//            return ResponseEntity.ok().body(result);
+//        } catch (RoleGuestException e) {
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.MOVED_PERMANENTLY);  // 301 status code
+//        } catch (AuthenticationCredentialsNotFoundException e) {
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+//        }
+//    }
     @Operation(summary = "로그인을 진행합니다.")
     @PostMapping(value = "/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginDto userLoginDto) {
-        try {
-            String user_id = userLoginDto.getUser_id();
-            String password = userLoginDto.getPassword();
-            String result = userServiceImpl.login(user_id, password);
-            return ResponseEntity.ok().body(result);
-        }catch (AuthenticationCredentialsNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<LoginResponseDto> login(@RequestBody UserLoginDto userLoginDto) {
+        HttpHeaders headers = new HttpHeaders();
+
+        LoginResponseDto result = userServiceImpl.login(userLoginDto.getUser_id(), userLoginDto.getPassword());
+
+        // 에러 메시지가 있는 경우에 대한 처리
+        if (result.getErrorMessage() != null) {
+            if (result.getErrorMessage().equals("회원정보 수정이 필요합니다. 회원정보 수정창으로 redirect됩니다.")) {
+                return new ResponseEntity<>(result, HttpStatus.MOVED_PERMANENTLY);  // 301 status code
+            } else {
+                return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
+            }
         }
+        headers.add("Authorization", result.getJwt());  // JWT를 헤더에 추가
+        return new ResponseEntity<>(result, headers, HttpStatus.OK);
     }
+
+
 
     @Operation(summary = "비밀번호를 찾습니다.")
     @PostMapping(value = "/find-pw")
@@ -218,6 +241,16 @@ public class UserController {
         User user = userServiceImpl.getCurrentUser();
         user.setTitle(memberTitle);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Operation(summary = "공지용 관리자 모드로 반환합니다.")
+    @GetMapping(value = "/admin")
+    public ResponseEntity<?> convertAdmin(){
+        log.info("왜 안들어오지");
+        User user = userServiceImpl.getCurrentUser();
+        if (user.getRole().equals(Role.ADMIN))
+            return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
 //    @Operation(summary = "전체유저를 이름을 반환합니다.")

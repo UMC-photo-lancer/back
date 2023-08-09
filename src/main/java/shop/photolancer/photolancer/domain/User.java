@@ -85,6 +85,14 @@ public class User extends BaseEntity {
         }
         this.point += amount;
     }
+
+    public void updateNotification(){
+        if (this.num_notification == null){
+            this.num_notification = 0;
+        }
+        this.num_notification += 1;
+    }
+
     public void passwordEncode(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(this.password);
     }

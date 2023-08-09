@@ -7,21 +7,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.photolancer.photolancer.converter.AccountConverter;
 import shop.photolancer.photolancer.converter.PaymentConverter;
-import shop.photolancer.photolancer.domain.Account;
-import shop.photolancer.photolancer.domain.Charge;
-import shop.photolancer.photolancer.domain.Post;
-import shop.photolancer.photolancer.domain.User;
+import shop.photolancer.photolancer.domain.*;
+import shop.photolancer.photolancer.domain.enums.NotificationType;
 import shop.photolancer.photolancer.domain.mapping.UserPhoto;
-import shop.photolancer.photolancer.repository.AccountRepository;
-import shop.photolancer.photolancer.repository.ChargeRepository;
-import shop.photolancer.photolancer.repository.PostRepository;
-import shop.photolancer.photolancer.repository.UserPhotoRepository;
+import shop.photolancer.photolancer.repository.*;
 import shop.photolancer.photolancer.service.PaymentService;
 import shop.photolancer.photolancer.web.dto.PaymentResponseDto;
 import org.springframework.data.domain.Pageable;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 
 
@@ -36,6 +33,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final UserPhotoRepository userPhotoRepository;
     private final AccountRepository accountRepository;
     private final AccountConverter accountConverter;
+    private final NotificationRepository notificationRepository;
 
     @Override
     @Transactional
@@ -43,6 +41,11 @@ public class PaymentServiceImpl implements PaymentService {
         Charge charge = paymentConverter.toCharge(user, amount, paymentMethod);
 
         user.updatePoint(amount);
+        user.updateNotification();
+
+        Notification chargeNotification = paymentConverter.toChargeNotification(user, amount);
+
+        notificationRepository.save(chargeNotification);
 
         return chargeRepository.save(charge);
     }
@@ -50,7 +53,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public List<Charge> getAllCharges(User user, Integer page){
         int pageSize = 10; // 페이지 당 출력할 아이템 수
+
         Pageable pageable = (Pageable) PageRequest.of(page-1, pageSize, Sort.by("createdAt").descending());
+
         return chargeRepository.findAllByUser(user, pageable).getContent();
     }
 
@@ -85,8 +90,12 @@ public class PaymentServiceImpl implements PaymentService {
         Charge charge = paymentConverter.toExchange(user, -point);
 
         user.updatePoint(-point);
+        user.updateNotification();
+
+        Notification exchangeNotification = paymentConverter.toExchangeNotification(user, point);
 
         chargeRepository.save(charge);
+        notificationRepository.save(exchangeNotification);
     }
 
     @Override
@@ -94,18 +103,26 @@ public class PaymentServiceImpl implements PaymentService {
     public void purchase(Long postId, User user){
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NoSuchElementException("Post not found"));
-
+        User postUser = post.getUser();
         Integer point = post.getPoint();
 
         Charge charge = paymentConverter.toPurchaseLog(user, -point);
 
-        chargeRepository.save(charge);
+        UserPhoto userPhoto = paymentConverter.toPurchase(post, user);
 
         user.updatePoint(-point);
+        postUser.updatePoint(point);
+        user.updateNotification();
+        postUser.updateNotification();
 
-        UserPhoto userPhoto = paymentConverter.toPurchase(post, user);
+        Notification purchaseNotification = paymentConverter.toPurchaseNotification(user, postUser, point);
+
+        Notification saleNotification = paymentConverter.toSaleNotification(user, postUser, point);
+
+        chargeRepository.save(charge);
         userPhotoRepository.save(userPhoto);
+        notificationRepository.save(purchaseNotification);
+        notificationRepository.save(saleNotification);
 
     }
-
 }

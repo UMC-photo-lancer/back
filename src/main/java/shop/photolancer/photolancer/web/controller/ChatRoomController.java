@@ -1,11 +1,15 @@
 package shop.photolancer.photolancer.web.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import shop.photolancer.photolancer.converter.ChatConverter;
 import shop.photolancer.photolancer.domain.ChatRoom;
 import shop.photolancer.photolancer.domain.Message;
 import shop.photolancer.photolancer.domain.User;
@@ -25,7 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@Controller
+@Api(tags = "채팅 관련 API")
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/chat")
 public class ChatRoomController {
@@ -34,8 +39,11 @@ public class ChatRoomController {
     private final ChatService chatService;
     private final ChatMapper mapper;
     private final UserServiceImpl userService;
+    private final ChatConverter chatConverter;
 
-    //채팅방 목록 반환
+    @ApiOperation(value = "채팅 목록 불러오기 API")
+    @ApiResponse(code = 200, message = "채팅 목록 불러오기 성공")
+    @ApiImplicitParam(name = "page", value = "페이지 번호", dataType = "int", example = "1", paramType = "query")
     @GetMapping("/rooms")
     public ResponseEntity getAllChatRooms(@RequestParam(defaultValue = "1") Long last) {
         try {
@@ -79,7 +87,9 @@ public class ChatRoomController {
         }
     }
 
-    // 채팅방 생성
+    @ApiOperation(value = "채팅방 생성 API")
+    @ApiImplicitParam(name = "receiver-id", value = "채팅 상대 ID", required = true, dataType = "Long", example = "1", paramType = "path")
+    @ApiResponse(code = 200, message = "채팅방 생성 성공")
     @PostMapping("/room/{receiver-id}")
     @ResponseBody
     public ResponseEntity createRoom(@PathVariable("receiver-id") Long receiverId) {
@@ -97,7 +107,9 @@ public class ChatRoomController {
     }
 
 
-    // 특정 채팅방 조회
+    @ApiOperation(value = "채팅방 불러오기 API")
+    @ApiImplicitParam(name = "chat-id", value = "채팅방 ID", required = true, dataType = "Long", example = "1", paramType = "path")
+    @ApiResponse(code = 200, message = "채팅방 불러오기 성공")
     @GetMapping("/room/{chat-id}")
     public ResponseEntity getChatMessages(@PathVariable("chat-id") Long chatId,
                                           @RequestParam(defaultValue = "1") Long last, @RequestBody ChatRequestDto request) {
@@ -112,12 +124,7 @@ public class ChatRoomController {
 
             List<Message> messageList = messages.getContent();
 
-            UserResponseDto.ChatUserDto userInfo = UserResponseDto.ChatUserDto.builder()
-                    .id(otherUserId)
-                    .level(otherUser.getLevel())
-                    .nickname(otherUser.getNickname())
-                    .profileUrl(otherUser.getProfileUrl())
-                    .build();
+            UserResponseDto.ChatUserDto userInfo = chatConverter.toUserInfo(otherUser);
 
             List<ChatResponseDto.MessageResponse> responses = mapper.messagesToMessageResponseDtos(messageList);
 
@@ -129,9 +136,10 @@ public class ChatRoomController {
         }
     }
 
-    //채팅 검색
+    @ApiOperation(value = "채팅방 검색 API")
+    @ApiResponse(code = 200, message = "채팅방 검색 성공")
+    @ApiImplicitParam(name = "nickname", value = "검색하려는 유저 닉네임", dataType = "string", example = "오리난쟁", paramType = "query")
     @PostMapping("/search")
-    @ResponseBody
     public ResponseEntity searchRoom(@RequestParam String nickname) {
         try {
             User user = userService.getCurrentUser();
@@ -140,7 +148,7 @@ public class ChatRoomController {
 
             ChatRoom chatRoom = chatService.searchRoom(user, nickname);
 
-            // 상대방 정보를 가져옴
+            //상대방 정보 가져오기
             User receiver = chatRoom.getReceiver().getId().equals(userId) ? chatRoom.getSender() : chatRoom.getReceiver();
 
             UserResponseDto.ChatUserDto response = new UserResponseDto.ChatUserDto(
