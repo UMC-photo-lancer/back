@@ -55,6 +55,10 @@ dependencies {
 
 	// mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	//LocalDateTime 타입인데, 이를 직렬화 할 때 발생한 오류
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
 }
 
 tasks.named('test') {

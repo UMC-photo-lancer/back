@@ -22,7 +22,10 @@ import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.web.dto.*;
 
 import javax.transaction.Transactional;
+import java.math.BigInteger;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @Transactional
@@ -101,6 +104,15 @@ public class UserServiceImpl {
             return optionalUser.get();
         } else {
             throw new NoSuchElementException("No user found with name " + userName);
+        }
+    }
+
+    public User findUserBySocialId(String socialId) {
+        Optional<User> optionalUser = userRepository.findBySocialId(socialId);
+        if (optionalUser.isPresent()) {
+            return optionalUser.get();
+        } else {
+            throw new NoSuchElementException("No user found with name " + socialId);
         }
     }
 
@@ -258,6 +270,7 @@ public class UserServiceImpl {
             user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
             userRepository.save(user);
     }
+
     public User getCurrentUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
@@ -265,8 +278,36 @@ public class UserServiceImpl {
                     HttpStatus.UNAUTHORIZED, "로그인 되지 않았습니다."
             );
         }
-        String userName = authentication.getName();
-        User user = findUserByUserName(userName);
+        User user = null;
+        // 소셜 kakao,naver,google / 자체로그인 로직 나눠서 만들기
+        String findSocial = authentication.getPrincipal().toString();
+        log.info("findSocial{}",findSocial);
+        if (findSocial.contains("google") || findSocial.contains("kakao")){
+            log.info("카카오 구글에 들어감");
+            String pattern = "Name: \\[([0-9]+)\\]";
+            Pattern r = Pattern.compile(pattern);
+            Matcher m = r.matcher(findSocial);
+            m.find();
+            user = findUserBySocialId(m.group(1));
+
+        } else if (findSocial.contains("naver")) {
+            log.info("naver에 들어감");
+            String pattern = "\\{id=([^,]+),";
+            Pattern r = Pattern.compile(pattern);
+            Matcher m = r.matcher(findSocial);
+            m.find();
+            user = findUserBySocialId(m.group(1));
+        }
+        else{
+            if (authentication.getName().matches("\\d+")){
+                String socialId = authentication.getName();
+                user = findUserBySocialId(socialId);
+            }
+            else{
+                String userName = authentication.getName();
+                user = findUserByUserName(userName);
+            }
+        }
         if(user.getStatus().equals(UserStatus.INACTIVE)) {
             throw new IllegalArgumentException("해당 사용자는 탈퇴한 사용자입니다.");
         }
