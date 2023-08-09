@@ -2,7 +2,6 @@ HELP.md
 .gradle
 
 ### github actions ###
-.github
 Dockerfile
 
 build/
