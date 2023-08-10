@@ -16,7 +16,7 @@ import shop.photolancer.photolancer.domain.enums.Role;
 import shop.photolancer.photolancer.exception.ResponseMessage;
 import shop.photolancer.photolancer.exception.StatusCode;
 import shop.photolancer.photolancer.service.NoticeService;
-import shop.photolancer.photolancer.service.impl.NoticeFileUploadService;
+import shop.photolancer.photolancer.service.impl.NoticeFileServiceImpl;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 import shop.photolancer.photolancer.web.dto.NoticeRequestDto;
 import shop.photolancer.photolancer.web.dto.NoticeResponseDto;
@@ -29,7 +29,7 @@ import java.util.List;
 @RequestMapping("/notice")
 public class NoticeController {
     private final NoticeService noticeService;
-    private final NoticeFileUploadService noticeFileUploadService;
+    private final NoticeFileServiceImpl noticeFileServiceImpl;
     private final UserServiceImpl userService;
     private final NoticeConverter noticeConverter;
     @PostMapping
@@ -43,10 +43,10 @@ public class NoticeController {
                 String title = request.getTitle();
                 Category category = request.getCategory();
                 Boolean isPublic = request.getIsPublic();
-
+                System.out.println(multipartFiles);
                 List<String> filePaths = null;
                 if (multipartFiles != null && !multipartFiles.isEmpty()) {
-                    filePaths = noticeFileUploadService.uploadAWS(multipartFiles);
+                    filePaths = noticeFileServiceImpl.uploadAWS(multipartFiles);
                     noticeService.upload(content, title, category, isPublic, filePaths, user);
                 }
                 else {
@@ -97,5 +97,22 @@ public class NoticeController {
             return noticeConverter.toNoticeDetail(notice, noticeFile, true);
         }
         return noticeConverter.toNoticeDetail(notice, noticeFile, false);
+    }
+
+    // 공지 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteNotice(@PathVariable Long id) {
+        User user = userService.getCurrentUser();
+        try {
+            if (user.getRole() == Role.ADMIN) {
+                noticeService.deleteNotice(id);
+                return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.NOTICE_DELETE_SUCCESS), HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOTICE_NOT_ADMIN), HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.INVALID_REQUEST), HttpStatus.BAD_REQUEST);
+        }
     }
 }

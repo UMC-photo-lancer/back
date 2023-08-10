@@ -18,4 +18,6 @@ public interface NoticeService {
     Notice findNoticeById(Long id);
 
     List<NoticeResponseDto.NoticeFileDto> findNoticeFileByNotice(Notice notice);
+
+    void deleteNotice(Long id);
 }
