@@ -16,8 +16,10 @@ import shop.photolancer.photolancer.service.NoticeService;
 import shop.photolancer.photolancer.web.dto.NoticeResponseDto;
 
 
+import javax.transaction.Transactional;
 import java.util.List;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class NoticeServiceImpl implements NoticeService {
@@ -25,11 +27,14 @@ public class NoticeServiceImpl implements NoticeService {
     private final NoticeConverter noticeConverter;
     private final NoticeFileRepository noticeFileRepository;
     private final NoticeFileConverter noticeFileConverter;
+    private final NoticeFileServiceImpl noticeFileService;
     @Override
     public Long upload(String content, String title, Category category,
                        Boolean isPublic, List<String> filePaths, User user) {
         Notice notice = noticeConverter.toNotice(content, title, category, isPublic, user);
         noticeRepository.save(notice);
+
+        System.out.println("infile");
 
         for (String fileUrl : filePaths) {
             NoticeFile noticeFile = noticeFileConverter.toEntity(fileUrl, notice);
@@ -41,6 +46,7 @@ public class NoticeServiceImpl implements NoticeService {
     @Override
     public Long upload(String content, String title, Category category,
                        Boolean isPublic, User user) {
+        System.out.println("nofile");
         Notice notice = noticeConverter.toNotice(content, title, category, isPublic, user);
         noticeRepository.save(notice);
 
@@ -88,4 +94,10 @@ public class NoticeServiceImpl implements NoticeService {
         return noticeFileDtos;
     }
 
+    @Override
+    public void deleteNotice(Long noticeId) {
+        Notice notice = findNoticeById(noticeId);
+        noticeFileService.deleteFile(notice);
+        noticeRepository.delete(notice);
+    }
 }

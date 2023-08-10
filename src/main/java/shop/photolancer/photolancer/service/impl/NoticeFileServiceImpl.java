@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import shop.photolancer.photolancer.domain.Notice;
+import shop.photolancer.photolancer.repository.NoticeFileRepository;
 import shop.photolancer.photolancer.service.S3UploadService;
 
 import java.io.IOException;
@@ -18,11 +20,12 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class NoticeFileUploadService implements S3UploadService {
+public class NoticeFileServiceImpl implements S3UploadService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     private final AmazonS3 amazonS3;
+    private final NoticeFileRepository noticeFileRepository;
 
     @Override
     public List<String> uploadAWS(List<MultipartFile> multipartFile) {
@@ -46,8 +49,12 @@ public class NoticeFileUploadService implements S3UploadService {
         return fileUrlList;
     }
 
-
         public String createFileName (String fileName){
             return UUID.randomUUID().toString().concat(fileName);
+        }
+
+        public void deleteFile(Notice notice) {
+            System.out.println(notice.getId());
+            noticeFileRepository.deleteAllByNotice(notice);
         }
 }

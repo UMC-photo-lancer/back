@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface NoticeFileRepository extends JpaRepository<NoticeFile, Long> {
     List<NoticeFile> findByNotice(Notice notice);
+
+    void deleteAllByNotice(Notice notice);
 }
