@@ -1,12 +1,15 @@
 package shop.photolancer.photolancer.domain;
 
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import shop.photolancer.photolancer.domain.base.BaseEntity;
 import shop.photolancer.photolancer.domain.enums.*;
-import shop.photolancer.photolancer.web.dto.base.DefaultRes;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Builder
@@ -14,7 +17,7 @@ import javax.persistence.*;
 @Setter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends BaseEntity {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,12 +46,6 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Purpose purpose;
-
-//    @Enumerated(EnumType.STRING)
-//    private Ability ability;
-
-//    @Enumerated(EnumType.STRING)
-//    private Sex sex;
 
     private String explane;
 

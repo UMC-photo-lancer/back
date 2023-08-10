@@ -2,22 +2,23 @@ package shop.photolancer.photolancer.web.controller;
 
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shop.photolancer.photolancer.converter.PaymentConverter;
 import shop.photolancer.photolancer.domain.Charge;
 import shop.photolancer.photolancer.domain.User;
+import shop.photolancer.photolancer.exception.CustomExceptions;
 import shop.photolancer.photolancer.exception.ResponseMessage;
 import shop.photolancer.photolancer.exception.StatusCode;
 import shop.photolancer.photolancer.service.PaymentService;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
+import shop.photolancer.photolancer.web.controller.base.BaseController;
 import shop.photolancer.photolancer.web.dto.PaymentRequestDto;
 import shop.photolancer.photolancer.web.dto.PaymentResponseDto;
+import shop.photolancer.photolancer.web.dto.UserResponseDto;
 import shop.photolancer.photolancer.web.dto.base.DefaultRes;
 
-import org.slf4j.Logger;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,9 +27,7 @@ import java.util.List;
 @Api(tags = "결제 관련 API")
 @RestController
 @RequiredArgsConstructor
-public class PaymentController {
-
-    private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
+public class PaymentController extends BaseController {
     private final UserServiceImpl userService;
     private final PaymentService paymentService;
     private final PaymentConverter paymentConverter;
@@ -54,8 +53,8 @@ public class PaymentController {
             paymentService.charge(user, amount, paymentMethod);
 
             return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.CHARGE_POINT_SUCCESS), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        } catch (CustomExceptions.ChareException e) {
+            return handleApiException(e, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -73,8 +72,8 @@ public class PaymentController {
             List<PaymentResponseDto.TradeLogDto> response = paymentConverter.toTradeLogDtoList(charges);
 
             return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.TRADE_LOG_READ_SUCCESS, response), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        } catch (CustomExceptions.TradeLogException e) {
+            return handleApiException(e, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -87,11 +86,15 @@ public class PaymentController {
 
             User user = userService.getCurrentUser();
 
-            List<PaymentResponseDto.ExchangeDto> response = paymentService.getExchange(user);
+            List<PaymentResponseDto.ExchangeDto> accounts = paymentService.getExchange(user);
+
+            PaymentResponseDto.PaymentUserDto userInfo = paymentConverter.toUserInfo(user);
+
+            PaymentResponseDto.UserInfoAndAccounts response = new PaymentResponseDto.UserInfoAndAccounts(userInfo,accounts);
 
             return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.EXCHANGE_READ_SUCCESS, response), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        } catch (CustomExceptions.ExchangeWindowException e) {
+            return handleApiException(e, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -119,8 +122,8 @@ public class PaymentController {
             paymentService.exchange(user, bank, accountNumber, point);
 
             return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.EXCHANGE_POINT_SUCCESS), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        } catch (CustomExceptions.ExchangeException e) {
+            return handleApiException(e, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -137,8 +140,8 @@ public class PaymentController {
             PaymentResponseDto.PurchaseDto response = paymentService.getPurchase(postId, user);
 
             return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.PURCHASE_READ_SUCCESS, response), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        } catch (CustomExceptions.PurchaseWindowException e) {
+            return handleApiException(e, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -155,8 +158,8 @@ public class PaymentController {
             paymentService.purchase(postId, user);
 
             return new ResponseEntity( DefaultRes.res(StatusCode.OK, ResponseMessage.PURCHASE_SUCCESS), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        } catch (CustomExceptions.PurchaseException e) {
+            return handleApiException(e, HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -12,6 +12,7 @@ import shop.photolancer.photolancer.domain.enums.PaymentMethodType;
 import shop.photolancer.photolancer.domain.mapping.UserPhoto;
 import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.web.dto.PaymentResponseDto;
+import shop.photolancer.photolancer.web.dto.UserResponseDto;
 
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
@@ -91,6 +92,13 @@ public class PaymentConverter {
                 .build();
     }
 
+    public PaymentResponseDto.PaymentUserDto toUserInfo(User user){
+        return PaymentResponseDto.PaymentUserDto.builder()
+                .userId(user.getId())
+                .point(user.getPoint())
+                .build();
+    }
+
     public Notification toChargeNotification(User user, Integer amount){
         return Notification.builder()
                 .message("포인트를 충전했습니다.")
@@ -130,6 +138,5 @@ public class PaymentConverter {
                 .user(postUser)
                 .build();
     }
-
 
 }
