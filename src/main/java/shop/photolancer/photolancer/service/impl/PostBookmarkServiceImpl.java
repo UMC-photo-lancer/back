@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import shop.photolancer.photolancer.converter.BookmarkConverter;
 import shop.photolancer.photolancer.converter.PostConverter;
 import shop.photolancer.photolancer.domain.Bookmark;
 import shop.photolancer.photolancer.domain.Post;
@@ -12,10 +13,12 @@ import shop.photolancer.photolancer.domain.mapping.PostBookmark;
 import shop.photolancer.photolancer.repository.PostBookmarkRepository;
 import shop.photolancer.photolancer.service.PostBookmarkService;
 import shop.photolancer.photolancer.web.dto.BookmarkDto;
+import shop.photolancer.photolancer.web.dto.BookmarkResponseDto;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -29,6 +32,7 @@ public class PostBookmarkServiceImpl implements PostBookmarkService {
     private final SavedPostServiceImpl savedPostService;
     private final UserPhotoServiceImpl userPhotoService;
     private final BookmarkServiceImpl bookmarkService;
+    private final BookmarkConverter bookmarkConverter;
 
     public Page<PostResponseDto.PostListDto> postBookmarkDefaultList(Pageable request) {
 
@@ -101,5 +105,17 @@ public class PostBookmarkServiceImpl implements PostBookmarkService {
             postBookmarkNameList.add(p.getBookmark().getName());
         }
         return postBookmarkNameList;
+    }
+
+    // bookmark 전체 반환, 게시글 수와 함께 반환
+    public List<BookmarkResponseDto.BookmarkDataResponseDto> getBookmarkData () {
+        List<Bookmark> bookmarks = bookmarkService.findAllBookmark();
+        List<BookmarkResponseDto.BookmarkDataResponseDto> bookmarkDataList = bookmarks.stream().map(
+                bookmark -> {
+                    Long postNum = postBookmarkRepository.countByBookmark(bookmark);
+                    return bookmarkConverter.toBookmarkData(bookmark, postNum);
+                }
+        ).collect(Collectors.toList());
+        return bookmarkDataList;
     }
 }
