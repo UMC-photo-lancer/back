@@ -7,6 +7,7 @@ import shop.photolancer.photolancer.domain.Notice;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.Category;
 import shop.photolancer.photolancer.domain.mapping.NoticeFile;
+import shop.photolancer.photolancer.web.dto.NoticeRequestDto;
 import shop.photolancer.photolancer.web.dto.NoticeResponseDto;
 
 import java.time.LocalDateTime;

@@ -115,4 +115,30 @@ public class NoticeController {
             return new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.INVALID_REQUEST), HttpStatus.BAD_REQUEST);
         }
     }
+
+    // 공지 수정
+    @PutMapping("{id}")
+    public ResponseEntity updateNotice(@PathVariable Long id,
+                                       @RequestPart(value = "NoticeContent") NoticeRequestDto.NoticeUpdateDto request
+            ,@RequestPart(value = "NoticeFile", required = false) List<MultipartFile> multipartFiles) {
+        User user = userService.getCurrentUser();
+        try {
+            if (user.getRole() == Role.ADMIN) {
+                List<String> filePaths = null;
+                if (multipartFiles != null && !multipartFiles.isEmpty()) {
+                    filePaths = noticeFileServiceImpl.uploadAWS(multipartFiles);
+                    noticeService.updateNotice(id, request, filePaths);
+                }
+                else {
+                    noticeService.updateNotice(id, request);
+                }
+                return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.NOTICE_UPDATE_SUCCESS), HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOTICE_NOT_ADMIN), HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.INVALID_REQUEST), HttpStatus.BAD_REQUEST);
+        }
+    }
 }

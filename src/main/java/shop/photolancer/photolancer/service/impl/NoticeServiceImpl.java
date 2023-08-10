@@ -13,6 +13,7 @@ import shop.photolancer.photolancer.domain.mapping.NoticeFile;
 import shop.photolancer.photolancer.repository.NoticeFileRepository;
 import shop.photolancer.photolancer.repository.NoticeRepository;
 import shop.photolancer.photolancer.service.NoticeService;
+import shop.photolancer.photolancer.web.dto.NoticeRequestDto;
 import shop.photolancer.photolancer.web.dto.NoticeResponseDto;
 
 
@@ -34,8 +35,6 @@ public class NoticeServiceImpl implements NoticeService {
         Notice notice = noticeConverter.toNotice(content, title, category, isPublic, user);
         noticeRepository.save(notice);
 
-        System.out.println("infile");
-
         for (String fileUrl : filePaths) {
             NoticeFile noticeFile = noticeFileConverter.toEntity(fileUrl, notice);
             noticeFileRepository.save(noticeFile);
@@ -46,7 +45,6 @@ public class NoticeServiceImpl implements NoticeService {
     @Override
     public Long upload(String content, String title, Category category,
                        Boolean isPublic, User user) {
-        System.out.println("nofile");
         Notice notice = noticeConverter.toNotice(content, title, category, isPublic, user);
         noticeRepository.save(notice);
 
@@ -97,7 +95,29 @@ public class NoticeServiceImpl implements NoticeService {
     @Override
     public void deleteNotice(Long noticeId) {
         Notice notice = findNoticeById(noticeId);
+        noticeFileService.deleteAWSFile(notice);
         noticeFileService.deleteFile(notice);
         noticeRepository.delete(notice);
+    }
+
+    @Override
+    public void updateNotice(Long noticeId, NoticeRequestDto.NoticeUpdateDto request) {
+        Notice notice = findNoticeById(noticeId);
+        noticeRepository.updateNotice(noticeId, request.getCategory(), request.getIsPublic(), request.getContent(), request.getTitle());
+        noticeFileService.deleteAWSFile(notice);
+        noticeFileService.deleteFile(notice);
+    }
+
+    @Override
+    public void updateNotice(Long noticeId, NoticeRequestDto.NoticeUpdateDto request, List<String> filePaths) {
+        Notice notice = findNoticeById(noticeId);
+        noticeRepository.updateNotice(noticeId, request.getCategory(), request.getIsPublic(), request.getContent(), request.getTitle());
+        noticeFileService.deleteAWSFile(notice);
+        noticeFileService.deleteFile(notice);
+
+        for (String fileUrl : filePaths) {
+            NoticeFile noticeFile = noticeFileConverter.toEntity(fileUrl, notice);
+            noticeFileRepository.save(noticeFile);
+        }
     }
 }

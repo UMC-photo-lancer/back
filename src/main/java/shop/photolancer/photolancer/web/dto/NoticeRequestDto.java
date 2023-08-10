@@ -14,4 +14,15 @@ public class NoticeRequestDto {
         private Category category;
         private Boolean isPublic;
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class NoticeUpdateDto {
+        private String content;
+        private String title;
+        private Category category;
+        private Boolean isPublic;
+    }
 }
