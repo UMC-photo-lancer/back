@@ -5,13 +5,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import shop.photolancer.photolancer.converter.PostConverter;
+import shop.photolancer.photolancer.domain.Bookmark;
 import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
+import shop.photolancer.photolancer.domain.mapping.PostBookmark;
 import shop.photolancer.photolancer.repository.PostBookmarkRepository;
 import shop.photolancer.photolancer.repository.UserPhotoRepository;
 import shop.photolancer.photolancer.service.PostBookmarkService;
 import shop.photolancer.photolancer.web.dto.BookmarkDto;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
+
+import java.util.List;
 
 
 @Service
@@ -24,6 +28,7 @@ public class PostBookmarkServiceImpl implements PostBookmarkService {
     private final PostLikeServiceImpl postLikeService;
     private final SavedPostServiceImpl savedPostService;
     private final UserPhotoServiceImpl userPhotoService;
+    private final BookmarkServiceImpl bookmarkService;
 
     public Page<PostResponseDto.PostListDto> postBookmarkDefaultList(Pageable request) {
 
@@ -62,4 +67,35 @@ public class PostBookmarkServiceImpl implements PostBookmarkService {
         return postBookmarkList;
     }
 
+    public void deletePostBookmarks(List<PostBookmark> postBookmarks) {
+        postBookmarkRepository.deleteAll(postBookmarks);
+    }
+
+    public List<PostBookmark> findPostBookmarks(Post post) {
+        List<PostBookmark> postBookmarksId = postBookmarkRepository.findByPost(post);
+        return postBookmarksId;
+    }
+
+    public void savePostBookmark(PostBookmark postBookmark) {
+        postBookmarkRepository.save(postBookmark);
+    }
+
+    public void createPostBookmarks(List<String> bookmarks, Post post) {
+        for (String bookmarkName : bookmarks) {
+            Bookmark bookmark = bookmarkService.createBookmark(bookmarkName);
+            PostBookmark postBookmark = postConverter.toPostBookmark(post, bookmark);
+            savePostBookmark(postBookmark);
+        }
+    }
+
+    public void createPostBookmark(String bookmarkName, Post post) {
+            Bookmark bookmark = bookmarkService.createBookmark(bookmarkName);
+            PostBookmark postBookmark = postConverter.toPostBookmark(post, bookmark);
+            savePostBookmark(postBookmark);
+    }
+
+    public PostBookmark findByBookmarkNameAndPost(String bookmarkName, Post post) {
+        Bookmark bookmark = bookmarkService.findBookmark(bookmarkName);
+        return postBookmarkRepository.findByBookmarkAndPost(bookmark, post);
+    }
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import shop.photolancer.photolancer.domain.*;
 import shop.photolancer.photolancer.domain.enums.NotificationType;
 import shop.photolancer.photolancer.domain.mapping.*;
+import shop.photolancer.photolancer.web.dto.PostRequestDto;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
 
 import java.util.List;

@@ -28,4 +28,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p WHERE p.user = :user ORDER BY p.createdAt DESC")
     List<Post> findByUserOrderByCreatedAtDesc(@Param("user") User user, Pageable pageable);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE Post p SET p.content = :content, p.isSale = :isSale, p.point = :point WHERE p.id = :postId")
+    void updatePost(@Param("postId") Long postId, @Param("content") String content, @Param("isSale") Boolean isSale,
+                        @Param("point") Integer point);
 }
