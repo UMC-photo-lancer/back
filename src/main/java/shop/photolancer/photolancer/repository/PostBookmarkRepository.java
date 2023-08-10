@@ -21,7 +21,4 @@ public interface PostBookmarkRepository extends JpaRepository<PostBookmark, Long
     List<PostBookmark> findByPost(Post post);
 
     PostBookmark findByBookmarkAndPost(Bookmark bookmark, Post post);
-
-    @Query("SELECT pb FROM PostBookmark pb JOIN pb.bookmark b ON pb.bookmark.id = b.id WHERE b.name = :postBookmarkName")
-    PostBookmark findByPostBookmarkName(@Param("postBookmarkName") String postBookmarkName);
 }

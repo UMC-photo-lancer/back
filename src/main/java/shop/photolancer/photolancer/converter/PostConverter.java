@@ -14,14 +14,14 @@ import java.util.List;
 @Component
 public class PostConverter {
     private final UserConverter userConverter;
-    public Post toPost(String content, Integer likeCount, Integer point,
-                       Boolean isSale, String thumbNailUri, User user) {
+
+    public Post toPost(PostRequestDto.PostUploadDto post, String thumbNailUri, User user) {
         return Post.builder()
                 .user(user)
-                .content(content)
-                .likeCount(likeCount)
-                .isSale(isSale)
-                .point(point)
+                .content(post.getContent())
+                .likeCount(post.getLikeCount())
+                .isSale(post.getIsSale())
+                .point(post.getPoint())
                 .thumbNailUri(thumbNailUri)
                 .build();
     }

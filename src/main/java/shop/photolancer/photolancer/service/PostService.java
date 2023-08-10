@@ -2,6 +2,7 @@ package shop.photolancer.photolancer.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.web.dto.PostRequestDto;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
@@ -9,8 +10,7 @@ import shop.photolancer.photolancer.web.dto.PostResponseDto;
 import java.util.List;
 
 public interface PostService {
-    void upload(String content, Integer likeCount, Boolean isSale,
-                Integer point, List<String> imgPaths, List<String> bookmarkList, User user);
+    void upload(PostRequestDto.PostUploadDto request, List<String> imgPaths, User user);
 
     PostResponseDto.PostDetailDto searchById(Long postId, User user);
 
@@ -29,4 +29,6 @@ public interface PostService {
     void sharePost(User sharedBy, List<User> shareTo, Long postId);
 
     void updatePost(Long id, PostRequestDto.PostUpdateDto postUpdateDto);
+
+    Post findPostById(Long postId);
 }

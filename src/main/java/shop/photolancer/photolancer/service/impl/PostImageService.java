@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import shop.photolancer.photolancer.converter.PostConverter;
+import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.mapping.PostImage;
 import shop.photolancer.photolancer.repository.PostImgRepository;
 import shop.photolancer.photolancer.service.S3UploadService;
@@ -21,13 +23,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class PostImageUploadService implements S3UploadService {
+public class PostImageService implements S3UploadService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
     private final AmazonS3 amazonS3;
     private final PostImgRepository postImgRepository;
+    private final PostConverter postConverter;
     @Override
-    public List<String> upload(List<MultipartFile> multipartFile) {
+    public List<String> uploadAWS(List<MultipartFile> multipartFile) {
         List<String> imgUrlList = new ArrayList<>();
 
         for (MultipartFile file : multipartFile) {
@@ -86,4 +89,30 @@ public class PostImageUploadService implements S3UploadService {
         return fileName.substring(fileName.lastIndexOf("."));
     }
 
+    // 포스트 이미지 DB에 저장
+    public void uploadFile(List<String> imgPaths, Post post) {
+        try {
+            for (String imgUrl : imgPaths) {
+                PostImage postImage = postConverter.toPostImage(imgUrl, post);
+                postImgRepository.save(postImage);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    
+    // 포스트 이미지를 포스트 아이디로 찾기
+    public List<PostImage> findByPostId (Long postId) {
+        return postImgRepository.findByPostId(postId);
+    }
+
+    // 포스트 이미지 uri 리스트 만들기
+    public List<String> toPostImageUriList(List<PostImage> postImageList) {
+        List<String> postImageUri = new ArrayList<>();
+
+        for (PostImage p : postImageList) {
+            postImageUri.add(p.getUri());
+        }
+        return postImageUri;
+    }
 }

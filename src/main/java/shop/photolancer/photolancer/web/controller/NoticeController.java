@@ -46,7 +46,7 @@ public class NoticeController {
 
                 List<String> filePaths = null;
                 if (multipartFiles != null && !multipartFiles.isEmpty()) {
-                    filePaths = noticeFileUploadService.upload(multipartFiles);
+                    filePaths = noticeFileUploadService.uploadAWS(multipartFiles);
                     noticeService.upload(content, title, category, isPublic, filePaths, user);
                 }
                 else {
