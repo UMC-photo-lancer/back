@@ -5,6 +5,7 @@ import shop.photolancer.photolancer.domain.Notice;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.Category;
 import shop.photolancer.photolancer.domain.mapping.NoticeFile;
+import shop.photolancer.photolancer.web.dto.NoticeRequestDto;
 import shop.photolancer.photolancer.web.dto.NoticeResponseDto;
 
 import java.util.List;
@@ -20,4 +21,8 @@ public interface NoticeService {
     List<NoticeResponseDto.NoticeFileDto> findNoticeFileByNotice(Notice notice);
 
     void deleteNotice(Long id);
+
+    void updateNotice(Long noticeId, NoticeRequestDto.NoticeUpdateDto request);
+
+    void updateNotice(Long noticeId, NoticeRequestDto.NoticeUpdateDto request, List<String> filePaths);
 }
