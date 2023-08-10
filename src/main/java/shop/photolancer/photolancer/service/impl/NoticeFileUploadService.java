@@ -25,7 +25,7 @@ public class NoticeFileUploadService implements S3UploadService {
     private final AmazonS3 amazonS3;
 
     @Override
-    public List<String> upload(List<MultipartFile> multipartFile) {
+    public List<String> uploadAWS(List<MultipartFile> multipartFile) {
         List<String> fileUrlList = new ArrayList<>();
 
         String fileName;

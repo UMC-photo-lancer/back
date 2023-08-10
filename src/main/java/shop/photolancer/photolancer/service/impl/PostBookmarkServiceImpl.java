@@ -10,11 +10,11 @@ import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.mapping.PostBookmark;
 import shop.photolancer.photolancer.repository.PostBookmarkRepository;
-import shop.photolancer.photolancer.repository.UserPhotoRepository;
 import shop.photolancer.photolancer.service.PostBookmarkService;
 import shop.photolancer.photolancer.web.dto.BookmarkDto;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -88,14 +88,18 @@ public class PostBookmarkServiceImpl implements PostBookmarkService {
         }
     }
 
-    public void createPostBookmark(String bookmarkName, Post post) {
-            Bookmark bookmark = bookmarkService.createBookmark(bookmarkName);
-            PostBookmark postBookmark = postConverter.toPostBookmark(post, bookmark);
-            savePostBookmark(postBookmark);
+    // postId로 bookmark 이름 반환
+    public List<PostBookmark> findByPostIdWithBookmark(Long postId) {
+        return postBookmarkRepository.findByPostIdWithBookmark(postId);
     }
 
-    public PostBookmark findByBookmarkNameAndPost(String bookmarkName, Post post) {
-        Bookmark bookmark = bookmarkService.findBookmark(bookmarkName);
-        return postBookmarkRepository.findByBookmarkAndPost(bookmark, post);
+    // boookmark nameList로 반환
+    public List<String> toPostBookmarkNameList(List<PostBookmark> postBookmarkList) {
+        List<String> postBookmarkNameList = new ArrayList<>();
+
+        for (PostBookmark p : postBookmarkList) {
+            postBookmarkNameList.add(p.getBookmark().getName());
+        }
+        return postBookmarkNameList;
     }
 }
