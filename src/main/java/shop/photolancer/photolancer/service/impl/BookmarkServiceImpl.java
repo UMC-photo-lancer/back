@@ -7,6 +7,8 @@ import shop.photolancer.photolancer.domain.Bookmark;
 import shop.photolancer.photolancer.repository.BookmarkRepository;
 import shop.photolancer.photolancer.service.BookmarkService;
 
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +25,8 @@ public class BookmarkServiceImpl implements BookmarkService {
         return bookmark;
     }
 
-    public Bookmark findBookmark(String bookmarkName) {
-        return bookmarkRepository.findByName(bookmarkName);
+    public List<Bookmark> findAllBookmark() {
+        return bookmarkRepository.findAll();
     }
+
 }

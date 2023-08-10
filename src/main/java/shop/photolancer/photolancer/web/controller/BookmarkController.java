@@ -9,15 +9,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import shop.photolancer.photolancer.service.impl.BookmarkServiceImpl;
 import shop.photolancer.photolancer.service.impl.PostBookmarkServiceImpl;
+import shop.photolancer.photolancer.web.dto.BookmarkResponseDto;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
+
+import java.util.List;
 
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/bookmark")
 public class BookmarkController {
-    public final PostBookmarkServiceImpl postBookmarkService;
+    private final PostBookmarkServiceImpl postBookmarkService;
     @GetMapping
     public Page<PostResponseDto.PostListDto> bookmarkDefault(@PageableDefault(size = 12, sort = "post.likeCount", direction = Sort.Direction.DESC)
                                                       Pageable request) {
@@ -50,5 +54,10 @@ public class BookmarkController {
     public Page<PostResponseDto.PostListDto> bookmarkPopularPhoto(@PageableDefault(size = 12, sort = "post.likeCount",
             direction = Sort.Direction.DESC) Pageable request, @PathVariable String bookmarkName) {
         return postBookmarkService.postBookmarkList(request, bookmarkName);
+    }
+
+    @GetMapping("/data")
+    public List<BookmarkResponseDto.BookmarkDataResponseDto> bookmarkData() {
+        return postBookmarkService.getBookmarkData();
     }
 }

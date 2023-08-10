@@ -1,7 +1,15 @@
 package shop.photolancer.photolancer.web.dto;
 
-import java.util.List;
+import lombok.*;
 
 public class BookmarkResponseDto {
-    private List<String> content;
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class BookmarkDataResponseDto {
+        private Long id;
+        private String bookmarkName;
+        private Long postNum;
+    }
 }
