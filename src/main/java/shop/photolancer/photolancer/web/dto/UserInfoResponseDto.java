@@ -18,6 +18,7 @@ public class UserInfoResponseDto {
     private Integer point;
     private String nickname;
     private String profileUrl;
+    private Double experience;
     private String explane;
     private String title;
     private Integer num_follower;
