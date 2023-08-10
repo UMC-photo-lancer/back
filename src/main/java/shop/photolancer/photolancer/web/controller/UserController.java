@@ -222,6 +222,7 @@ public class UserController {
         userInfoResponse.setNickname(user.getNickname());
         userInfoResponse.setProfileUrl(user.getProfileUrl());
         userInfoResponse.setExplane(user.getExplane());
+        userInfoResponse.setExperience(user.getExperience());
         userInfoResponse.setTitle(user.getTitle());
         userInfoResponse.setNum_follower(user.getNum_follower());
         userInfoResponse.setNum_post(user.getNum_post());
