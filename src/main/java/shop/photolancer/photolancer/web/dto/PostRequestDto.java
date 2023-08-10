@@ -25,4 +25,15 @@ public class PostRequestDto {
     public static class PostShareDto {
             private List<Long> userId;
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class PostUpdateDto {
+        private String content;
+        private Boolean isSale;
+        private Integer point;
+        private List<String> bookmark;
+    }
 }

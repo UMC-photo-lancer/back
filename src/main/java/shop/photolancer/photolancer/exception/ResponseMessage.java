@@ -33,6 +33,8 @@ public class ResponseMessage {
     public static final String POST_UPLOAD_SUCCESS = "포스트 업로드 성공";
     public static final String POST_LIKE_SUCCESS = "포스트 좋아요 성공";
 
+    public static final String POST_UPDATE_SUCCESS = "포스트 수정 성공";
+
     public static final String POST_SHARE_SUCCESS = "포스트 공유 성공";
 
     public static final String POST_DELETE_SUCCESS = "포스트 삭제 성공";
@@ -53,4 +55,5 @@ public class ResponseMessage {
     public static final String INVALID_REQUEST = "유효한 요청이 아닙니다";
     public static final String NOTICE_NOT_ADMIN = "관리자가 아닙니다";
     public static final String FOLLOWER_DELETE_SUCCESS = "팔로워 삭제 성공";
+
 }

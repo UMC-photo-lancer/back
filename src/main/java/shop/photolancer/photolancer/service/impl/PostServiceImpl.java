@@ -12,6 +12,7 @@ import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.mapping.*;
 import shop.photolancer.photolancer.repository.*;
 import shop.photolancer.photolancer.service.PostService;
+import shop.photolancer.photolancer.web.dto.PostRequestDto;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -25,13 +26,14 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final PostImgRepository postImgRepository;
     private final PostConverter postConverter;
-    private final BookMarkServiceImpl bookmarkService;
+    private final BookmarkServiceImpl bookmarkService;
     private final PostBookmarkRepository postBookmarkRepository;
     private final PostLikeServiceImpl postLikeService;
     private final SavedPostServiceImpl savedPostService;
     private final UserPhotoServiceImpl userPhotoService;
     private final UserServiceImpl userService;
     private final NotificationRepository notificationRepository;
+    private final PostBookmarkServiceImpl postBookmarkService;
 
 
 
@@ -173,5 +175,14 @@ public class PostServiceImpl implements PostService {
         ).collect(Collectors.toList());
 
         notificationRepository.saveAll(notifications);
+    }
+
+    @Override
+    public void updatePost(Long id, PostRequestDto.PostUpdateDto postUpdateDto) {
+        postRepository.updatePost(id, postUpdateDto.getContent(), postUpdateDto.getIsSale(), postUpdateDto.getPoint());
+        Post post = postRepository.findById(id).orElseThrow();
+        List<PostBookmark> postBookmarkIdList = postBookmarkService.findPostBookmarks(post);
+        postBookmarkService.deletePostBookmarks(postBookmarkIdList);
+        postBookmarkService.createPostBookmarks(postUpdateDto.getBookmark(), post);
     }
 }

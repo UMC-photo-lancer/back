@@ -101,4 +101,16 @@ public class PostController {
             return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity updatePost(@PathVariable Long id, @RequestBody PostRequestDto.PostUpdateDto postUpdateDto) {
+        try {
+            postService.updatePost(id, postUpdateDto);
+
+            return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.POST_UPDATE_SUCCESS), HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
+        }
+    }
 }
