@@ -8,6 +8,7 @@ import shop.photolancer.photolancer.converter.PostConverter;
 import shop.photolancer.photolancer.domain.Notification;
 import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
+import shop.photolancer.photolancer.domain.enums.PostStatus;
 import shop.photolancer.photolancer.domain.mapping.*;
 import shop.photolancer.photolancer.repository.*;
 import shop.photolancer.photolancer.service.PostService;
@@ -36,8 +37,16 @@ public class PostServiceImpl implements PostService {
     @Override
     public Post findPostById(Long postId) {
         Optional<Post> optionalPost = postRepository.findById(postId);
+
+
         if (optionalPost.isPresent()) {
-            return optionalPost.get();
+            Post post = optionalPost.get();
+
+            if(post.getPostStatus().equals(PostStatus.DELETED)) {
+                throw new IllegalArgumentException("삭제된 포스트입니다.");
+            }
+
+            return post;
         } else {
             throw new NoSuchElementException("No post found with id " + postId);
         }
@@ -88,8 +97,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void deletePost(Long postId) {
-        postRepository.deleteById(postId);
+    public void deletePost(Long postId, User user) {
+        Post post = findPostById(postId);
+        if (post.getUser().equals(user)) {
+            postRepository.deletePost(postId);
+        }
+        else {
+            throw new IllegalArgumentException("해당 글을 작성한 유저가 아닙니다.");
+        }
     }
 
     @Override
@@ -158,6 +173,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void sharePost(User sharedBy, List<User> shareTo, Long postId) {
+        Post post = findPostById(postId);
         List<Notification> notifications = shareTo.stream().map(
                 shareToUser -> postConverter.toShareNotification(sharedBy, shareToUser, postId)
         ).collect(Collectors.toList());
@@ -166,11 +182,16 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void updatePost(Long id, PostRequestDto.PostUpdateDto postUpdateDto) {
-        postRepository.updatePost(id, postUpdateDto.getContent(), postUpdateDto.getIsSale(), postUpdateDto.getPoint());
-        Post post = postRepository.findById(id).orElseThrow();
-        List<PostBookmark> postBookmarkIdList = postBookmarkService.findPostBookmarks(post);
-        postBookmarkService.deletePostBookmarks(postBookmarkIdList);
-        postBookmarkService.createPostBookmarks(postUpdateDto.getBookmark(), post);
+    public void updatePost(Long id, PostRequestDto.PostUpdateDto postUpdateDto, User user) {
+        Post post = findPostById(id);
+        if (post.getUser().equals(user)) {
+            postRepository.updatePost(id, postUpdateDto.getContent(), postUpdateDto.getIsSale(), postUpdateDto.getPoint());
+            List<PostBookmark> postBookmarkIdList = postBookmarkService.findPostBookmarks(post);
+            postBookmarkService.deletePostBookmarks(postBookmarkIdList);
+            postBookmarkService.createPostBookmarks(postUpdateDto.getBookmark(), post);
+        }
+        else {
+            throw new IllegalArgumentException("해당 글을 작성한 유저가 아닙니다.");
+        }
     }
 }

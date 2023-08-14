@@ -40,7 +40,7 @@ public class PostBookmarkServiceImpl implements PostBookmarkService {
         BookmarkDto usersFirstBookmark = userBookmarkService.findBookmarksByUser(user).get(0);
         String content = usersFirstBookmark.getContent().toString();
         String cleanContent = content.replace("[", "").replace("]", "");
-        Page<Post> postList = postBookmarkRepository.findByPostBookmarkName(request, cleanContent);
+        Page<Post> postList = postBookmarkRepository.findByPostBookmarkNameNotDeleted(request, cleanContent);
 
         Page<PostResponseDto.PostListDto> postBookmarkList = postList.map(
                 hotPhoto -> {
@@ -57,7 +57,7 @@ public class PostBookmarkServiceImpl implements PostBookmarkService {
     public Page<PostResponseDto.PostListDto> postBookmarkList(Pageable request, String bookmarkName) {
 
         User user = userService.getCurrentUser();
-        Page<Post> postList = postBookmarkRepository.findByPostBookmarkName(request, bookmarkName);
+        Page<Post> postList = postBookmarkRepository.findByPostBookmarkNameNotDeleted(request, bookmarkName);
 
         Page<PostResponseDto.PostListDto> postBookmarkList = postList.map(
                 photo -> {

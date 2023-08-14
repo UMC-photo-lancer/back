@@ -16,7 +16,7 @@ public interface PostService {
 
     void updateLike(Long postId, User user);
 
-    void deletePost(Long postId);
+    void deletePost(Long postId, User user);
 
     void savePost(Long postId, User user);
 
@@ -28,7 +28,7 @@ public interface PostService {
 
     void sharePost(User sharedBy, List<User> shareTo, Long postId);
 
-    void updatePost(Long id, PostRequestDto.PostUpdateDto postUpdateDto);
+    void updatePost(Long id, PostRequestDto.PostUpdateDto postUpdateDto, User user);
 
     Post findPostById(Long postId);
 }

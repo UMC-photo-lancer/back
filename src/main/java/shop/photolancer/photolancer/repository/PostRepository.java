@@ -21,9 +21,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findAll(Pageable request);
 
+    @Query("SELECT p FROM Post p WHERE p.postStatus <> 'DELETED'")
+    Page<Post> findAllNotDeleted(Pageable request);
+
+    @Query("SELECT p FROM Post p WHERE p.postStatus <> 'DELETED' AND p.user = :user")
     Page<Post> findByUser(User user, Pageable pageable);
 
-    @Query("SELECT p FROM Post p WHERE p.user = :user ORDER BY p.createdAt DESC")
+    @Query("SELECT p FROM Post p WHERE p.user = :user AND p.postStatus <> 'DELETED' ORDER BY p.createdAt DESC")
     List<Post> findByUserOrderByCreatedAtDesc(@Param("user") User user, Pageable pageable);
 
     @Transactional
@@ -31,4 +35,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("UPDATE Post p SET p.content = :content, p.isSale = :isSale, p.point = :point WHERE p.id = :postId")
     void updatePost(@Param("postId") Long postId, @Param("content") String content, @Param("isSale") Boolean isSale,
                         @Param("point") Integer point);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Post p SET p.postStatus = 'DELETED' WHERE p.id = :postId")
+    void deletePost(Long postId);
 }
