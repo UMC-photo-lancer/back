@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import shop.photolancer.photolancer.domain.base.BaseEntity;
+import shop.photolancer.photolancer.domain.enums.PostStatus;
 import shop.photolancer.photolancer.domain.mapping.*;
 
 import javax.persistence.*;
@@ -41,18 +42,9 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostImage> images;
 
-//    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-//    private List<PostLike> likes;
-//
-//    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-//    private List<SavedPost> savedPosts;
-//
-//    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-//    private List<PostContest> contests;
-
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostBookmark> bookmarks;
 
-//    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-//    private List<Comment> comments;
+    @Enumerated(EnumType.STRING)
+    private PostStatus postStatus;
 }

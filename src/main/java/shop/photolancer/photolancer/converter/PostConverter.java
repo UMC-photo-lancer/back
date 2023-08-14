@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import shop.photolancer.photolancer.domain.*;
 import shop.photolancer.photolancer.domain.enums.NotificationType;
+import shop.photolancer.photolancer.domain.enums.PostStatus;
 import shop.photolancer.photolancer.domain.mapping.*;
 import shop.photolancer.photolancer.web.dto.PostRequestDto;
 import shop.photolancer.photolancer.web.dto.PostResponseDto;
@@ -23,6 +24,7 @@ public class PostConverter {
                 .isSale(post.getIsSale())
                 .point(post.getPoint())
                 .thumbNailUri(thumbNailUri)
+                .postStatus(PostStatus.EXISTENT)
                 .build();
     }
 
@@ -94,12 +96,6 @@ public class PostConverter {
                 .post(post)
                 .id(postContest.getId())
                 .ranked(postContest.getRanked())
-                .build();
-    }
-
-    public PostResponseDto.UserPhotoDto toUserPhotoDto(UserPhoto userPhoto) {
-        return PostResponseDto.UserPhotoDto.builder()
-                .id(userPhoto.getId())
                 .build();
     }
 

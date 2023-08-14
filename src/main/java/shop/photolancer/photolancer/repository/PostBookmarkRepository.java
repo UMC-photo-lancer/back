@@ -18,8 +18,13 @@ public interface PostBookmarkRepository extends JpaRepository<PostBookmark, Long
     @Query("SELECT pb.post FROM PostBookmark pb JOIN pb.bookmark b ON pb.bookmark.id = b.id WHERE b.name = :postBookmarkName")
     Page<Post> findByPostBookmarkName(Pageable pageable, @Param("postBookmarkName") String postBookmarkName);
 
+    @Query("SELECT pb.post FROM PostBookmark pb JOIN pb.bookmark b ON pb.bookmark.id = b.id WHERE b.name = :postBookmarkName AND pb.post.postStatus <> 'DELETED'")
+    Page<Post> findByPostBookmarkNameNotDeleted(Pageable pageable, @Param("postBookmarkName") String postBookmarkName);
+
+
     List<PostBookmark> findByPost(Post post);
 
+    @Query("SELECT COUNT(pb) FROM PostBookmark pb WHERE pb.bookmark = :bookmark AND pb.post.postStatus <> 'DELETED'")
     Long countByBookmark(Bookmark bookmark);
 
 }

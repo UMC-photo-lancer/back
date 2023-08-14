@@ -64,10 +64,12 @@ public class PostController {
     }
 
     @ApiOperation(value = "POST 삭제 API")
-    @DeleteMapping("/{id}")
+    @PutMapping("/{id}/delete")
     public ResponseEntity deletePost(@PathVariable Long id) {
         try {
-            postService.deletePost(id);
+            User user = userService.getCurrentUser();
+
+            postService.deletePost(id, user);
 
             return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.POST_DELETE_SUCCESS), HttpStatus.OK);
         }  catch (Exception e) {
@@ -109,7 +111,8 @@ public class PostController {
     @PutMapping("/{id}")
     public ResponseEntity updatePost(@PathVariable Long id, @RequestBody PostRequestDto.PostUpdateDto postUpdateDto) {
         try {
-            postService.updatePost(id, postUpdateDto);
+            User user = userService.getCurrentUser();
+            postService.updatePost(id, postUpdateDto, user);
 
             return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.POST_UPDATE_SUCCESS), HttpStatus.OK);
 

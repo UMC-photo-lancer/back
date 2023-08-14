@@ -34,7 +34,7 @@ public class ExploreServiceImpl implements ExploreService {
 
     @Override
     public Page<PostResponseDto.PostListDto> hotPhoto(Pageable request) {
-        Page<Post> postImageList = postRepository.findAll(request);
+        Page<Post> postImageList = postRepository.findAllNotDeleted(request);
         User user = userService.getCurrentUser();
 
         Page<PostResponseDto.PostListDto> hotPhotoPage = postImageList.map(
@@ -51,7 +51,7 @@ public class ExploreServiceImpl implements ExploreService {
 
     @Override
     public Page<PostResponseDto.PostListDto> recentPhoto(Pageable request) {
-        Page<Post> postImageList = postRepository.findAll(request);
+        Page<Post> postImageList = postRepository.findAllNotDeleted(request);
 
         User user = userService.getCurrentUser();
 
