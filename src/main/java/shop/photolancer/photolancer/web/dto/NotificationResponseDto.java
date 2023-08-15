@@ -16,4 +16,5 @@ public class NotificationResponseDto {
     private LocalDateTime updatedAt;
     private String message;
     private String type;
+    private String post_uri;
 }

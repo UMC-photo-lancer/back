@@ -11,13 +11,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import shop.photolancer.photolancer.domain.User;
 
 import shop.photolancer.photolancer.domain.enums.Role;
+import shop.photolancer.photolancer.exception.StatusCode;
 import shop.photolancer.photolancer.repository.UserRepository;
+import shop.photolancer.photolancer.service.S3UploadService;
+import shop.photolancer.photolancer.service.impl.PostImageService;
 import shop.photolancer.photolancer.service.impl.UserBookmarkServiceImpl;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 import shop.photolancer.photolancer.web.dto.*;
+import shop.photolancer.photolancer.web.dto.base.DefaultRes;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -47,7 +52,8 @@ public class UserController {
     private final UserServiceImpl userServiceImpl;
     private final UserBookmarkServiceImpl userBookmarkServiceImpl;
     protected final UserRepository userRepository;
-    private AmazonS3 s3Client;
+    private S3UploadService s3UploadService;
+    private final PostImageService postImageService;
 
     // 휴면 계정, 즉 탈퇴한 계정일 경우의 회원가입 얘기하기
     @Operation(summary = "회원가입을 진행합니다.")
@@ -262,12 +268,17 @@ public class UserController {
 //        return ResponseEntity.ok(userServiceImpl.getaAllUser());
 //    }
 
-//    @Operation(summary = "유저의 프로필 사진을 수정합니다.")
-//    @PostMapping(value = "/{bucketName}/uploadProfile")
-//    public ResponseEntity<?> uploadProfile(@PathVariable("bucketName") String bucketName,@RequestPart("file") MultipartFile file){
-//        User user = userServiceImpl.getCurrentUser();
-//        String userName = user.getName();
-//        userServiceImpl.uploadProfile(bucketName,userName,file);
-//        return ResponseEntity.ok().build();
-//    }
+    @Operation(summary = "유저의 프로필 사진을 수정합니다.")
+    @PostMapping(value = "/uploadProfile")
+    public ResponseEntity<?> uploadProfile(@RequestParam MultipartFile profileImage) {
+        try {
+            String profileImageUrl = postImageService.uploadProfileImage(profileImage);
+            User user = userServiceImpl.getCurrentUser();
+            userServiceImpl.updateUserProfileImage(user, profileImageUrl);
+
+            return new ResponseEntity<>(profileImageUrl, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }

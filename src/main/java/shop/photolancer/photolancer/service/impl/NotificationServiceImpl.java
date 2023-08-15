@@ -31,6 +31,7 @@ public class NotificationServiceImpl {
                 .updatedAt(notification.getUpdatedAt())
                 .message(notification.getMessage())
                 .type(notification.getType().getNotification()) // NotificationType에서 실제 문자열 값을 가져옵니다.
+                .post_uri(notification.getPostUri())
                 .build();
     }
 
@@ -40,5 +41,4 @@ public class NotificationServiceImpl {
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
-
 }

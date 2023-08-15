@@ -8,10 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import shop.photolancer.photolancer.domain.Notification;
 import shop.photolancer.photolancer.domain.enums.NotificationType;
 import shop.photolancer.photolancer.service.impl.NotificationServiceImpl;
-import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 import shop.photolancer.photolancer.web.dto.NotificationResponseDto;
 
 import java.util.List;
@@ -24,7 +22,7 @@ import java.util.List;
 public class NotificationController {
     private final NotificationServiceImpl notificationService;
 
-    @Operation(summary = "공지를 반환합니다.")
+    @Operation(summary = "타입에 따른 공지를 반환합니다.")
     @GetMapping(value = "list")
     public List<NotificationResponseDto> getNotificationsByType(@RequestParam String type) {
         NotificationType notificationType = NotificationType.fromString(type);

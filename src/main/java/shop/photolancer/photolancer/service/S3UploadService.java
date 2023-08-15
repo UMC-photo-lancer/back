@@ -7,4 +7,5 @@ import java.util.List;
 public interface S3UploadService {
     List<String> uploadAWS(List<MultipartFile> multipartFile);
     String createFileName(String fileName);
+
 }
