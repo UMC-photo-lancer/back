@@ -356,4 +356,11 @@ public class UserServiceImpl {
         user.setProfileUrl(profileImageUrl);
         userRepository.save(user);
     }
+
+    public String findSocial(User user) {
+        if (user.getSocialId() != null) {
+            return String.valueOf(user.getSocialType());
+        }
+        return null;
+    }
 }
