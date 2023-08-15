@@ -12,6 +12,7 @@ import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.web.dto.BookmarkDto;
 
 import javax.transaction.Transactional;
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,5 +57,8 @@ public class UserBookmarkServiceImpl {
         return userBookmarks.stream()
                 .map(ub -> new BookmarkDto(Collections.singletonList(ub.getBookmark().getName())))
                 .collect(Collectors.toList());
+    }
+
+    public void deleteBookmark(User user, BigInteger bookmarkId) {
     }
 }
