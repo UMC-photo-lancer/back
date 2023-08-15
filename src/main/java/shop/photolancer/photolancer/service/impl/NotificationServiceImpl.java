@@ -33,4 +33,12 @@ public class NotificationServiceImpl {
                 .type(notification.getType().getNotification()) // NotificationType에서 실제 문자열 값을 가져옵니다.
                 .build();
     }
+
+    public List<NotificationResponseDto> getNotifications() {
+        List<Notification> notifications = notificationRepository.findAll();
+        return notifications.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
 }

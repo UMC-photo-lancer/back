@@ -30,4 +30,10 @@ public class NotificationController {
         NotificationType notificationType = NotificationType.fromString(type);
         return notificationService.getNotificationsByType(notificationType);
     }
+
+    @Operation(summary = "전체공지를 반환합니다.")
+    @GetMapping(value = "list_all")
+    public List<NotificationResponseDto> getNotificationsByType() {
+        return notificationService.getNotifications();
+    }
 }
