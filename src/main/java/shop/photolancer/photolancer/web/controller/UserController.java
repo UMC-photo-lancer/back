@@ -1,7 +1,5 @@
 package shop.photolancer.photolancer.web.controller;
 
-
-import com.amazonaws.services.s3.AmazonS3;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -15,14 +13,13 @@ import org.springframework.web.multipart.MultipartFile;
 import shop.photolancer.photolancer.domain.User;
 
 import shop.photolancer.photolancer.domain.enums.Role;
-import shop.photolancer.photolancer.exception.StatusCode;
 import shop.photolancer.photolancer.repository.UserRepository;
 import shop.photolancer.photolancer.service.S3UploadService;
 import shop.photolancer.photolancer.service.impl.PostImageService;
 import shop.photolancer.photolancer.service.impl.UserBookmarkServiceImpl;
 import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 import shop.photolancer.photolancer.web.dto.*;
-import shop.photolancer.photolancer.web.dto.base.DefaultRes;
+import util.LevelCalculator;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -34,19 +31,19 @@ import java.util.regex.Pattern;
 @Slf4j
 public class UserController {
     // 1. 로그인 -> 탈퇴한 회원인지 체크하기
-    // 2. 소셜로그인
+    // 2. 소셜로그인 -> done
     // 3. 회원가입(이름,이메일,비밀번호,비밀번호확인) -> done
     // 4. 비밀번호 찾기 -> done
     // 5. 회원정보 수정 (닉네임 -> Null일 경우 자기 닉네임,소개,북마크 설정) -> done/bookmark연동 필요
     // 6. 유저 Level,point, 닉네임, 한줄소개, 관심 키워드, 팔로워,포스트, 팔로잉, 타이틀 반환 -> 팔로워, 포스트수, 팔로잉 수, 타이틀 수정 필요 -> done
     // 7. 회원 탈퇴 -> done
-    // 8. 유저 검색(nikname기반 검색 포스트 개수,팔로워수, 팔로잉 수, 한줄 소개 관심키워드 보여줌)
+    // 8. 유저 검색(nikname기반 검색 포스트 개수,팔로워수, 팔로잉 수, 한줄 소개 관심키워드 보여줌) -> done
     // 9. 아이디 찾기 -> done
     // 10. 비밀번호 변경 -> done
-    // 11. 유저 프로필 사진 설정
+    // 11. 유저 프로필 사진 설정 -> done
     // 12. 유저 타이틀 수정 -> done
     // 13. level, 경험치 계산 하기
-    // 14. 공지 관리용 관리자 모드 만들기
+    // 14. 공지 관리용 관리자 모드 만들기 -> done
     // 15. 북마크 -> user bookmark 만들기!!! -> done
 
     private final UserServiceImpl userServiceImpl;
@@ -160,21 +157,6 @@ public class UserController {
         }
     }
 
-//    @Operation(summary = "로그인을 진행합니다.")
-//    @PostMapping(value = "/login")
-//    public ResponseEntity<LoginDto> login(@RequestBody UserLoginDto userLoginDto) {
-//        HttpHeaders headers = new HttpHeaders();
-//        try {
-//            String user_id = userLoginDto.getUser_id();
-//            String password = userLoginDto.getPassword();
-//            String result = userServiceImpl.login(user_id, password);
-//            return ResponseEntity.ok().body(result);
-//        } catch (RoleGuestException e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.MOVED_PERMANENTLY);  // 301 status code
-//        } catch (AuthenticationCredentialsNotFoundException e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
-//        }
-//    }
     @Operation(summary = "로그인을 진행합니다.")
     @PostMapping(value = "/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody UserLoginDto userLoginDto) {
@@ -193,7 +175,6 @@ public class UserController {
         headers.add("Authorization", result.getJwt());  // JWT를 헤더에 추가
         return new ResponseEntity<>(result, headers, HttpStatus.OK);
     }
-
 
 
     @Operation(summary = "비밀번호를 찾습니다.")
@@ -223,7 +204,7 @@ public class UserController {
 
         // UserInfoResponse DTO를 생성합니다.
         UserInfoResponseDto userInfoResponse = new UserInfoResponseDto();
-        userInfoResponse.setLevel(user.getLevel());
+        userInfoResponse.setLevel(LevelCalculator.getLevel(user.getExperience()));
         userInfoResponse.setPoint(user.getPoint());
         userInfoResponse.setNickname(user.getNickname());
         userInfoResponse.setProfileUrl(user.getProfileUrl());
@@ -280,5 +261,13 @@ public class UserController {
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @Operation(summary = "사용자의 소셜로그인 정보 반환")
+    @GetMapping(value = "/social")
+    public String findSocial() {
+        User user = userServiceImpl.getCurrentUser();
+        String social = userServiceImpl.findSocial(user);
+        return social;
     }
 }
