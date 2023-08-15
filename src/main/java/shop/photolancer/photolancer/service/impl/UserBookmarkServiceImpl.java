@@ -59,6 +59,11 @@ public class UserBookmarkServiceImpl {
                 .collect(Collectors.toList());
     }
 
-    public void deleteBookmark(User user, BigInteger bookmarkId) {
+    public void deleteBookmark(User user,Long bookmarkId) {
+        // 주어진 ID와 사용자로 북마크 객체를 찾습니다.
+        UserBookmark userBookmark = (UserBookmark) userBookmarkRepository.findByIdAndUser(bookmarkId, user)
+                .orElseThrow(() -> new IllegalArgumentException("북마크를 찾을 수 없습니다."));
+        // 찾아낸 북마크 객체를 삭제합니다.
+        userBookmarkRepository.delete(userBookmark);
     }
 }

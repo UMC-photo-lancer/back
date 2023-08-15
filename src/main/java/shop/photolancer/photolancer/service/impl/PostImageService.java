@@ -115,4 +115,21 @@ public class PostImageService implements S3UploadService {
         }
         return postImageUri;
     }
+
+    // 사용자 프로필 사진 업로드 부분(사진 하나만 올리면됨)
+    public String uploadProfileImage(MultipartFile profileImage) {
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(profileImage.getSize());
+        objectMetadata.setContentType(profileImage.getContentType());
+
+        String fileName = createFileName(profileImage.getOriginalFilename());
+
+        try(InputStream inputStream = profileImage.getInputStream()) {
+            amazonS3.putObject(new PutObjectRequest(bucket+"/profile/image", fileName, inputStream, objectMetadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+            return amazonS3.getUrl(bucket+"/profile/image", fileName).toString();
+        } catch(IOException e) {
+            throw new RuntimeException("Error while uploading profile image", e);
+        }
+    }
 }

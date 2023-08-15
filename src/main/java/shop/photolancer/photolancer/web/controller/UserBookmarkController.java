@@ -53,7 +53,7 @@ public class UserBookmarkController {
 
     @Operation(summary = "사용자의 북마크를 삭제합니다.")
     @DeleteMapping(value = "/delete")
-    public void deleteBookmark(BigInteger bookmarkId){
+    public void deleteBookmark(@RequestParam Long bookmarkId){
         User user = userServiceImpl.getCurrentUser();
         userBookmarkServiceImpl.deleteBookmark(user,bookmarkId);
     }

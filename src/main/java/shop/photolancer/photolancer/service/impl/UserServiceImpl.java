@@ -352,26 +352,8 @@ public class UserServiceImpl {
         javaMailSender.send(message);
     }
 
-//    public void uploadProfile(String bucketName, String userName, MultipartFile file) {
-//        try {
-//            String originalFileName = file.getOriginalFilename();
-//            String savedFileName = UUID.randomUUID().toString() + "_" + originalFileName;
-//
-////            String fileUrl = s3Service.uploadFile(savedFileName); // S3에 파일 업로드 후 URL 반환
-//
-////            User save_profile = UserRepository.save(
-////                    User.builder()
-////                            .profile_url(fileUrl)
-////                            .build();
-////            )
-////            File fileUploadEntity = new File(originalFileName, savedFileName, fileUrl);
-////            return fileUrl;
-//        } catch (IOException e) {
-//            return "Error occurred while uploading file.";
-//        }
-//    }
-
-//    public List<UserListRequestDto.Info> getaAllUser() {
-//        return userRepository.map(UserInfoResponseDto.Info::of).collect(Collectors.toList())
-//    }
+    public void updateUserProfileImage(User user, String profileImageUrl) {
+        user.setProfileUrl(profileImageUrl);
+        userRepository.save(user);
+    }
 }
