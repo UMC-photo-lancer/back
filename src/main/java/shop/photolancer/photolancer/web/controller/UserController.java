@@ -250,7 +250,6 @@ public class UserController {
     @Operation(summary = "공지용 관리자 모드로 반환합니다.")
     @GetMapping(value = "/admin")
     public ResponseEntity<?> convertAdmin(){
-        log.info("왜 안들어오지");
         User user = userServiceImpl.getCurrentUser();
         if (user.getRole().equals(Role.ADMIN))
             return new ResponseEntity<>(HttpStatus.OK);

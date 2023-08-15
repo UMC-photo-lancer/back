@@ -14,6 +14,7 @@ import shop.photolancer.photolancer.service.impl.UserServiceImpl;
 import shop.photolancer.photolancer.service.impl.UserBookmarkServiceImpl;
 import shop.photolancer.photolancer.web.dto.BookmarkDto;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Api(tags = "사용자 북마크 관련 API")
@@ -48,5 +49,12 @@ public class UserBookmarkController {
         } catch (AuthenticationCredentialsNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    @Operation(summary = "사용자의 북마크를 삭제합니다.")
+    @DeleteMapping(value = "/delete")
+    public void deleteBookmark(BigInteger bookmarkId){
+        User user = userServiceImpl.getCurrentUser();
+        userBookmarkServiceImpl.deleteBookmark(user,bookmarkId);
     }
 }
