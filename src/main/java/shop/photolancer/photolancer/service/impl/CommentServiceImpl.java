@@ -77,13 +77,27 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentResponseDto.CommentsResponseDto> showComments(Long postId) {
         List<Comment> commentList = commentRepository.findAllByPostIdWithNullParentId(postId);
+        User currentUser = userService.getCurrentUser();
 
         List<CommentResponseDto.CommentsResponseDto> comments = commentList.stream().map(
                 comment -> commentConverter.toComments(comment, comment.getChildComments().stream().map(
-                        recomment -> commentConverter.toReComments(recomment,
-                                userConverter.toUserProfile(recomment.getUser()))).collect(Collectors.toList()),
-                        userConverter.toUserProfile(comment.getUser())
-                        )).collect(Collectors.toList());
+                                recomment -> commentConverter.toReComments(
+                                        recomment,
+                                        userConverter.toUserProfile(recomment.getUser()),
+                                        isMyComment(currentUser, recomment.getUser())
+                                )).collect(Collectors.toList()),
+                        userConverter.toUserProfile(comment.getUser()),
+                        isMyComment(currentUser, comment.getUser())
+                )).collect(Collectors.toList());
         return comments;
+    }
+
+    public Boolean isMyComment(User currentUser, User commentUser) {
+        if (commentUser.equals(currentUser)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }
