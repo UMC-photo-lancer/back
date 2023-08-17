@@ -13,6 +13,7 @@ import shop.photolancer.photolancer.domain.Follow;
 import shop.photolancer.photolancer.domain.Post;
 import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.repository.FollowRepository;
+import shop.photolancer.photolancer.repository.NotificationRepository;
 import shop.photolancer.photolancer.repository.PostRepository;
 import shop.photolancer.photolancer.service.FollowService;
 import shop.photolancer.photolancer.web.dto.FollowingResponseDto;
@@ -35,21 +36,23 @@ public class FollowServiceImpl implements FollowService {
     private final PostLikeServiceImpl postLikeService;
     private final UserPhotoServiceImpl userPhotoService;
     private final UserConverter userConverter;
+    private final NotificationRepository notificationRepository;
 
     @Override
-    public void requestFollow(Long followingUserId, Long userId) {
-        User user = userService.findUserById(userId);
+    public void requestFollow(Long followingUserId, Long followerUserId) {
+        User followerUser = userService.findUserById(followerUserId);
         User followingUser = userService.findUserById(followingUserId);
-        Follow follow = followRepository.findByFollowerAndFollowing(user, followingUser);
+        Follow follow = followRepository.findByFollowerAndFollowing(followerUser, followingUser);
 
             if (follow == null) {
-                Follow following = followConverter.toFollow(user, followingUser);
-                user.setNum_following(user.getNum_following()+1);
+                Follow following = followConverter.toFollow(followerUser, followingUser);
+                followerUser.setNum_following(followerUser.getNum_following()+1);
                 followingUser.setNum_follower(followingUser.getNum_follower()+1);
+                notificationRepository.save(followConverter.toFollowNotification(followerUser, followingUser));
                 followRepository.save(following);
             }
             else {
-                user.setNum_following(user.getNum_following()-1);
+                followerUser.setNum_following(followerUser.getNum_following()-1);
                 followingUser.setNum_follower(followingUser.getNum_follower()-1);
                 followRepository.delete(follow);
             }
