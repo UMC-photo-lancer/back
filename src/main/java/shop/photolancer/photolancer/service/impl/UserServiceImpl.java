@@ -363,4 +363,12 @@ public class UserServiceImpl {
         }
         return null;
     }
+
+    public User findUserByNickName(String userNickname) {
+        User user = userRepository.findByNickname(userNickname);
+        if (user == null) {
+            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
+        }
+        return user;
+    }
 }
