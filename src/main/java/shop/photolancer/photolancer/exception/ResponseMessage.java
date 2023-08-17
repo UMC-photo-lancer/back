@@ -59,6 +59,6 @@ public class ResponseMessage {
     public static final String NOTICE_NOT_ADMIN = "관리자가 아닙니다";
     public static final String FOLLOWER_DELETE_SUCCESS = "팔로워 삭제 성공";
 
-
-
+    // 유저 프로필 포스트
+    public static final String GET_USER_PROFILE_POST_SUCCESS = "유저 프로필 포스트 가져오기 성공";
 }
