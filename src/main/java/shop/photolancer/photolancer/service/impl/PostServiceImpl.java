@@ -84,6 +84,7 @@ public class PostServiceImpl implements PostService {
         try {
             Long postLikeId = postLikeService.findPostLike(post, user);
             if(postLikeId == null) {
+                notificationRepository.save(postConverter.toLikeNotification(user, post.getUser()));
                 postRepository.updateLikeCount(postId, post.getLikeCount()+1);
                 postLikeService.updateLike(postConverter.toPostLike(post, user));
             }
@@ -175,9 +176,9 @@ public class PostServiceImpl implements PostService {
     public void sharePost(User sharedBy, List<User> shareTo, Long postId) {
         Post post = findPostById(postId);
         List<Notification> notifications = shareTo.stream().map(
-                shareToUser -> postConverter.toShareNotification(sharedBy, shareToUser, postId)
+                shareToUser -> postConverter.toShareNotification(sharedBy, shareToUser, post)
         ).collect(Collectors.toList());
-
+        notificationRepository.save(postConverter.toShareNotification(sharedBy, post.getUser(), post));
         notificationRepository.saveAll(notifications);
     }
 

@@ -116,12 +116,20 @@ public class PostConverter {
                 .build();
     }
 
-    public Notification toShareNotification(User sharedBy, User shareTo, Long postId){
+    public Notification toShareNotification(User sharedBy, User shareTo, Post post){
         return Notification.builder()
-                .message(sharedBy.getNickname() + "님이 게시글을 공유하였습니다.")
+                .message("Lv. " + sharedBy.getLevel() + " " + sharedBy.getNickname() + "님이 "+ post.getUser().getNickname()+"님의 게시글을 공유하였습니다.")
                 .type(NotificationType.SHARE)
                 .user(shareTo)
-                .postUri("http://photolancer.shop/post/" + postId)
+                .postUri("http://photolancer.shop/post/" + post.getId())
+                .build();
+    }
+
+    public Notification toLikeNotification(User currentUser, User postOwner){
+        return Notification.builder()
+                .message("Lv. " + currentUser.getLevel() + " " + currentUser.getNickname() + "님이 " + postOwner.getNickname() + "님의 게시글을 좋아합니다.")
+                .type(NotificationType.HEART)
+                .user(postOwner)
                 .build();
     }
 }
