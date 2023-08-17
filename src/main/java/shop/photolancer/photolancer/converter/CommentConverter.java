@@ -35,20 +35,23 @@ public class CommentConverter {
     //전체 댓글 조회
     public CommentResponseDto.CommentsResponseDto toComments(Comment comment,
                                                              List<CommentResponseDto.RecommentsResponseDto> recomments,
-                                                             UserResponseDto.PostUserDto user) {
+                                                             UserResponseDto.PostUserDto user,
+                                                             Boolean isMyComment) {
         return CommentResponseDto.CommentsResponseDto.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
                 .recomments(recomments)
                 .user(user)
+                .isMyComment(isMyComment)
                 .build();
     }
     //대댓글 조회
-    public CommentResponseDto.RecommentsResponseDto toReComments(Comment comment, UserResponseDto.PostUserDto user) {
+    public CommentResponseDto.RecommentsResponseDto toReComments(Comment comment, UserResponseDto.PostUserDto user, Boolean isMyComment) {
         return CommentResponseDto.RecommentsResponseDto.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
                 .user(user)
+                .isMyComment(isMyComment)
                 .build();
     }
 }

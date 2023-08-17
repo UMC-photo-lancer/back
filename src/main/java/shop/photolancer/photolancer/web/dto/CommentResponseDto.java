@@ -16,6 +16,8 @@ public class CommentResponseDto {
         private List<CommentResponseDto.RecommentsResponseDto> recomments;
 
         private UserResponseDto.PostUserDto user;
+
+        private Boolean isMyComment;
     }
 
     @Getter
@@ -26,5 +28,7 @@ public class CommentResponseDto {
         private String content;
 
         private UserResponseDto.PostUserDto user;
+
+        private Boolean isMyComment;
     }
 }
