@@ -40,9 +40,9 @@ public class UserJoinRequestDto {
     @Pattern(regexp = "^[A-Za-z0-9+_.-]+@(.+)$", message = "유효한 이메일 주소를 입력하세요.")
     private String email;
 
-    @NotBlank(message = "목적은 필수 입력 값입니다.")
-    @Enumerated(EnumType.STRING)
-    private String purpose;
+//    @NotBlank(message = "목적은 필수 입력 값입니다.")
+//    @Enumerated(EnumType.STRING)
+//    private String purpose;
 
     /* DTO -> Entity */
     public User toEntity(){
@@ -50,7 +50,7 @@ public class UserJoinRequestDto {
                 .name(name)
                 .password(password)
                 .userId(user_id)
-                .purpose(Purpose.fromStringIgnoreCase(this.purpose))
+//                .purpose(Purpose.fromStringIgnoreCase(this.purpose))
                 .email(email)
                 .build();
         return user;
