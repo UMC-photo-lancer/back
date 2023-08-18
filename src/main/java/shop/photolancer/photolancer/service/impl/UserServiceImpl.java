@@ -122,7 +122,6 @@ public class UserServiceImpl {
                 .password(userInfo.getPassword())
                 .name(userInfo.getName())
                 .email(userInfo.getEmail())
-                .purpose(Purpose.valueOf(userInfo.getPurpose()))
                 .status(UserStatus.ACTIVE)
                 .role(Role.GUEST)
                 .point(0)
