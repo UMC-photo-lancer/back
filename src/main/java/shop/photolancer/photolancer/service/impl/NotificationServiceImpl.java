@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import shop.photolancer.photolancer.domain.Notification;
+import shop.photolancer.photolancer.domain.User;
 import shop.photolancer.photolancer.domain.enums.NotificationType;
 import shop.photolancer.photolancer.repository.NotificationRepository;
 import shop.photolancer.photolancer.web.dto.NotificationResponseDto;
@@ -19,8 +20,15 @@ import java.util.stream.Collectors;
 public class NotificationServiceImpl {
 
     private final NotificationRepository notificationRepository;
-    public List<NotificationResponseDto> getNotificationsByType(NotificationType type) {
-        List<Notification> notifications = notificationRepository.findAllByType(type);
+    public List<NotificationResponseDto> getNotificationsByType(NotificationType type, Long userId) {
+        List<Notification> notifications;
+
+        if (type == NotificationType.SYSTEM) {
+            notifications = notificationRepository.findAllByType(type);
+        } else {
+            notifications = notificationRepository.findAllByTypeAndUserId(type, userId);
+        }
+
         return notifications.stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
@@ -35,8 +43,9 @@ public class NotificationServiceImpl {
                 .build();
     }
 
-    public List<NotificationResponseDto> getNotifications() {
-        List<Notification> notifications = notificationRepository.findAll();
+    public List<NotificationResponseDto> getNotifications(Long userId) {
+        List<Notification> notifications = notificationRepository.findAllByUserIdOrTypeIsSystem(userId);
+
         return notifications.stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
