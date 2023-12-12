@@ -7,7 +7,6 @@ import javax.persistence.*;
 @Entity
 @Builder
 @Getter
-@Setter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Bookmark {

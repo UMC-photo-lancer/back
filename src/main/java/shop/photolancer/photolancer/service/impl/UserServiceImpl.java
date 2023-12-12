@@ -141,15 +141,15 @@ public class UserServiceImpl {
     }
 
     public User deactivateUser(User user) {
-        user.setStatus(UserStatus.INACTIVE);
+        user.deactivateUser();
         return userRepository.save(user);
     }
 
     public User updateUser(UserUpdateRequestDto requestDto,User user, BookmarkDto bookmarkDto) {
-        user.setNickname(requestDto.getNickname());
-        user.setExplane(requestDto.getExplane());
-        user.setPurpose(Purpose.fromStringIgnoreCase(requestDto.getPurpose()));
-        user.setRole(Role.USER);
+        String nickname = requestDto.getNickname();
+        String explane = requestDto.getExplane();
+        Purpose purpose = Purpose.fromStringIgnoreCase(requestDto.getPurpose());
+        user.updateUser(nickname, explane, purpose);
         userBookmarkService.registerBookmark(user,bookmarkDto);
         return userRepository.save(user);
     }
@@ -266,7 +266,8 @@ public class UserServiceImpl {
             if (!changePasswordDto.getNewPassword().equals(changePasswordDto.getNewAgainPassword())) {
                 throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
             }
-            user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+            String password = passwordEncoder.encode(changePasswordDto.getNewPassword());
+            user.updatePassword(password);
             userRepository.save(user);
     }
 
@@ -352,7 +353,7 @@ public class UserServiceImpl {
     }
 
     public void updateUserProfileImage(User user, String profileImageUrl) {
-        user.setProfileUrl(profileImageUrl);
+        user.updateProfileUrl(profileImageUrl);
         userRepository.save(user);
     }
 

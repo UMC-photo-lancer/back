@@ -56,7 +56,7 @@ public class PostServiceImpl implements PostService {
     public void upload(PostRequestDto.PostUploadDto request, List<String> imgPaths, User user) {
         Post post = postConverter.toPost(request, imgPaths.get(0), user);
         postRepository.save(post);
-        user.setNum_post(user.getNum_post() + 1);
+        user.updateNum_post();
         postImageService.uploadFile(imgPaths, post);
         postBookmarkService.createPostBookmarks(request.getBookmark(), post);
     }

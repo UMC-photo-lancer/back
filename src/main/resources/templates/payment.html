@@ -10,9 +10,7 @@
     <script>
         var IMP = window.IMP;
         IMP.init("imp43113443");
-    </script>
 
-    <script>
         function requestPay() {
             IMP.init("imp43113443");
             IMP.request_pay({
@@ -20,9 +18,9 @@
                 // 해당하는 pg사 요청해주세요. 잘못 요청시 기본 PG사(KG이니시스) 띄워짐.
                 // "kakaopay.TC0ONETIME"
                 // "tosspay.tosstest"
-                pg: "tosspay.tosstest",
+                pg: "kakaopay.TC0ONETIME",
                 pay_method: "card",
-                merchant_uid: "ORD20180131-0000030",   // 주문번호 1씩 증가하게 해주세요
+                merchant_uid: `mid_${new Date().getTime()}`,   // 주문번호 1씩 증가하게 해주세요
                 name: "포토랜서 포인트 충전",
                 amount: 10000,                         // int 타입으로 포인트 충전액 보내주세요
             },

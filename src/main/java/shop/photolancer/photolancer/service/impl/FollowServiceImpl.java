@@ -43,17 +43,16 @@ public class FollowServiceImpl implements FollowService {
         User followerUser = userService.findUserById(followerUserId);
         User followingUser = userService.findUserById(followingUserId);
         Follow follow = followRepository.findByFollowerAndFollowing(followerUser, followingUser);
-
             if (follow == null) {
                 Follow following = followConverter.toFollow(followerUser, followingUser);
-                followerUser.setNum_following(followerUser.getNum_following()+1);
-                followingUser.setNum_follower(followingUser.getNum_follower()+1);
+                followerUser.updateNum_following(true);
+                followingUser.updateNum_follower(true);
                 notificationRepository.save(followConverter.toFollowNotification(followerUser, followingUser));
                 followRepository.save(following);
             }
             else {
-                followerUser.setNum_following(followerUser.getNum_following()-1);
-                followingUser.setNum_follower(followingUser.getNum_follower()-1);
+                followerUser.updateNum_following(false);
+                followingUser.updateNum_follower(false);
                 followRepository.delete(follow);
             }
         }
