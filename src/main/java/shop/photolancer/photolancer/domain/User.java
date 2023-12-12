@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 @Getter
-@Setter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
@@ -92,6 +91,45 @@ public class User {
 
     public void passwordEncode(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(this.password);
+    }
+
+    public void updateNum_following(Boolean isFollow){
+        if (isFollow == true){
+            this.num_following += 1;
+        } else {
+            this.num_following -= 1;
+        }
+    }
+
+    public void updateNum_follower(Boolean isFollow){
+        if (isFollow == true){
+            this.num_follower += 1;
+        }{
+            this.num_follower -= 1;
+        }
+    }
+
+    public void updateNum_post(){
+        this.num_post += 1;
+    }
+
+    public void deactivateUser(){
+        this.status = UserStatus.INACTIVE;
+    }
+
+    public void updateUser(String nickname, String explane, Purpose purpose){
+        this.nickname = nickname;
+        this.explane = explane;
+        this.purpose = purpose;
+        this.role = Role.USER;
+    }
+
+    public void updatePassword(String password){
+        this.password = password;
+    }
+
+    public void updateProfileUrl(String profileUrl){
+        this.profileUrl = profileUrl;
     }
 
 //    public void updateRefreshToken(String updateRefreshToken) {

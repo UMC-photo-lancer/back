@@ -38,10 +38,10 @@ public class AccountServiceImpl implements AccountService {
         List<Account> userAccounts = accountRepository.findByUser(user);
 
         for (Account userAccount : userAccounts) {
-            userAccount.setIsMain(false);
+            userAccount.updateIsMain(false);
         }
 
-        account.setIsMain(true);
+        account.updateIsMain(true);
 
         accountRepository.saveAll(userAccounts);
     }
@@ -52,8 +52,7 @@ public class AccountServiceImpl implements AccountService {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new NoSuchElementException("Account not found."));
 
-        account.setBank(bank);
-        account.setAccountNumber(accountNumber);
+        account.updateAccount(bank, accountNumber);
     }
 
     @Transactional
